@@ -12,6 +12,8 @@ var PROFILES = {
   strong: { sigma: 0.035, think: 0.35, pressLag: 0.03, retryPause: 0.6 }
 };
 var DT = SIM.DT;
+var ALLM = [];
+[0, 3, 6, 9].forEach(function (dl) { [1, 1.12, 1.24, 1.36].forEach(function (pm) { ALLM.push({ dL: dl, pump: pm, rescue: (dl + (pm > 1.2 ? 1 : 0)) % 3 }); }); });
 var OPT = { relStep: 2, maxHold: 3.2, gaps: [0], maxFlight: 2.4 };
 var AB = { rope: [20, 50, 120], swing: [20, 60, 140], magnet: [15, 40, 100], rescue: [60, 160] };
 
@@ -78,7 +80,7 @@ function run(profName, seed, endlessCount, stars) {
   plan.forEach(function (st) {
     SIM.setMods({});
     var key = st.i + ':' + st.p;
-    if (!MEMO[key]) MEMO[key] = st.i >= 24 ? LEVELS.endless(st.i - 24, [{}], 60) : (st.p > 0 ? LEVELS.starLevel(st.i, st.p, [{}], 60) : LEVELS.get(st.i));
+    if (!MEMO[key]) MEMO[key] = st.i >= 24 ? LEVELS.endless(st.i - 24, ALLM, 60) : (st.p > 0 ? LEVELS.starLevel(st.i, st.p, ALLM, 60) : LEVELS.get(st.i));
     lv = MEMO[key];
     SIM.setMods(modsOf(ab));
     if (!lv || !lv.ok) { flags.push('level ' + (st.i + 1) + '/' + st.p + ' missing'); return; }
@@ -97,7 +99,7 @@ module.exports = { run: run, PROFILES: PROFILES };
 if (require.main === module) {
   var endlessN = +(process.argv[2] || 0), runs = +(process.argv[3] || 3), STARS = +(process.argv[4] || 0);
   var hash = crypto.createHash('sha1');
-  ['sim.js', 'solver.js', 'levels.js'].forEach(function (f) { hash.update(fs.readFileSync(path.join(__dirname, '..', 'src', f))); });
+  ['sim.js', 'solver.js', 'levels.js'].forEach(function (f) { hash.update(fs.readFileSync(path.join(__dirname, '..', 'src', f))); }); hash.update(fs.readFileSync(__filename));
   var h = hash.digest('hex').slice(0, 10);
   var cdir = process.env.SIM_CACHE || path.join(__dirname, '..', '..', 'sim-cache');
   fs.mkdirSync(cdir, { recursive: true });
