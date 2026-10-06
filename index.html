@@ -1,0 +1,2688 @@
+<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Canopy Fling | أرجوحة الغيل</title><meta name="description" content="Swing from vine to vine through a golden rainforest canopy. أرجوحة بين الكروم في غابة مطيرة ذهبية."><meta property="og:title" content="Canopy Fling | أرجوحة الغيل"><meta property="og:description" content="Swing &amp; fling through the rainforest canopy."><meta property="og:type" content="website"><meta property="og:url" content="https://qtur.github.io/canopy-fling/"><meta property="og:image" content="https://qtur.github.io/canopy-fling/og.png"><script src="https://www.youtube.com/game_api/v1"></script><style>/* خطوط: Handjet بكسل، عربي ولاتيني (تُستبدل الروابط وقت البناء) */
+@font-face{font-family:"Pix";font-weight:700;font-display:block;src:url(fonts/handjet-arabic-700.woff2) format("woff2");unicode-range:U+0600-06FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE80-FEFC}
+@font-face{font-family:"Pix";font-weight:700;font-display:block;src:url(fonts/handjet-latin-700.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{--jade0:#0a2a26;--jade1:#0f3b33;--jade2:#16513f;--lime:#a8d83f;--mango:#ff8a1e;--mango2:#ffb347;--hib:#e0457b;--turq:#86d6cc;--cream:#fff1d0;--ink:#2a160f}
+html,body{margin:0;height:100%;background:var(--jade0);overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font-family:"Pix","Tajawal","Segoe UI",system-ui,sans-serif;font-weight:700;color:var(--cream)}
+#stage{position:fixed;inset:0;overflow:hidden;background:var(--jade0)}
+#cv{position:absolute;left:0;top:0;image-rendering:pixelated;image-rendering:crisp-edges}
+button{font-family:inherit;font-weight:inherit}
+/* أيقونات بكسل بالقناع */
+.ic{display:inline-block;width:1em;height:1em;background:currentColor;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;image-rendering:pixelated;vertical-align:-.12em}
+.hud{position:fixed;top:max(8px,env(safe-area-inset-top));left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:0 10px;pointer-events:none;direction:ltr}
+.hud .l{display:flex;gap:8px;align-items:center}
+/* خانة بكسل: حواف مقطوعة بالظل المتدرّج */
+.pill{display:inline-flex;gap:6px;align-items:center;background:var(--jade0);color:var(--cream);padding:3px 10px;font-size:22px;line-height:1.1;unicode-bidi:plaintext;box-shadow:0 -3px 0 -0px var(--jade0),0 3px 0 0 var(--jade0),-3px 0 0 0 var(--jade0),3px 0 0 0 var(--jade0);opacity:.92}
+.pill .ic{color:var(--turq)}
+.btns{display:flex;gap:6px;pointer-events:auto}
+.btn{width:40px;height:40px;border:0;background:var(--jade0);color:var(--cream);font-size:24px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 -3px 0 0 var(--jade0),0 3px 0 0 var(--jade0),-3px 0 0 0 var(--jade0),3px 0 0 0 var(--jade0);opacity:.92}
+.btn:active{background:var(--jade2)}
+#tip{position:fixed;left:50%;bottom:16%;transform:translateX(-50%);max-width:80%;text-align:center;background:var(--jade0);color:var(--cream);padding:9px 16px;font-size:26px;display:none;pointer-events:none;animation:pulse 1.4s ease-in-out infinite;box-shadow:0 -4px 0 0 var(--jade0),0 4px 0 0 var(--jade0),-4px 0 0 0 var(--jade0),4px 0 0 0 var(--jade0)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+#win{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(10,42,38,.4)}
+#winmsg{color:var(--cream);font-size:52px;text-shadow:0 3px 0 rgba(0,0,0,.45)}
+#winsub{color:var(--cream);font-size:24px;text-shadow:0 2px 0 rgba(0,0,0,.4);max-width:80%;text-align:center}
+/* أزرار بكسل */
+.pb{border:0;background:var(--jade1);color:var(--cream);font-size:26px;padding:8px 20px;min-width:140px;cursor:pointer;line-height:1.1;box-shadow:0 -4px 0 0 var(--jade1),0 4px 0 0 var(--jade1),-4px 0 0 0 var(--jade1),4px 0 0 0 var(--jade1),0 8px 0 0 var(--jade0);margin-bottom:8px}
+.pb:active{background:var(--jade2);transform:translateY(2px)}
+.pb.main{background:var(--mango);color:var(--ink);font-size:34px;box-shadow:0 -4px 0 0 var(--mango),0 4px 0 0 var(--mango),-4px 0 0 0 var(--mango),4px 0 0 0 var(--mango),0 8px 0 0 #c4561a}
+.pb:disabled{background:#2b4a41;color:#7fa093;box-shadow:0 -4px 0 0 #2b4a41,0 4px 0 0 #2b4a41,-4px 0 0 0 #2b4a41,4px 0 0 0 #2b4a41,0 8px 0 0 var(--jade0)}
+.pb.sq{min-width:0;padding:8px 14px;font-size:28px}
+.pb:focus-visible,.btn:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
+/* القائمة: بداية / إيقاف */
+#menu{direction:ltr;position:fixed;inset:0;display:none;flex-direction:column;justify-content:space-between;align-items:center;padding:6% 5% 7%;background:linear-gradient(rgba(10,42,38,.0),rgba(10,42,38,.0))}
+#menu .logo{text-align:center;margin-top:7%;unicode-bidi:plaintext;text-shadow:-3px 0 0 var(--jade0),3px 0 0 var(--jade0),0 -3px 0 var(--jade0),0 3px 0 var(--jade0),-3px -3px 0 var(--jade0),3px -3px 0 var(--jade0),-3px 3px 0 var(--jade0),3px 3px 0 var(--jade0),0 6px 0 var(--jade0)}
+#menu h1,#msub,.pb{unicode-bidi:plaintext}
+#menu h1{margin:0;font-size:min(21vw,10vh,84px);line-height:.95;color:var(--cream)}
+html[lang=ar] #menu h1{font-size:min(24vw,11.5vh,96px);line-height:1.05}
+#msub{font-size:min(7vw,3.6vh,28px);color:var(--mango2);margin-top:8px;text-shadow:-2px 0 0 var(--jade0),2px 0 0 var(--jade0),0 -2px 0 var(--jade0),0 2px 0 var(--jade0),-2px -2px 0 var(--jade0),2px 2px 0 var(--jade0),-2px 2px 0 var(--jade0),2px -2px 0 var(--jade0),0 4px 0 var(--jade0)}
+#menu .mbox{display:flex;flex-direction:column;align-items:center;gap:10px;width:min(100%,360px)}
+#menu .mrow{display:flex;gap:18px;align-items:center}
+#menu.pause .logo{margin-top:0}
+#menu.pause h1{font-size:min(14vw,9vh,56px)}
+html[lang=ar] #menu.pause h1{font-size:min(16vw,10vh,64px)}
+#menu.pause #msub{display:none}
+#menu.pause{background:rgba(10,42,38,.55);justify-content:center;gap:22px}
+@media (min-aspect-ratio:5/4){
+  #menu{flex-direction:column;justify-content:center;align-items:flex-end;padding:3% 6%;gap:14px}
+  #menu .logo{margin-top:0;width:44%;text-align:center}
+  #menu h1{font-size:min(7.5vw,17vh,84px)}
+  html[lang=ar] #menu h1{font-size:min(8.5vw,19vh,96px)}
+  #msub{font-size:min(2.6vw,5vh,28px)}
+  .pb{font-size:min(3vw,6.4vh,26px);padding:min(1.4vh,8px) 20px;margin-bottom:min(1.4vh,8px)}
+  .pb.main{font-size:min(3.6vw,8vh,34px)}
+  #menu .mbox{width:44%;gap:min(1.2vh,10px)}
+  #menu.pause{align-items:center}
+  #menu.pause .logo,#menu.pause .mbox{width:auto}
+  #menu.pause h1{font-size:min(5vw,12vh,56px)}
+  html[lang=ar] #menu.pause h1{font-size:min(5.6vw,13vh,64px)}
+}
+#card{position:fixed;left:50%;top:11%;transform:translateX(-50%);max-width:82%;text-align:center;background:var(--jade0);color:var(--cream);padding:10px 16px;display:none;flex-direction:column;gap:4px;pointer-events:none;font-size:24px;line-height:1.15;box-shadow:0 -4px 0 0 var(--jade0),0 4px 0 0 var(--jade0),-4px 0 0 0 var(--jade0),4px 0 0 0 var(--jade0)}
+#card b{font-size:32px;color:var(--mango2)}
+#toast{position:fixed;left:50%;top:30%;transform:translateX(-50%);background:var(--mango);color:var(--ink);padding:5px 14px;font-size:28px;display:none;pointer-events:none;box-shadow:0 -3px 0 0 var(--mango),0 3px 0 0 var(--mango),-3px 0 0 0 var(--mango),3px 0 0 0 var(--mango)}
+#shop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,42,38,.78)}
+#shop .sp{width:min(88%,400px);max-height:88%;overflow:auto;background:var(--jade1);padding:14px 16px;display:flex;flex-direction:column;gap:10px;color:var(--cream);box-shadow:0 -4px 0 0 var(--jade1),0 4px 0 0 var(--jade1),-4px 0 0 0 var(--jade1),4px 0 0 0 var(--jade1)}
+#shop h2{margin:0;font-size:40px;text-align:center}
+#shopbal{text-align:center;font-size:26px;color:var(--lime)}
+.row{display:flex;align-items:center;gap:10px;justify-content:space-between;background:rgba(255,255,255,.07);padding:8px 10px}
+.row .nm{font-size:26px}
+.row .ds{font-size:20px;opacity:.85;line-height:1.1}
+.row .pips{color:var(--mango2);display:flex;gap:4px;margin-top:2px}
+.row .pips i{width:10px;height:10px;display:inline-block;background:var(--mango2)}
+.row .pips i.off{background:rgba(255,255,255,.18)}
+.row .pb{min-width:70px;font-size:24px;margin-bottom:8px}
+#bpres{background:var(--hib);color:var(--cream);box-shadow:0 -4px 0 0 var(--hib),0 4px 0 0 var(--hib),-4px 0 0 0 var(--hib),4px 0 0 0 var(--hib),0 8px 0 0 #7a1f4a}
+#bpres:disabled{background:#2b4a41;color:#7fa093;box-shadow:0 -4px 0 0 #2b4a41,0 4px 0 0 #2b4a41,-4px 0 0 0 #2b4a41,4px 0 0 0 #2b4a41,0 8px 0 0 var(--jade0)}
+
+@media (max-height:520px) and (min-aspect-ratio:5/4){
+  #shop .sp{width:min(94%,760px);max-height:94%;display:grid;grid-template-columns:1fr 1.25fr;grid-template-areas:'h l' 'b l' 'f l' 'p l' 'c l';gap:8px 18px;align-content:center;padding:10px 16px}
+  #shop h2{grid-area:h;font-size:32px}
+  #shopbal{grid-area:b;font-size:20px}
+  #shoplist{grid-area:l;align-self:center}
+  #bfree{grid-area:f}#bpres{grid-area:p}#bclose{grid-area:c}
+  #shop .pb{font-size:20px;padding:6px 10px}
+}
+</style></head><body><div id="stage"><canvas id="cv"></canvas></div>
+<div class="hud"><div class="l"><span class="pill" id="lvl"></span><span class="pill"><i class="ic ic-drop"></i><span id="dropn"></span></span></div>
+<div class="btns"><button class="btn" id="bpause" aria-label="pause"><i class="ic ic-pause"></i></button></div></div>
+<div id="card"><b id="cardt"></b><span id="cardb"></span></div>
+<div id="toast"></div>
+<div id="tip"></div>
+<div id="win"><div id="winmsg"></div><div id="winsub"></div><button class="pb" id="badd" style="display:none"></button><button class="pb main" id="bnext"></button></div>
+<div id="menu"><div class="logo"><h1 id="mtitle"></h1><div id="msub"></div></div>
+<div class="mbox"><button class="pb main" id="bplay"></button><button class="pb" id="brestart"></button><button class="pb" id="bshop"></button>
+<div class="mrow"><button class="pb" id="blang" aria-label="language"></button><button class="pb sq" id="bsound" aria-label="sound"><i class="ic" id="bsi"></i></button></div></div></div>
+<div id="shop"><div class="sp"><h2 id="shoph"></h2><div id="shopbal"></div><div id="shoplist"></div><button class="pb" id="bfree" style="display:none"></button><button class="pb" id="bpres"></button><button class="pb" id="bclose"></button></div></div>
+<script type="text/plain" id="wsrc">'use strict';
+/* فيزياء اللعبة: خطوة ثابتة، تُستخدم في اللعب والحلّال والمحاكاة بنفس الأرقام بالضبط */
+var SIM = (function () {
+  var DT = 1 / 120;
+  var TAU = Math.PI * 2;
+  var C = {
+    G: 420,          /* جاذبية (بكسل/ث²) */
+    GRAB_R: 22,      /* مدى المسك حول الحلقة */
+    PUMP: 4.0,       /* دفع زاوي لما تضغط (راد/ث²) */
+    THMAX: 1.3,      /* أقصى زاوية تمرجح */
+    OMMAX: 7,        /* أقصى سرعة زاوية */
+    CD: 0.28,        /* بعد الترك ما تمسك نفس الحلقة */
+    RSLACK_LO: 8,    /* الحبل يقصر لين كذا */
+    RSLACK_HI: 10,   /* ويطول لين كذا */
+    GOAL_R: 14,
+    LEAF_MIN: 210,   /* أدنى سرعة ارتداد من الورقة */
+    LEAF_MAX: 330,   /* وأقصاها */
+    LEAF_USES: 2,    /* كم ارتداد تتحمل الورقة */
+    DRAFT_A: 760,    /* تسارع التيار الصاعد */
+    DRAFT_T: 1.2     /* أقصى مدة رفع بين مسكتين (يمنع التعليق في الهواء) */
+  };
+  var READY = 0, HANG = 1, FREE = 2;
+  /* تعديلات القدرات: pump مضاعِف الدفع، dL زيادة طول الحبل، rescue عدد النجدات */
+  var M = { pump: 1, dL: 0, rescue: 0 };
+  function setMods(m) { M.pump = m.pump || 1; M.dL = m.dL || 0; M.rescue = m.rescue || 0; }
+  function getMods() { return { pump: M.pump, dL: M.dL, rescue: M.rescue }; }
+
+  function eff(a) { return a.L + M.dL; }
+  /* موضع نقطة التعليق الأفقي (الحلقات المتحركة تحملها الطيور) */
+  function ax(lv, a, t) { return a.mv ? a.x + a.mv.A * Math.sin(TAU * t / lv.tper + a.mv.ph) : a.x; }
+  function avx(lv, a, t) { return a.mv ? a.mv.A * (TAU / lv.tper) * Math.cos(TAU * t / lv.tper + a.mv.ph) : 0; }
+
+  function cloneState(s) {
+    return {
+      mode: s.mode, x: s.x, y: s.y, vx: s.vx, vy: s.vy, ix: s.ix, th: s.th, om: s.om, L: s.L,
+      idle: s.idle, hold: s.hold, t: s.t, cd: s.cd, last: s.last, cp: s.cp, dead: s.dead, won: s.won,
+      cut: s.cut, lcut: s.lcut, grabbed: s.grabbed, resc: s.resc, dtm: s.dtm
+    };
+  }
+
+  function anchorRest(lv, i, t) {
+    var a = lv.anchors[i];
+    return { x: ax(lv, a, t || 0), y: a.y + eff(a) };
+  }
+
+  /* حالة البداية: معلّق على حلقة ix جاهز */
+  function spawnAt(lv, ix, s) {
+    s = s || {};
+    var a = lv.anchors[ix];
+    s.t = s.t || 0;
+    s.mode = HANG; s.ix = ix; s.th = 0; s.om = 0; s.L = eff(a);
+    s.x = ax(lv, a, s.t); s.y = a.y + s.L; s.vx = 0; s.vy = 0;
+    s.idle = true; s.hold = 0; s.cd = 0; s.last = -1; s.dead = false; s.won = false;
+    s.cp = ix; s.cut = 0; s.lcut = 0; s.grabbed = 0; s.resc = s.resc || 0; s.dtm = 0;
+    return s;
+  }
+  function makeState(lv) { return spawnAt(lv, 0, { t: 0, resc: 0 }); }
+
+  function respawn(lv, s) {
+    var keepT = s.t, keepR = s.resc;
+    spawnAt(lv, s.cp, s);
+    s.t = keepT; s.resc = keepR;
+    var a = lv.anchors[s.ix]; s.x = ax(lv, a, s.t);
+    return s;
+  }
+
+  function releaseVel(lv, s) {
+    var a = lv.anchors[s.ix];
+    var c = Math.cos(s.th), sn = Math.sin(s.th);
+    return [s.L * s.om * c + avx(lv, a, s.t), -s.L * s.om * sn];
+  }
+
+  function doRelease(lv, s, forced, ev) {
+    var a = lv.anchors[s.ix];
+    var v = releaseVel(lv, s);
+    s.vx = v[0]; s.vy = v[1];
+    s.x = ax(lv, a, s.t) + s.L * Math.sin(s.th); s.y = a.y + s.L * Math.cos(s.th);
+    s.mode = FREE; s.last = s.ix; s.cd = C.CD; s.hold = 0;
+    if (a.bit) s.cut |= a.bit;
+    if (ev) ev.push({ t: 'release', vx: s.vx, vy: s.vy, ix: s.ix, forced: forced, cut: !!a.bit });
+  }
+
+  /* خطوة وحدة. held: هل الإصبع نازل؟  ev: مصفوفة أحداث اختيارية */
+  function step(lv, s, held, ev) {
+    var i, a, dx, dy, d, best, bd, th, r, c, sn, pxv;
+    s.t += DT;
+    if (s.mode === HANG) {
+      a = lv.anchors[s.ix];
+      if (s.idle) {
+        if (held) s.idle = false;
+        else { s.x = ax(lv, a, s.t) + s.L * Math.sin(s.th); return; }
+      }
+      if (!held) { doRelease(lv, s, false, ev); return; }
+      s.hold += DT;
+      if (a.fold && s.hold > a.fold) { doRelease(lv, s, true, ev); return; }
+      var dir = s.om > 0 ? 1 : (s.om < 0 ? -1 : 1);
+      /* الدفع يقل كلما قربت الطاقة من طاقة أقصى زاوية */
+      var gl = C.G / s.L;
+      var en = 0.5 * s.om * s.om + gl * (1 - Math.cos(s.th));
+      var emax = gl * (1 - Math.cos(C.THMAX));
+      var k = 1 - en / emax;
+      if (k < 0) k = 0;
+      var al = -gl * Math.sin(s.th) + C.PUMP * M.pump * dir * k;
+      s.om += al * DT;
+      if (s.om > C.OMMAX) s.om = C.OMMAX; else if (s.om < -C.OMMAX) s.om = -C.OMMAX;
+      s.th += s.om * DT;
+      s.x = ax(lv, a, s.t) + s.L * Math.sin(s.th); s.y = a.y + s.L * Math.cos(s.th);
+      return;
+    }
+    /* طيران */
+    var oy = s.y;
+    s.vy += C.G * DT;
+    if (lv.drafts) {
+      for (i = 0; i < lv.drafts.length; i++) {
+        d = lv.drafts[i];
+        if (s.dtm < C.DRAFT_T && s.x >= d.x - d.w / 2 && s.x <= d.x + d.w / 2 && s.y >= d.y && s.y <= d.y + d.h) { s.vy -= C.DRAFT_A * DT; s.dtm += DT; }
+      }
+    }
+    s.x += s.vx * DT; s.y += s.vy * DT;
+    if (s.cd > 0) s.cd -= DT;
+    /* ورق يرتد */
+    if (lv.leaves && s.vy > 0) {
+      for (i = 0; i < lv.leaves.length; i++) {
+        var lf = lv.leaves[i], used = (s.lcut >> (2 * i)) & 3;
+        if (used >= C.LEAF_USES) continue;
+        if (oy <= lf.y && s.y >= lf.y && Math.abs(s.x - lf.x) <= lf.w / 2) {
+          s.y = lf.y;
+          s.vy = -Math.min(Math.max(s.vy * 0.92, C.LEAF_MIN), C.LEAF_MAX);
+          s.lcut += 1 << (2 * i);
+          if (ev) ev.push({ t: 'bounce', i: i, x: s.x, y: s.y });
+          break;
+        }
+      }
+    }
+    /* مسك */
+    if (held) {
+      best = -1; bd = C.GRAB_R * C.GRAB_R;
+      for (i = 0; i < lv.anchors.length; i++) {
+        a = lv.anchors[i];
+        if (i === s.last && s.cd > 0) continue;
+        if (a.bit && (s.cut & a.bit)) continue;
+        dx = s.x - ax(lv, a, s.t); dy = s.y - (a.y + eff(a));
+        d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = i; }
+      }
+      if (best >= 0) {
+        a = lv.anchors[best];
+        pxv = ax(lv, a, s.t);
+        dx = s.x - pxv; dy = s.y - a.y;
+        r = Math.sqrt(dx * dx + dy * dy);
+        var lo = eff(a) - C.RSLACK_LO, hi = eff(a) + C.RSLACK_HI;
+        if (r < lo) r = lo; else if (r > hi) r = hi;
+        th = Math.atan2(dx, dy);
+        if (th > 1.2) th = 1.2; else if (th < -1.2) th = -1.2;
+        c = Math.cos(th); sn = Math.sin(th);
+        s.mode = HANG; s.ix = best; s.L = r; s.th = th;
+        s.om = ((s.vx - avx(lv, a, s.t)) * c - s.vy * sn) / r;
+        if (s.om > C.OMMAX) s.om = C.OMMAX; else if (s.om < -C.OMMAX) s.om = -C.OMMAX;
+        s.x = pxv + r * sn; s.y = a.y + r * c;
+        s.idle = false; s.hold = 0; s.dtm = 0;
+        if (a.cp) s.cp = best;
+        s.grabbed++;
+        if (ev) ev.push({ t: 'grab', ix: best, speed: Math.sqrt(s.vx * s.vx + s.vy * s.vy) });
+        return;
+      }
+    }
+    /* هدف */
+    dx = s.x - lv.goal.x; dy = s.y - lv.goal.y;
+    if (dx * dx + dy * dy < C.GOAL_R * C.GOAL_R) {
+      s.won = true;
+      if (ev) ev.push({ t: 'win' });
+      return;
+    }
+    /* سقوط */
+    if (s.y > lv.killY && M.rescue > s.resc) {
+      s.resc++; s.y = lv.killY - 40; s.vy = -300;
+      if (ev) ev.push({ t: 'rescue', x: s.x, y: s.y });
+      return;
+    }
+    if (s.y > lv.killY || s.x < lv.minX || s.x > lv.maxX) {
+      s.dead = true;
+      if (ev) ev.push({ t: 'dead' });
+    }
+  }
+
+  return {
+    DT: DT, C: C, READY: READY, HANG: HANG, FREE: FREE, TAU: TAU,
+    makeState: makeState, cloneState: cloneState, spawnAt: spawnAt, respawn: respawn, step: step,
+    anchorRest: anchorRest, releaseVel: releaseVel, eff: eff, ax: ax, avx: avx, setMods: setMods, getMods: getMods
+  };
+})();
+
+'use strict';
+/* الحلّال: يستخدم نفس فيزياء SIM بالضبط. يبحث عن توقيتات الترك اللي توصّل للهدف */
+var SOLVER = (function () {
+  var DT = SIM.DT;
+
+  function qkey(s, tper) {
+    return s.ix + ':' + Math.round(s.th * 8) + ':' + Math.round(s.om * 3) + ':' + s.cut + ':' + s.lcut + ':' + (tper ? Math.round((s.t % tper) * 6) : 0);
+  }
+
+  /* من حالة تعليق: يجرّب الترك كل relStep خطوة، وبعدها مسك متأخر بفجوات مختلفة */
+  function releases(lv, hang, opt, cb) {
+    var relStep = opt.relStep, maxHold = opt.maxHold, gaps = opt.gaps;
+    var sw = SIM.cloneState(hang);
+    var maxSteps = Math.round(maxHold / DT);
+    for (var st = 0; st <= maxSteps; st++) {
+      if (sw.mode !== SIM.HANG) break;
+      if (st % relStep === 0) {
+        for (var gi = 0; gi < gaps.length; gi++) {
+          var res = flight(lv, sw, gaps[gi], opt);
+          cb(st, gaps[gi], res);
+        }
+      }
+      SIM.step(lv, sw, true);
+    }
+  }
+
+  /* يترك ثم يطير. النتيجة: {k:'arrive'|'win'|'dead'|'timeout', s:state} */
+  function flight(lv, hang, gap, opt) {
+    var f = SIM.cloneState(hang);
+    SIM.step(lv, f, false);              /* ترك */
+    var gapSteps = Math.round(gap / DT);
+    var maxFlight = Math.round(opt.maxFlight / DT);
+    for (var i = 0; i < maxFlight; i++) {
+      SIM.step(lv, f, i >= gapSteps);
+      if (f.won) return { k: 'win', s: f };
+      if (f.dead) return { k: 'dead', s: f };
+      if (f.mode === SIM.HANG) return { k: 'arrive', s: f };
+    }
+    return { k: 'timeout', s: f };
+  }
+
+  var DEF = { relStep: 8, maxHold: 3.2, gaps: [0, 0.12], maxFlight: 2.4, maxNodes: 600 };
+  function opts(o) {
+    var r = {};
+    for (var k in DEF) r[k] = (o && o[k] !== undefined) ? o[k] : DEF[k];
+    return r;
+  }
+
+  /* بحث: هل في طريق من الحلقة start للهدف؟ يرجّع المسار */
+  function solve(lv, startAi, o) {
+    var opt = opts(o);
+    var start = SIM.spawnAt(lv, startAi || 0, { t: 0 });
+    var nodes = [{ s: start, par: -1, act: null }];
+    var seen = {}; seen[qkey(start, lv.tper)] = 1;
+    var open = [0], expanded = 0, winNode = -1, winAct = null;
+    while (open.length && expanded < opt.maxNodes && winNode < 0) {
+      /* نختار الأبعد تقدّمًا */
+      var bi = 0, bs = -1;
+      for (var q = 0; q < open.length; q++) {
+        var sc = nodes[open[q]].s.ix * 1000 - nodes[open[q]].depth * 0 + nodes[open[q]].s.x;
+        if (sc > bs) { bs = sc; bi = q; }
+      }
+      var ni = open.splice(bi, 1)[0];
+      var node = nodes[ni];
+      expanded++;
+      var hang = node.s;
+      releases(lv, hang, opt, function (st, gap, res) {
+        if (winNode >= 0) return;
+        if (res.k === 'win') { winNode = ni; winAct = { rel: st, gap: gap }; return; }
+        if (res.k !== 'arrive') return;
+        var key = qkey(res.s, lv.tper);
+        if (seen[key]) return;
+        seen[key] = 1;
+        nodes.push({ s: res.s, par: ni, act: { rel: st, gap: gap, from: hang.ix }, depth: (node.depth || 0) + 1 });
+        open.push(nodes.length - 1);
+      });
+    }
+    if (winNode < 0) return { ok: false, expanded: expanded, seen: nodes.length };
+    var path = [winAct], cur = winNode;
+    while (nodes[cur].par >= 0) { path.unshift(nodes[cur].act); cur = nodes[cur].par; }
+    return { ok: true, path: path, expanded: expanded, seen: nodes.length };
+  }
+
+  /* نافذة الترك: من حالة تعليق، كم خطوة ترك تنجح في الوصول للحلقة target (أو الهدف) */
+  function winRange(lv, hang, target, o) {
+    var opt = opts(o);
+    opt.relStep = (o && o.relStep) || 1;
+    var good = [], gapsOK = {};
+    var sw = SIM.cloneState(hang);
+    var maxSteps = Math.round(opt.maxHold / DT);
+    for (var st = 0; st <= maxSteps; st += opt.relStep) {
+      if (sw.mode !== SIM.HANG) break;
+      var res = flight(lv, sw, opt.gaps[0], opt);
+      var ok = (target === 'goal') ? res.k === 'win' : (res.k === 'arrive' && res.s.ix === target);
+      if (ok && res.s.resc === hang.resc) good.push(st);
+      for (var q = 0; q < opt.relStep; q++) SIM.step(lv, sw, true);
+    }
+    /* أطول مقطع متصل */
+    var best = [0, 0], run = null;
+    for (var i = 0; i < good.length; i++) {
+      if (run && good[i] - run[1] <= opt.relStep) run[1] = good[i];
+      else { run = [good[i], good[i]]; }
+      if (run[1] - run[0] > best[1] - best[0]) best = [run[0], run[1]];
+    }
+    return { count: good.length, from: best[0], to: best[1], width: (best[1] - best[0] + opt.relStep) * DT, any: good.length > 0 };
+  }
+
+
+  /* مسار متسلسل: من كل حلقة للي بعدها بنافذة ترك مركزية. يرجّع أضيق نافذة */
+  function seqPath(lv, o, startIx, t0) {
+    var opt = opts(o);
+    opt.relStep = 2;
+    var s = SIM.spawnAt(lv, startIx || 0, { t: t0 || 0 });
+    var path = [], minW = 99, ws = [];
+    var n = lv.anchors.length;
+    for (var ti = (startIx || 0) + 1; ti <= n; ti++) {
+      var target = ti < n ? ti : 'goal';
+      var w = winRange(lv, s, target, opt);
+      if (!w.any) return { ok: false, at: ti };
+      var mid = Math.round((w.from + w.to) / 2);
+      mid -= mid % 2;
+      path.push({ rel: mid, gap: opt.gaps[0], target: target, width: w.width });
+      ws.push(w.width);
+      if (w.width < minW) minW = w.width;
+      var c = SIM.cloneState(s);
+      for (var q = 0; q < mid; q++) SIM.step(lv, c, true);
+      var f = flight(lv, c, opt.gaps[0], opt);
+      if (target === 'goal') break;
+      if (f.k !== 'arrive' || f.s.ix !== ti) return { ok: false, at: ti, why: 'arrive' };
+      s = f.s;
+    }
+    return { ok: true, path: path, minWidth: minW, widths: ws };
+  }
+
+  return { solve: solve, seqPath: seqPath, flight: flight, winRange: winRange, releases: releases, qkey: qkey };
+})();
+
+'use strict';
+/* بناء المراحل: توليد حتمي من بذرة + معاملات، والتحقق بالحلّال */
+var LEVELS = (function () {
+  var TAU = Math.PI * 2;
+  function rng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function rr(R, lo, hi) { return lo + (hi - lo) * R(); }
+  function r2(v) { return Math.round(v * 100) / 100; }
+
+  /* مولّد عام: سلسلة حلقات + ميزات حسب المنطقة */
+  function gen(p) {
+    var R = rng(p.seed), anchors = [], leaves = [], drafts = [], i, bits = 0;
+    var yr = p.yr || [100, 150];
+    var x = 40, ry = 120, prevRy = 120;
+    var mvAny = false;
+    for (i = 0; i < p.n; i++) {
+      var L = Math.round(rr(R, p.L[0], p.L[1]));
+      var draft = false;
+      if (i > 0) {
+        var gx = Math.round(rr(R, p.dx[0], p.dx[1]));
+        var gy = Math.round(rr(R, p.dy[0], p.dy[1]));
+        if (p.draft && R() < p.draft && i < p.n - 1) { draft = true; gy -= Math.round(rr(R, 36, 56)); }
+        x += gx; prevRy = ry; ry += gy;
+        if (ry < yr[0]) ry = yr[0] + Math.round(R() * 6);
+        if (ry > yr[1]) ry = yr[1] - Math.round(R() * 6);
+      }
+      var a = { x: x, y: ry - L, L: L, k: 0, cp: (i % p.cpEvery) === 0 };
+      if (i > 0 && !a.cp) {
+        var q = R();
+        if (p.brk && q < p.brk && bits < 28) { a.brk = true; a.bit = 1 << bits++; a.k = 2; }
+        else if (p.fold && q < (p.brk || 0) + p.fold && bits < 28) { a.fold = r2(rr(R, p.foldT[0], p.foldT[1])); a.bit = 1 << bits++; a.k = 4; }
+        else if (p.mv && q < (p.brk || 0) + (p.fold || 0) + p.mv) { a.mv = { A: Math.round(rr(R, p.mvA[0], p.mvA[1])), ph: r2(R() * TAU) }; a.k = 3; mvAny = true; }
+      }
+      if (i > 0) {
+        var pa = anchors[i - 1];
+        if (p.leaf && R() < p.leaf && leaves.length < 14) {
+          leaves.push({ x: Math.round((pa.x + x) / 2 + rr(R, -6, 6)), y: Math.round(Math.max(pa.y + pa.L, ry) + rr(R, p.leafDy[0], p.leafDy[1])), w: Math.round(rr(R, 34, 44)) });
+        }
+        if (draft) drafts.push({ x: Math.round((pa.x + x) / 2), y: Math.round(Math.min(pa.y + pa.L, ry) - 80), w: 28, h: 150 });
+      }
+      anchors.push(a);
+    }
+    var last = anchors[anchors.length - 1];
+    var gx2 = last.x + Math.round(rr(R, p.dx[0], p.dx[1]));
+    var gy2 = last.y + last.L + Math.round(rr(R, p.dy[0], p.dy[1]) * 0.5);
+    var maxY = 0;
+    anchors.forEach(function (a2) { if (a2.y + a2.L > maxY) maxY = a2.y + a2.L; });
+    leaves.forEach(function (l) { if (l.y > maxY) maxY = l.y; });
+    return {
+      id: p.id, name: p.name, area: p.area || 1, seed: p.seed,
+      anchors: anchors, goal: { x: gx2, y: gy2 }, leaves: leaves, drafts: drafts,
+      tper: p.tper || 3.2,
+      killY: maxY + 120, minX: -60, maxX: gx2 + 140, pickups: []
+    };
+  }
+
+  /* يضع قطرات على مسار الحل الفعلي */
+  function addPickups(lv, path) {
+    var s = SIM.makeState(lv), pk = [], lowY = 0;
+    for (var i = 0; i < path.length; i++) {
+      var act = path[i];
+      for (var q = 0; q < act.rel; q++) SIM.step(lv, s, true);
+      var gapSteps = Math.round(act.gap / SIM.DT);
+      var pts = [];
+      SIM.step(lv, s, false);
+      for (var f = 0; f < 700; f++) {
+        SIM.step(lv, s, f >= gapSteps);
+        if (f % 4 === 0) pts.push([s.x, s.y]);
+        if (s.y > lowY) lowY = s.y;
+        if (s.mode === SIM.HANG || s.won || s.dead) break;
+      }
+      if (pts.length > 6) {
+        var a = pts[Math.floor(pts.length * 0.3)], b = pts[Math.floor(pts.length * 0.7)];
+        pk.push({ x: Math.round(a[0]), y: Math.round(a[1]) - 4, t: 0 });
+        pk.push({ x: Math.round(b[0]), y: Math.round(b[1]) - 4, t: (i % 2 === 1) ? 1 : 0 });
+      }
+    }
+    lv.pickups = pk; lv.lowY = Math.round(lowY);
+  }
+
+  /* مواصفات المراحل (بدون بذور): ٦ مناطق × ٤ مراحل، الطول والصعوبة يزيدان تدريجيًا */
+  function makeSpecs() {
+    var out = [], a, w;
+    for (a = 1; a <= 6; a++) {
+      for (w = 0; w < 4; w++) {
+        var i = (a - 1) * 4 + w;
+        var sp = {
+          area: a, n: Math.round(8 + i * 1.15), dx: [60 + 3 * w, 78 + 4 * w + (a > 1 ? 4 : 0)], dy: [-16 - 2 * w, 16 + 2 * w], L: [36, 48],
+          cpEvery: 4 + (a >= 3 ? 1 : 0) + (a >= 5 ? 1 : 0)
+        };
+        if (a === 2) { sp.leaf = [0.9, 0.85, 0.8, 0.8][w]; sp.leafDy = [40, 64]; }
+        if (a === 3) { sp.brk = [0.45, 0.55, 0.6, 0.7][w]; if (w === 3) { sp.leaf = 0.25; sp.leafDy = [44, 66]; } }
+        if (a === 4) { sp.draft = [0.45, 0.45, 0.5, 0.5][w]; sp.yr = [70, 165]; if (w === 3) sp.brk = 0.15; }
+        if (a === 5) { sp.mv = [0.5, 0.4, 0.34, 0.3][w]; if (w === 3) sp.n = 20; if (w === 2) sp.n = 22; sp.mvA = w ? [10, 17] : [14, 22]; sp.tper = [3.2, 3.0, 2.8, 2.6][w]; if (w === 3) sp.brk = 0.1; }
+        if (a === 6) { sp.fold = [0.45, 0.5, 0.55, 0.55][w]; sp.foldT = [[1.2, 1.6], [1.1, 1.5], [1.0, 1.4], [0.95, 1.3]][w]; if (w >= 2) sp.brk = 0.1; }
+        out.push(sp);
+      }
+    }
+    return out;
+  }
+  var SPECS = makeSpecs();
+  /* بذور مثبّتة بعد التحقق (tools/find-seeds.js) */
+  var SEEDS = [5,1,27,14,3,6,9,9,2,5,2,17,9,4,24,3,9,103,46,640,66,90,881,783];
+
+  function specFor(i) {
+    var sp = {};
+    for (var k in SPECS[i]) sp[k] = SPECS[i][k];
+    var g = i / (SPECS.length - 1), within = i % 4;
+    sp.hi = Math.round((0.24 - 0.15 * g + (within === 0 ? 0.03 : 0)) * 100) / 100;
+    sp.lo = Math.max(0.05, Math.round((sp.hi - 0.06) * 100) / 100);
+    sp.id = i + 1; sp.name = 'a' + sp.area + 'l' + (i + 1); sp.seed = SEEDS[i] || 1;
+    return sp;
+  }
+
+  /* مسار حل متسلسل (مع نتيجة التحقق) */
+  function solveLevel(lv) {
+    return SOLVER.seqPath(lv, {});
+  }
+  /* يبني ويحلّ؛ يرجّع المستوى مع lv.minW و lv.ok */
+  function finish(lv) {
+    var r = (typeof SOLVER !== 'undefined') ? solveLevel(lv) : null;
+    lv.ok = !!(r && r.ok);
+    lv.minW = r && r.ok ? r.minWidth : 0;
+    if (r && r.ok) addPickups(lv, r.path);
+    return lv;
+  }
+  function build(def) { return finish(gen(def)); }
+
+  var cache = {};
+  function get(i) {
+    if (!cache[i]) {
+      if (typeof CORE_DATA !== 'undefined' && CORE_DATA[i]) cache[i] = CORE_DATA[i];
+      else { var sv = SIM.getMods(); SIM.setMods({}); cache[i] = build(specFor(i)); SIM.setMods(sv); }
+    }
+    return cache[i];
+  }
+
+  /* نسخة النجمة p من المرحلة i: أطول وأصعب، تتولد وتتحقق (بالخيط الخلفي) */
+  function starLevel(i, p, modsList, maxAttempts) {
+    var saved = SIM.getMods();
+    maxAttempts = maxAttempts || 60;
+    for (var at = 0; at < maxAttempts; at++) {
+      var sp = specFor(i);
+      sp.seed = 7000 + i * 131 + p * 977 + at * 31; sp.n += (at < 24 ? 3 : 1) * p;
+      sp.hi = Math.max(0.11, sp.hi - 0.01 * p) + (at >= 24 ? 0.05 : 0); sp.lo = at >= 24 ? 0.06 : Math.max(0.07, sp.lo - 0.01 * p);
+      sp.id = 3000 + p * 100 + i; sp.name = 's' + p + 'l' + i;
+      SIM.setMods({});
+      var lv = finish(gen(sp));
+      if (!lv.ok || lv.minW < sp.lo || lv.minW > sp.hi) continue;
+      var ok = true;
+      for (var mi = 0; mi < (modsList || []).length && ok; mi++) {
+        SIM.setMods(modsList[mi]);
+        if (!SOLVER.seqPath(lv, {}).ok) ok = false;
+      }
+      SIM.setMods(saved);
+      if (ok) { lv.attempt = at; return lv; }
+    }
+    SIM.setMods(saved);
+    return get(i);   /* احتياط: مرحلة الأساس نفسها (متحقَّقة) بدل مرحلة سهلة */
+  }
+
+  /* ---------- مسارات لا نهائية: تخلط كل القواعد، وتصعب تدريجيًا ---------- */
+  function endlessSpec(k, attempt) {
+    var h = rng(k * 7919 + 13 + attempt * 104729);
+    var d = Math.min(1, k / 40);          /* صعوبة */
+    var n = 8 + Math.floor(h() * 4) + Math.floor(d * 3);
+    var p = {
+      area: 7, n: n, dx: [60 + Math.round(d * 4), 80 + Math.round(d * 8)], dy: [-16, 16], L: [36, 48],
+      cpEvery: d > 0.6 ? 5 : 4, yr: [70, 165], tper: 2.8 + h() * 0.6, mvA: [12, 24], foldT: [1.0, 1.5], leafDy: [42, 66],
+      lo: 0.2 - 0.09 * d
+    };
+    /* نختار ٣-٤ قواعد من الخمس لكل مسار */
+    var rules = ['leaf', 'brk', 'draft', 'mv', 'fold'];
+    for (var i = rules.length - 1; i > 0; i--) { var j = Math.floor(h() * (i + 1)); var t = rules[i]; rules[i] = rules[j]; rules[j] = t; }
+    var cnt = 2 + Math.floor(h() * 2) + (d > 0.5 ? 1 : 0);
+    for (i = 0; i < cnt; i++) {
+      var r = rules[i];
+      p[r] = r === 'leaf' ? 0.6 : (r === 'draft' ? 0.4 : (r === 'brk' ? 0.35 : (r === 'mv' ? 0.35 : 0.3)));
+    }
+    var sum = (p.brk || 0) + (p.fold || 0) + (p.mv || 0);
+    if (sum > 0.9) { var sc = 0.9 / sum; if (p.brk) p.brk *= sc; if (p.fold) p.fold *= sc; if (p.mv) p.mv *= sc; }
+    p.id = 1000 + k; p.name = 'e' + k; p.seed = 1 + k * 977 + attempt * 31;
+    return p;
+  }
+  /* يرجّع أول محاولة تنجح (مع القدرات المطلوبة) */
+  function endless(k, modsList, maxAttempts) {
+    var saved = SIM.getMods();
+    maxAttempts = maxAttempts || 40;
+    for (var at = 0; at < maxAttempts; at++) {
+      var sp = endlessSpec(k, at);
+      var lv, ok = true, mi;
+      SIM.setMods({});
+      lv = finish(gen(sp));
+      if (!lv.ok || lv.minW < sp.lo) continue;
+      for (mi = 0; mi < (modsList || []).length && ok; mi++) {
+        SIM.setMods(modsList[mi]);
+        var r2_ = SOLVER.seqPath(lv, {});
+        if (!r2_.ok) ok = false;
+      }
+      SIM.setMods(saved);
+      if (ok) { lv.attempt = at; return lv; }
+    }
+    SIM.setMods(saved);
+    return null;
+  }
+
+  return {
+    SPECS: SPECS, SEEDS: SEEDS, gen: gen, build: build, finish: finish, get: get, specFor: specFor,
+    count: function () { return SPECS.length; }, addPickups: addPickups, rng: rng, endless: endless, starLevel: starLevel, endlessSpec: endlessSpec
+  };
+})();
+
+onmessage = function (e) { var d = e.data; var lv = null; try { lv = d.star ? LEVELS.starLevel(d.i, d.star, d.mods, 60) : LEVELS.endless(d.ek, d.mods, 60); } catch (x) {} postMessage({ k: d.k, lv: lv }); };
+</script><script>var CORE_DATA = [{"id":1,"name":"a1l1","area":1,"seed":5,"anchors":[{"x":40,"y":76,"L":44,"k":0,"cp":true},{"x":104,"y":79,"L":45,"k":0,"cp":false},{"x":177,"y":80,"L":43,"k":0,"cp":false},{"x":251,"y":92,"L":39,"k":0,"cp":false},{"x":319,"y":89,"L":36,"k":0,"cp":true},{"x":384,"y":86,"L":47,"k":0,"cp":false},{"x":444,"y":103,"L":39,"k":0,"cp":false},{"x":506,"y":102,"L":39,"k":0,"cp":false}],"goal":{"x":570,"y":134},"leaves":[],"drafts":[],"tper":3.2,"killY":262,"minX":-60,"maxX":710,"pickups":[{"x":82,"y":93,"t":0},{"x":93,"y":93,"t":0},{"x":137,"y":99,"t":0},{"x":150,"y":99,"t":1},{"x":209,"y":98,"t":0},{"x":229,"y":101,"t":0},{"x":281,"y":106,"t":0},{"x":294,"y":106,"t":1},{"x":347,"y":104,"t":0},{"x":359,"y":105,"t":0},{"x":424,"y":100,"t":0},{"x":439,"y":104,"t":1},{"x":471,"y":120,"t":0},{"x":482,"y":122,"t":0},{"x":538,"y":118,"t":0},{"x":550,"y":117,"t":1}],"ok":true,"minW":0.21666666666666667,"lowY":132},{"id":2,"name":"a1l2","area":1,"seed":1,"anchors":[{"x":40,"y":76,"L":44,"k":0,"cp":true},{"x":113,"y":101,"L":36,"k":0,"cp":false},{"x":188,"y":106,"L":39,"k":0,"cp":false},{"x":260,"y":97,"L":48,"k":0,"cp":false},{"x":328,"y":92,"L":41,"k":0,"cp":true},{"x":392,"y":87,"L":42,"k":0,"cp":false},{"x":459,"y":74,"L":39,"k":0,"cp":false},{"x":537,"y":63,"L":43,"k":0,"cp":false},{"x":610,"y":71,"L":44,"k":0,"cp":true}],"goal":{"x":677,"y":119},"leaves":[],"drafts":[],"tper":3.2,"killY":265,"minX":-60,"maxX":817,"pickups":[{"x":83,"y":97,"t":0},{"x":98,"y":99,"t":0},{"x":138,"y":117,"t":0},{"x":157,"y":123,"t":1},{"x":224,"y":122,"t":0},{"x":237,"y":120,"t":0},{"x":295,"y":115,"t":0},{"x":306,"y":112,"t":1},{"x":359,"y":108,"t":0},{"x":371,"y":108,"t":0},{"x":421,"y":103,"t":0},{"x":433,"y":101,"t":1},{"x":495,"y":93,"t":0},{"x":507,"y":92,"t":0},{"x":576,"y":83,"t":0},{"x":595,"y":84,"t":1},{"x":642,"y":90,"t":0},{"x":663,"y":93,"t":0}],"ok":true,"minW":0.18333333333333332,"lowY":137},{"id":3,"name":"a1l3","area":1,"seed":27,"anchors":[{"x":40,"y":79,"L":41,"k":0,"cp":true},{"x":106,"y":71,"L":36,"k":0,"cp":false},{"x":177,"y":64,"L":39,"k":0,"cp":false},{"x":253,"y":60,"L":41,"k":0,"cp":false},{"x":319,"y":67,"L":38,"k":0,"cp":true},{"x":400,"y":80,"L":40,"k":0,"cp":false},{"x":482,"y":69,"L":41,"k":0,"cp":false},{"x":555,"y":63,"L":38,"k":0,"cp":false},{"x":634,"y":62,"L":43,"k":0,"cp":true},{"x":717,"y":73,"L":38,"k":0,"cp":false}],"goal":{"x":792,"y":114},"leaves":[],"drafts":[],"tper":3.2,"killY":240,"minX":-60,"maxX":932,"pickups":[{"x":76,"y":98,"t":0},{"x":81,"y":95,"t":0},{"x":138,"y":88,"t":0},{"x":150,"y":88,"t":1},{"x":211,"y":82,"t":0},{"x":224,"y":81,"t":0},{"x":285,"y":79,"t":0},{"x":297,"y":80,"t":1},{"x":349,"y":85,"t":0},{"x":366,"y":92,"t":0},{"x":436,"y":94,"t":0},{"x":451,"y":91,"t":1},{"x":514,"y":86,"t":0},{"x":527,"y":86,"t":0},{"x":589,"y":82,"t":0},{"x":606,"y":83,"t":1},{"x":666,"y":82,"t":0},{"x":687,"y":85,"t":0},{"x":752,"y":85,"t":0},{"x":771,"y":86,"t":1}],"ok":true,"minW":0.2,"lowY":110},{"id":4,"name":"a1l4","area":1,"seed":14,"anchors":[{"x":40,"y":79,"L":41,"k":0,"cp":true},{"x":120,"y":73,"L":41,"k":0,"cp":false},{"x":203,"y":65,"L":41,"k":0,"cp":false},{"x":273,"y":77,"L":40,"k":0,"cp":false},{"x":349,"y":76,"L":38,"k":0,"cp":true},{"x":419,"y":73,"L":47,"k":0,"cp":false},{"x":496,"y":95,"L":45,"k":0,"cp":false},{"x":570,"y":81,"L":47,"k":0,"cp":false},{"x":644,"y":69,"L":44,"k":0,"cp":true},{"x":719,"y":63,"L":43,"k":0,"cp":false},{"x":804,"y":68,"L":45,"k":0,"cp":false}],"goal":{"x":883,"y":115},"leaves":[],"drafts":[],"tper":3.2,"killY":260,"minX":-60,"maxX":1023,"pickups":[{"x":77,"y":100,"t":0},{"x":89,"y":100,"t":0},{"x":158,"y":94,"t":0},{"x":171,"y":93,"t":1},{"x":240,"y":87,"t":0},{"x":255,"y":88,"t":0},{"x":302,"y":94,"t":0},{"x":319,"y":96,"t":1},{"x":383,"y":94,"t":0},{"x":396,"y":94,"t":0},{"x":457,"y":94,"t":0},{"x":479,"y":99,"t":1},{"x":530,"y":113,"t":0},{"x":542,"y":113,"t":0},{"x":608,"y":102,"t":0},{"x":617,"y":98,"t":1},{"x":679,"y":89,"t":0},{"x":692,"y":88,"t":0},{"x":752,"y":84,"t":0},{"x":773,"y":86,"t":1},{"x":842,"y":87,"t":0},{"x":860,"y":89,"t":0}],"ok":true,"minW":0.2,"lowY":132},{"id":5,"name":"a2l5","area":2,"seed":3,"anchors":[{"x":40,"y":75,"L":45,"k":0,"cp":true},{"x":110,"y":70,"L":36,"k":0,"cp":false},{"x":174,"y":61,"L":43,"k":0,"cp":false},{"x":249,"y":66,"L":39,"k":0,"cp":false},{"x":326,"y":55,"L":47,"k":0,"cp":true},{"x":386,"y":65,"L":36,"k":0,"cp":false},{"x":448,"y":60,"L":43,"k":0,"cp":false},{"x":527,"y":63,"L":45,"k":0,"cp":false},{"x":603,"y":67,"L":47,"k":0,"cp":true},{"x":664,"y":55,"L":45,"k":0,"cp":false},{"x":736,"y":60,"L":42,"k":0,"cp":false},{"x":813,"y":57,"L":45,"k":0,"cp":false},{"x":895,"y":57,"L":48,"k":0,"cp":true}],"goal":{"x":969,"y":112},"leaves":[{"x":75,"y":164,"w":37},{"x":147,"y":154,"w":41},{"x":206,"y":166,"w":37},{"x":283,"y":154,"w":41},{"x":358,"y":161,"w":40},{"x":417,"y":155,"w":40},{"x":490,"y":159,"w":44},{"x":632,"y":167,"w":37},{"x":696,"y":165,"w":40},{"x":778,"y":157,"w":44},{"x":859,"y":165,"w":37}],"drafts":[],"tper":3.2,"killY":287,"minX":-60,"maxX":1109,"pickups":[{"x":70,"y":119,"t":0},{"x":85,"y":158,"t":0},{"x":153,"y":84,"t":0},{"x":158,"y":82,"t":1},{"x":205,"y":80,"t":0},{"x":222,"y":82,"t":0},{"x":279,"y":81,"t":0},{"x":296,"y":82,"t":1},{"x":367,"y":68,"t":0},{"x":379,"y":69,"t":0},{"x":413,"y":76,"t":0},{"x":423,"y":79,"t":1},{"x":480,"y":81,"t":0},{"x":498,"y":83,"t":0},{"x":560,"y":83,"t":0},{"x":578,"y":84,"t":1},{"x":639,"y":81,"t":0},{"x":645,"y":78,"t":0},{"x":698,"y":74,"t":0},{"x":714,"y":75,"t":1},{"x":772,"y":71,"t":0},{"x":785,"y":76,"t":0},{"x":849,"y":78,"t":0},{"x":866,"y":78,"t":1},{"x":934,"y":78,"t":0},{"x":952,"y":81,"t":0}],"ok":true,"minW":0.21666666666666667,"lowY":164},{"id":6,"name":"a2l6","area":2,"seed":6,"anchors":[{"x":40,"y":78,"L":42,"k":0,"cp":true},{"x":118,"y":73,"L":36,"k":0,"cp":false},{"x":202,"y":66,"L":39,"k":0,"cp":false},{"x":274,"y":64,"L":42,"k":0,"cp":false},{"x":359,"y":79,"L":44,"k":0,"cp":true},{"x":435,"y":73,"L":39,"k":0,"cp":false},{"x":518,"y":72,"L":43,"k":0,"cp":false},{"x":586,"y":66,"L":46,"k":0,"cp":false},{"x":656,"y":64,"L":39,"k":0,"cp":true},{"x":731,"y":56,"L":47,"k":0,"cp":false},{"x":815,"y":62,"L":39,"k":0,"cp":false},{"x":888,"y":66,"L":43,"k":0,"cp":false},{"x":958,"y":74,"L":43,"k":0,"cp":true},{"x":1033,"y":72,"L":39,"k":0,"cp":false}],"goal":{"x":1099,"y":115},"leaves":[{"x":73,"y":182,"w":44},{"x":159,"y":168,"w":40},{"x":243,"y":166,"w":44},{"x":401,"y":173,"w":40},{"x":477,"y":162,"w":43},{"x":546,"y":163,"w":37},{"x":616,"y":161,"w":35},{"x":693,"y":159,"w":37},{"x":776,"y":165,"w":36},{"x":856,"y":151,"w":35},{"x":928,"y":176,"w":36},{"x":991,"y":162,"w":38}],"drafts":[],"tper":3.2,"killY":302,"minX":-60,"maxX":1239,"pickups":[{"x":77,"y":100,"t":0},{"x":90,"y":99,"t":0},{"x":153,"y":94,"t":0},{"x":170,"y":94,"t":1},{"x":243,"y":83,"t":0},{"x":251,"y":82,"t":0},{"x":307,"y":85,"t":0},{"x":325,"y":90,"t":1},{"x":397,"y":88,"t":0},{"x":413,"y":84,"t":0},{"x":467,"y":89,"t":0},{"x":483,"y":94,"t":1},{"x":561,"y":89,"t":0},{"x":570,"y":87,"t":0},{"x":618,"y":86,"t":0},{"x":630,"y":83,"t":1},{"x":685,"y":80,"t":0},{"x":701,"y":83,"t":0},{"x":770,"y":77,"t":0},{"x":787,"y":77,"t":1},{"x":848,"y":72,"t":0},{"x":864,"y":77,"t":0},{"x":924,"y":80,"t":0},{"x":936,"y":83,"t":1},{"x":990,"y":92,"t":0},{"x":1003,"y":92,"t":0},{"x":1066,"y":89,"t":0},{"x":1081,"y":90,"t":1}],"ok":true,"minW":0.15,"lowY":111},{"id":7,"name":"a2l7","area":2,"seed":9,"anchors":[{"x":40,"y":82,"L":38,"k":0,"cp":true},{"x":109,"y":87,"L":46,"k":0,"cp":false},{"x":192,"y":92,"L":44,"k":0,"cp":false},{"x":276,"y":103,"L":39,"k":0,"cp":false},{"x":347,"y":103,"L":46,"k":0,"cp":true},{"x":425,"y":90,"L":42,"k":0,"cp":false},{"x":507,"y":84,"L":40,"k":0,"cp":false},{"x":577,"y":82,"L":43,"k":0,"cp":false},{"x":659,"y":83,"L":42,"k":0,"cp":true},{"x":741,"y":101,"L":43,"k":0,"cp":false},{"x":830,"y":101,"L":44,"k":0,"cp":false},{"x":912,"y":101,"L":47,"k":0,"cp":false},{"x":991,"y":98,"L":43,"k":0,"cp":true},{"x":1074,"y":98,"L":46,"k":0,"cp":false},{"x":1145,"y":112,"L":36,"k":0,"cp":false}],"goal":{"x":1211,"y":147},"leaves":[{"x":72,"y":195,"w":35},{"x":239,"y":203,"w":39},{"x":306,"y":210,"w":36},{"x":382,"y":191,"w":39},{"x":546,"y":179,"w":40},{"x":623,"y":179,"w":40},{"x":703,"y":186,"w":41},{"x":788,"y":208,"w":35},{"x":874,"y":209,"w":35},{"x":949,"y":200,"w":36},{"x":1107,"y":209,"w":40}],"drafts":[],"tper":3.2,"killY":330,"minX":-60,"maxX":1351,"pickups":[{"x":65,"y":125,"t":0},{"x":80,"y":185,"t":0},{"x":150,"y":125,"t":0},{"x":163,"y":121,"t":1},{"x":226,"y":113,"t":0},{"x":246,"y":116,"t":0},{"x":308,"y":117,"t":0},{"x":329,"y":117,"t":1},{"x":382,"y":122,"t":0},{"x":395,"y":121,"t":0},{"x":465,"y":112,"t":0},{"x":479,"y":110,"t":1},{"x":543,"y":100,"t":0},{"x":553,"y":101,"t":0},{"x":608,"y":101,"t":0},{"x":629,"y":105,"t":1},{"x":702,"y":97,"t":0},{"x":718,"y":103,"t":0},{"x":776,"y":120,"t":0},{"x":794,"y":124,"t":1},{"x":871,"y":123,"t":0},{"x":888,"y":122,"t":0},{"x":947,"y":122,"t":0},{"x":961,"y":121,"t":1},{"x":1025,"y":118,"t":0},{"x":1045,"y":120,"t":0},{"x":1109,"y":117,"t":0},{"x":1125,"y":118,"t":1},{"x":1172,"y":126,"t":0},{"x":1188,"y":129,"t":0}],"ok":true,"minW":0.15,"lowY":195},{"id":8,"name":"a2l8","area":2,"seed":9,"anchors":[{"x":40,"y":82,"L":38,"k":0,"cp":true},{"x":113,"y":88,"L":46,"k":0,"cp":false},{"x":199,"y":94,"L":44,"k":0,"cp":false},{"x":286,"y":105,"L":39,"k":0,"cp":false},{"x":360,"y":102,"L":46,"k":0,"cp":true},{"x":431,"y":104,"L":42,"k":0,"cp":false},{"x":514,"y":107,"L":40,"k":0,"cp":false},{"x":598,"y":105,"L":43,"k":0,"cp":false},{"x":681,"y":100,"L":44,"k":0,"cp":true},{"x":768,"y":90,"L":36,"k":0,"cp":false},{"x":843,"y":88,"L":46,"k":0,"cp":false},{"x":931,"y":86,"L":40,"k":0,"cp":false},{"x":1015,"y":92,"L":37,"k":0,"cp":true},{"x":1104,"y":99,"L":38,"k":0,"cp":false},{"x":1174,"y":78,"L":46,"k":0,"cp":false},{"x":1243,"y":78,"L":44,"k":0,"cp":false}],"goal":{"x":1319,"y":129},"leaves":[{"x":74,"y":196,"w":35},{"x":247,"y":205,"w":39},{"x":328,"y":193,"w":39},{"x":395,"y":195,"w":41},{"x":470,"y":200,"w":42},{"x":552,"y":210,"w":40},{"x":730,"y":202,"w":43},{"x":811,"y":190,"w":42},{"x":973,"y":176,"w":39},{"x":1135,"y":183,"w":43},{"x":1204,"y":168,"w":36}],"drafts":[],"tper":3.2,"killY":330,"minX":-60,"maxX":1459,"pickups":[{"x":66,"y":129,"t":0},{"x":81,"y":179,"t":0},{"x":153,"y":126,"t":0},{"x":167,"y":123,"t":1},{"x":237,"y":114,"t":0},{"x":255,"y":117,"t":0},{"x":322,"y":112,"t":0},{"x":339,"y":113,"t":1},{"x":397,"y":116,"t":0},{"x":410,"y":117,"t":0},{"x":462,"y":123,"t":0},{"x":482,"y":126,"t":1},{"x":550,"y":126,"t":0},{"x":567,"y":125,"t":0},{"x":631,"y":125,"t":0},{"x":648,"y":126,"t":1},{"x":720,"y":121,"t":0},{"x":737,"y":120,"t":0},{"x":809,"y":108,"t":0},{"x":820,"y":109,"t":1},{"x":877,"y":108,"t":0},{"x":898,"y":111,"t":0},{"x":970,"y":108,"t":0},{"x":988,"y":107,"t":1},{"x":1046,"y":109,"t":0},{"x":1065,"y":114,"t":0},{"x":1146,"y":106,"t":0},{"x":1154,"y":102,"t":1},{"x":1209,"y":97,"t":0},{"x":1221,"y":96,"t":0},{"x":1278,"y":98,"t":0},{"x":1296,"y":102,"t":1}],"ok":true,"minW":0.13333333333333333,"lowY":196},{"id":9,"name":"a3l9","area":3,"seed":2,"anchors":[{"x":40,"y":75,"L":45,"k":0,"cp":true},{"x":106,"y":81,"L":40,"k":0,"cp":false},{"x":177,"y":72,"L":44,"k":0,"cp":false},{"x":254,"y":69,"L":37,"k":2,"cp":false,"brk":true,"bit":1},{"x":327,"y":58,"L":46,"k":2,"cp":false,"brk":true,"bit":2},{"x":388,"y":69,"L":48,"k":0,"cp":true},{"x":451,"y":70,"L":37,"k":2,"cp":false,"brk":true,"bit":4},{"x":521,"y":64,"L":47,"k":0,"cp":false},{"x":591,"y":67,"L":39,"k":2,"cp":false,"brk":true,"bit":8},{"x":653,"y":64,"L":42,"k":0,"cp":false},{"x":735,"y":70,"L":36,"k":0,"cp":true},{"x":799,"y":70,"L":42,"k":2,"cp":false,"brk":true,"bit":16},{"x":879,"y":77,"L":45,"k":2,"cp":false,"brk":true,"bit":32},{"x":941,"y":82,"L":47,"k":0,"cp":false},{"x":1015,"y":84,"L":46,"k":2,"cp":false,"brk":true,"bit":64},{"x":1093,"y":86,"L":46,"k":0,"cp":true},{"x":1173,"y":106,"L":40,"k":2,"cp":false,"brk":true,"bit":128}],"goal":{"x":1241,"y":138},"leaves":[],"drafts":[],"tper":3.2,"killY":266,"minX":-60,"maxX":1381,"pickups":[{"x":82,"y":93,"t":0},{"x":92,"y":92,"t":0},{"x":135,"y":98,"t":0},{"x":148,"y":98,"t":1},{"x":215,"y":92,"t":0},{"x":228,"y":91,"t":0},{"x":286,"y":87,"t":0},{"x":299,"y":87,"t":1},{"x":368,"y":76,"t":0},{"x":380,"y":80,"t":0},{"x":423,"y":87,"t":0},{"x":433,"y":84,"t":1},{"x":477,"y":87,"t":0},{"x":490,"y":89,"t":0},{"x":559,"y":83,"t":0},{"x":571,"y":81,"t":1},{"x":620,"y":82,"t":0},{"x":632,"y":83,"t":0},{"x":683,"y":83,"t":0},{"x":704,"y":87,"t":1},{"x":770,"y":84,"t":0},{"x":786,"y":82,"t":0},{"x":829,"y":90,"t":0},{"x":850,"y":94,"t":1},{"x":918,"y":89,"t":0},{"x":934,"y":92,"t":0},{"x":975,"y":103,"t":0},{"x":988,"y":103,"t":1},{"x":1049,"y":104,"t":0},{"x":1066,"y":105,"t":0},{"x":1130,"y":107,"t":0},{"x":1148,"y":110,"t":1},{"x":1205,"y":119,"t":0},{"x":1221,"y":118,"t":0}],"ok":true,"minW":0.2,"lowY":135},{"id":10,"name":"a3l10","area":3,"seed":5,"anchors":[{"x":40,"y":76,"L":44,"k":0,"cp":true},{"x":108,"y":79,"L":45,"k":2,"cp":false,"brk":true,"bit":1},{"x":188,"y":79,"L":43,"k":0,"cp":false},{"x":269,"y":92,"L":39,"k":0,"cp":false},{"x":343,"y":88,"L":36,"k":0,"cp":false},{"x":423,"y":93,"L":39,"k":0,"cp":true},{"x":486,"y":104,"L":39,"k":2,"cp":false,"brk":true,"bit":2},{"x":552,"y":103,"L":39,"k":0,"cp":false},{"x":617,"y":109,"L":39,"k":2,"cp":false,"brk":true,"bit":4},{"x":686,"y":96,"L":48,"k":2,"cp":false,"brk":true,"bit":8},{"x":766,"y":101,"L":46,"k":0,"cp":true},{"x":844,"y":88,"L":46,"k":0,"cp":false},{"x":914,"y":101,"L":43,"k":0,"cp":false},{"x":998,"y":102,"L":36,"k":2,"cp":false,"brk":true,"bit":16},{"x":1067,"y":80,"L":46,"k":0,"cp":false},{"x":1153,"y":69,"L":39,"k":0,"cp":true},{"x":1233,"y":61,"L":40,"k":0,"cp":false},{"x":1298,"y":72,"L":37,"k":2,"cp":false,"brk":true,"bit":32}],"goal":{"x":1367,"y":117},"leaves":[],"drafts":[],"tper":3.2,"killY":268,"minX":-60,"maxX":1507,"pickups":[{"x":81,"y":95,"t":0},{"x":91,"y":94,"t":0},{"x":141,"y":99,"t":0},{"x":158,"y":100,"t":1},{"x":221,"y":100,"t":0},{"x":243,"y":103,"t":0},{"x":300,"y":105,"t":0},{"x":315,"y":104,"t":1},{"x":370,"y":105,"t":0},{"x":392,"y":109,"t":0},{"x":462,"y":93,"t":0},{"x":470,"y":98,"t":1},{"x":515,"y":119,"t":0},{"x":527,"y":120,"t":0},{"x":580,"y":119,"t":0},{"x":593,"y":120,"t":1},{"x":646,"y":124,"t":0},{"x":658,"y":125,"t":0},{"x":724,"y":118,"t":0},{"x":741,"y":117,"t":1},{"x":801,"y":120,"t":0},{"x":814,"y":119,"t":0},{"x":888,"y":107,"t":0},{"x":903,"y":108,"t":1},{"x":945,"y":121,"t":0},{"x":965,"y":125,"t":0},{"x":1109,"y":102,"t":0},{"x":1122,"y":100,"t":0},{"x":1193,"y":91,"t":0},{"x":1206,"y":89,"t":1},{"x":1270,"y":79,"t":0},{"x":1285,"y":78,"t":0},{"x":1328,"y":87,"t":0},{"x":1343,"y":92,"t":1}],"ok":true,"minW":0.13333333333333333,"lowY":139},{"id":11,"name":"a3l11","area":3,"seed":2,"anchors":[{"x":40,"y":75,"L":45,"k":0,"cp":true},{"x":113,"y":82,"L":40,"k":0,"cp":false},{"x":191,"y":72,"L":44,"k":0,"cp":false},{"x":276,"y":67,"L":37,"k":2,"cp":false,"brk":true,"bit":1},{"x":356,"y":58,"L":46,"k":2,"cp":false,"brk":true,"bit":2},{"x":423,"y":73,"L":48,"k":0,"cp":true},{"x":492,"y":72,"L":37,"k":2,"cp":false,"brk":true,"bit":4},{"x":569,"y":67,"L":47,"k":0,"cp":false},{"x":646,"y":69,"L":39,"k":2,"cp":false,"brk":true,"bit":8},{"x":714,"y":64,"L":42,"k":0,"cp":false},{"x":804,"y":70,"L":36,"k":0,"cp":true},{"x":875,"y":71,"L":42,"k":2,"cp":false,"brk":true,"bit":16},{"x":963,"y":81,"L":45,"k":2,"cp":false,"brk":true,"bit":32},{"x":1031,"y":88,"L":47,"k":0,"cp":false},{"x":1112,"y":90,"L":46,"k":2,"cp":false,"brk":true,"bit":64},{"x":1198,"y":92,"L":46,"k":0,"cp":true},{"x":1286,"y":107,"L":40,"k":2,"cp":false,"brk":true,"bit":128},{"x":1375,"y":104,"L":36,"k":2,"cp":false,"brk":true,"bit":256},{"x":1462,"y":101,"L":46,"k":2,"cp":false,"brk":true,"bit":512},{"x":1543,"y":100,"L":44,"k":2,"cp":false,"brk":true,"bit":1024}],"goal":{"x":1616,"y":141},"leaves":[],"drafts":[],"tper":3.2,"killY":267,"minX":-60,"maxX":1756,"pickups":[{"x":81,"y":96,"t":0},{"x":93,"y":95,"t":0},{"x":142,"y":100,"t":0},{"x":159,"y":102,"t":1},{"x":234,"y":94,"t":0},{"x":247,"y":92,"t":0},{"x":310,"y":86,"t":0},{"x":326,"y":86,"t":1},{"x":397,"y":79,"t":0},{"x":411,"y":82,"t":0},{"x":458,"y":92,"t":0},{"x":468,"y":89,"t":1},{"x":518,"y":89,"t":0},{"x":538,"y":94,"t":0},{"x":610,"y":88,"t":0},{"x":622,"y":87,"t":1},{"x":674,"y":86,"t":0},{"x":685,"y":87,"t":0},{"x":752,"y":84,"t":0},{"x":770,"y":87,"t":1},{"x":840,"y":87,"t":0},{"x":853,"y":85,"t":0},{"x":908,"y":91,"t":0},{"x":930,"y":98,"t":1},{"x":1008,"y":93,"t":0},{"x":1027,"y":97,"t":0},{"x":1064,"y":111,"t":0},{"x":1081,"y":113,"t":1},{"x":1148,"y":112,"t":0},{"x":1170,"y":114,"t":0},{"x":1235,"y":113,"t":0},{"x":1253,"y":116,"t":1},{"x":1319,"y":120,"t":0},{"x":1342,"y":119,"t":0},{"x":1411,"y":118,"t":0},{"x":1430,"y":120,"t":1},{"x":1497,"y":120,"t":0},{"x":1515,"y":120,"t":0},{"x":1576,"y":118,"t":0},{"x":1596,"y":120,"t":1}],"ok":true,"minW":0.16666666666666666,"lowY":135},{"id":12,"name":"a3l12","area":3,"seed":17,"anchors":[{"x":40,"y":76,"L":44,"k":0,"cp":true},{"x":122,"y":67,"L":38,"k":2,"cp":false,"brk":true,"bit":1},{"x":205,"y":65,"L":39,"k":0,"cp":false},{"x":279,"y":71,"L":39,"k":0,"cp":false},{"x":365,"y":75,"L":42,"k":2,"cp":false,"brk":true,"bit":2},{"x":444,"y":57,"L":43,"k":0,"cp":true},{"x":524,"y":66,"L":40,"k":2,"cp":false,"brk":true,"bit":4},{"x":601,"y":57,"L":47,"k":2,"cp":false,"brk":true,"bit":8},{"x":672,"y":71,"L":45,"k":2,"cp":false,"brk":true,"bit":16},{"x":750,"y":55,"L":47,"k":2,"cp":false,"brk":true,"bit":32},{"x":837,"y":60,"L":43,"k":0,"cp":true},{"x":927,"y":62,"L":43,"k":0,"cp":false},{"x":1013,"y":65,"L":37,"k":0,"cp":false},{"x":1099,"y":73,"L":43,"k":0,"cp":false},{"x":1184,"y":80,"L":37,"k":2,"cp":false,"brk":true,"bit":64},{"x":1261,"y":79,"L":37,"k":0,"cp":true},{"x":1342,"y":91,"L":38,"k":2,"cp":false,"brk":true,"bit":128},{"x":1421,"y":100,"L":47,"k":2,"cp":false,"brk":true,"bit":256},{"x":1498,"y":87,"L":43,"k":2,"cp":false,"brk":true,"bit":512},{"x":1580,"y":93,"L":40,"k":2,"cp":false,"brk":true,"bit":1024},{"x":1660,"y":100,"L":47,"k":0,"cp":true}],"goal":{"x":1746,"y":142},"leaves":[{"x":481,"y":168,"w":35},{"x":1147,"y":162,"w":40}],"drafts":[],"tper":3.2,"killY":288,"minX":-60,"maxX":1886,"pickups":[{"x":79,"y":98,"t":0},{"x":92,"y":97,"t":0},{"x":161,"y":89,"t":0},{"x":175,"y":88,"t":1},{"x":237,"y":85,"t":0},{"x":250,"y":86,"t":0},{"x":311,"y":89,"t":0},{"x":329,"y":94,"t":1},{"x":402,"y":93,"t":0},{"x":415,"y":88,"t":0},{"x":481,"y":78,"t":0},{"x":501,"y":79,"t":1},{"x":554,"y":82,"t":0},{"x":570,"y":84,"t":0},{"x":644,"y":76,"t":0},{"x":663,"y":79,"t":1},{"x":705,"y":90,"t":0},{"x":718,"y":90,"t":0},{"x":796,"y":80,"t":0},{"x":812,"y":77,"t":1},{"x":872,"y":78,"t":0},{"x":893,"y":84,"t":0},{"x":967,"y":86,"t":0},{"x":981,"y":84,"t":1},{"x":1046,"y":85,"t":0},{"x":1065,"y":90,"t":0},{"x":1141,"y":84,"t":0},{"x":1157,"y":84,"t":1},{"x":1212,"y":94,"t":0},{"x":1230,"y":95,"t":0},{"x":1296,"y":95,"t":0},{"x":1315,"y":97,"t":1},{"x":1376,"y":105,"t":0},{"x":1400,"y":109,"t":0},{"x":1457,"y":119,"t":0},{"x":1470,"y":118,"t":1},{"x":1537,"y":109,"t":0},{"x":1554,"y":108,"t":0},{"x":1612,"y":111,"t":0},{"x":1630,"y":116,"t":1},{"x":1699,"y":119,"t":0},{"x":1717,"y":121,"t":0}],"ok":true,"minW":0.15,"lowY":139},{"id":13,"name":"a4l13","area":4,"seed":9,"anchors":[{"x":40,"y":82,"L":38,"k":0,"cp":true},{"x":103,"y":84,"L":46,"k":0,"cp":false},{"x":183,"y":79,"L":39,"k":0,"cp":false},{"x":249,"y":38,"L":43,"k":0,"cp":false},{"x":321,"y":54,"L":40,"k":0,"cp":false},{"x":385,"y":29,"L":46,"k":0,"cp":true},{"x":457,"y":36,"L":38,"k":0,"cp":false},{"x":528,"y":35,"L":37,"k":0,"cp":false},{"x":600,"y":25,"L":47,"k":0,"cp":false},{"x":673,"y":30,"L":46,"k":0,"cp":false},{"x":737,"y":48,"L":42,"k":0,"cp":true},{"x":809,"y":51,"L":44,"k":0,"cp":false},{"x":885,"y":46,"L":36,"k":0,"cp":false},{"x":961,"y":47,"L":48,"k":0,"cp":false},{"x":1042,"y":39,"L":44,"k":0,"cp":false},{"x":1110,"y":29,"L":46,"k":0,"cp":true},{"x":1183,"y":35,"L":37,"k":0,"cp":false},{"x":1261,"y":40,"L":38,"k":0,"cp":false},{"x":1322,"y":28,"L":46,"k":0,"cp":false},{"x":1402,"y":32,"L":39,"k":0,"cp":false},{"x":1466,"y":34,"L":37,"k":0,"cp":true},{"x":1541,"y":36,"L":46,"k":0,"cp":false}],"goal":{"x":1613,"y":89},"leaves":[],"drafts":[{"x":216,"y":1,"w":28,"h":150},{"x":353,"y":-5,"w":28,"h":150},{"x":421,"y":-6,"w":28,"h":150},{"x":1076,"y":-5,"w":28,"h":150},{"x":1147,"y":-8,"w":28,"h":150},{"x":1362,"y":-9,"w":28,"h":150},{"x":1434,"y":-9,"w":28,"h":150}],"tper":3.2,"killY":250,"minX":-60,"maxX":1753,"pickups":[{"x":75,"y":101,"t":0},{"x":85,"y":101,"t":0},{"x":138,"y":103,"t":0},{"x":150,"y":102,"t":1},{"x":213,"y":101,"t":0},{"x":220,"y":94,"t":0},{"x":292,"y":68,"t":0},{"x":301,"y":70,"t":1},{"x":359,"y":-5,"t":0},{"x":371,"y":-61,"t":0},{"x":426,"y":-10,"t":0},{"x":442,"y":-50,"t":1},{"x":484,"y":53,"t":0},{"x":496,"y":55,"t":0},{"x":563,"y":54,"t":0},{"x":575,"y":54,"t":1},{"x":636,"y":45,"t":0},{"x":652,"y":44,"t":0},{"x":711,"y":47,"t":0},{"x":730,"y":51,"t":1},{"x":766,"y":68,"t":0},{"x":782,"y":71,"t":0},{"x":843,"y":68,"t":0},{"x":855,"y":67,"t":1},{"x":918,"y":66,"t":0},{"x":935,"y":67,"t":0},{"x":997,"y":68,"t":0},{"x":1011,"y":67,"t":1},{"x":1089,"y":-14,"t":0},{"x":1102,"y":-51,"t":0},{"x":1144,"y":84,"t":0},{"x":1172,"y":2,"t":1},{"x":1209,"y":52,"t":0},{"x":1229,"y":57,"t":0},{"x":1299,"y":49,"t":0},{"x":1308,"y":47,"t":1},{"x":1366,"y":-16,"t":0},{"x":1386,"y":-54,"t":0},{"x":1435,"y":-5,"t":0},{"x":1452,"y":-56,"t":1},{"x":1491,"y":51,"t":0},{"x":1510,"y":58,"t":0},{"x":1582,"y":58,"t":0},{"x":1600,"y":60,"t":1}],"ok":true,"minW":0.13333333333333333,"lowY":120},{"id":14,"name":"a4l14","area":4,"seed":4,"anchors":[{"x":40,"y":73,"L":47,"k":0,"cp":true},{"x":108,"y":30,"L":40,"k":0,"cp":false},{"x":187,"y":32,"L":43,"k":0,"cp":false},{"x":260,"y":30,"L":45,"k":0,"cp":false},{"x":334,"y":22,"L":48,"k":0,"cp":false},{"x":409,"y":25,"L":45,"k":0,"cp":true},{"x":484,"y":30,"L":42,"k":0,"cp":false},{"x":548,"y":28,"L":43,"k":0,"cp":false},{"x":632,"y":27,"L":46,"k":0,"cp":false},{"x":717,"y":30,"L":45,"k":0,"cp":false},{"x":803,"y":29,"L":43,"k":0,"cp":true},{"x":882,"y":33,"L":42,"k":0,"cp":false},{"x":956,"y":43,"L":37,"k":0,"cp":false},{"x":1035,"y":36,"L":39,"k":0,"cp":false},{"x":1107,"y":44,"L":48,"k":0,"cp":false},{"x":1172,"y":34,"L":37,"k":0,"cp":true},{"x":1257,"y":27,"L":47,"k":0,"cp":false},{"x":1335,"y":43,"L":39,"k":0,"cp":false},{"x":1414,"y":28,"L":47,"k":0,"cp":false},{"x":1494,"y":32,"L":39,"k":0,"cp":false},{"x":1575,"y":37,"L":36,"k":0,"cp":true},{"x":1654,"y":37,"L":37,"k":0,"cp":false},{"x":1735,"y":29,"L":41,"k":0,"cp":false}],"goal":{"x":1821,"y":67},"leaves":[],"drafts":[{"x":74,"y":-10,"w":28,"h":150},{"x":148,"y":-10,"w":28,"h":150},{"x":447,"y":-10,"w":28,"h":150},{"x":516,"y":-9,"w":28,"h":150},{"x":590,"y":-9,"w":28,"h":150},{"x":843,"y":-8,"w":28,"h":150},{"x":996,"y":-5,"w":28,"h":150},{"x":1140,"y":-9,"w":28,"h":150},{"x":1215,"y":-9,"w":28,"h":150}],"tper":3.2,"killY":240,"minX":-60,"maxX":1961,"pickups":[{"x":163,"y":-10,"t":0},{"x":180,"y":-44,"t":1},{"x":216,"y":53,"t":0},{"x":230,"y":57,"t":0},{"x":302,"y":49,"t":0},{"x":313,"y":47,"t":1},{"x":371,"y":42,"t":0},{"x":387,"y":42,"t":0},{"x":453,"y":-23,"t":0},{"x":467,"y":-49,"t":1},{"x":524,"y":-20,"t":0},{"x":537,"y":-49,"t":0},{"x":582,"y":76,"t":0},{"x":608,"y":49,"t":1},{"x":665,"y":49,"t":0},{"x":686,"y":52,"t":0},{"x":752,"y":53,"t":0},{"x":771,"y":53,"t":1},{"x":851,"y":-24,"t":0},{"x":867,"y":-45,"t":0},{"x":912,"y":52,"t":0},{"x":929,"y":54,"t":1},{"x":997,"y":-31,"t":0},{"x":1015,"y":-49,"t":0},{"x":1063,"y":54,"t":0},{"x":1084,"y":59,"t":1},{"x":1153,"y":-18,"t":0},{"x":1164,"y":-62,"t":0},{"x":1198,"y":59,"t":0},{"x":1218,"y":65,"t":1},{"x":1296,"y":49,"t":0},{"x":1317,"y":50,"t":0},{"x":1363,"y":60,"t":0},{"x":1380,"y":63,"t":1},{"x":1463,"y":51,"t":0},{"x":1475,"y":48,"t":0},{"x":1522,"y":49,"t":0},{"x":1542,"y":54,"t":1},{"x":1612,"y":54,"t":0},{"x":1625,"y":51,"t":0},{"x":1681,"y":52,"t":0},{"x":1701,"y":56,"t":1},{"x":1778,"y":53,"t":0},{"x":1798,"y":52,"t":0}],"ok":true,"minW":0.1,"lowY":98},{"id":15,"name":"a4l15","area":4,"seed":24,"anchors":[{"x":40,"y":80,"L":40,"k":0,"cp":true},{"x":113,"y":56,"L":48,"k":0,"cp":false},{"x":190,"y":80,"L":39,"k":0,"cp":false},{"x":258,"y":77,"L":40,"k":0,"cp":false},{"x":346,"y":25,"L":47,"k":0,"cp":false},{"x":428,"y":32,"L":44,"k":0,"cp":true},{"x":499,"y":29,"L":46,"k":0,"cp":false},{"x":567,"y":44,"L":42,"k":0,"cp":false},{"x":642,"y":59,"L":42,"k":0,"cp":false},{"x":716,"y":32,"L":41,"k":0,"cp":false},{"x":801,"y":26,"L":48,"k":0,"cp":true},{"x":879,"y":27,"L":47,"k":0,"cp":false},{"x":967,"y":32,"L":39,"k":0,"cp":false},{"x":1055,"y":34,"L":39,"k":0,"cp":false},{"x":1131,"y":28,"L":46,"k":0,"cp":false},{"x":1200,"y":27,"L":45,"k":0,"cp":true},{"x":1273,"y":37,"L":44,"k":0,"cp":false},{"x":1354,"y":33,"L":40,"k":0,"cp":false},{"x":1424,"y":24,"L":47,"k":0,"cp":false},{"x":1509,"y":32,"L":41,"k":0,"cp":false},{"x":1585,"y":51,"L":38,"k":0,"cp":true},{"x":1661,"y":31,"L":44,"k":0,"cp":false},{"x":1749,"y":39,"L":41,"k":0,"cp":false},{"x":1820,"y":27,"L":45,"k":0,"cp":false}],"goal":{"x":1897,"y":75},"leaves":[],"drafts":[{"x":302,"y":-8,"w":28,"h":150},{"x":387,"y":-8,"w":28,"h":150},{"x":679,"y":-7,"w":28,"h":150},{"x":759,"y":-7,"w":28,"h":150},{"x":840,"y":-6,"w":28,"h":150},{"x":923,"y":-9,"w":28,"h":150},{"x":1011,"y":-9,"w":28,"h":150},{"x":1093,"y":-7,"w":28,"h":150},{"x":1166,"y":-8,"w":28,"h":150},{"x":1623,"y":-5,"w":28,"h":150}],"tper":3.2,"killY":240,"minX":-60,"maxX":2037,"pickups":[{"x":74,"y":100,"t":0},{"x":85,"y":98,"t":0},{"x":168,"y":78,"t":0},{"x":187,"y":81,"t":1},{"x":217,"y":98,"t":0},{"x":228,"y":100,"t":0},{"x":311,"y":-14,"t":0},{"x":332,"y":-93,"t":1},{"x":369,"y":61,"t":0},{"x":388,"y":68,"t":0},{"x":470,"y":51,"t":0},{"x":481,"y":49,"t":1},{"x":537,"y":47,"t":0},{"x":553,"y":50,"t":0},{"x":601,"y":63,"t":0},{"x":618,"y":67,"t":1},{"x":684,"y":-14,"t":0},{"x":698,"y":-67,"t":0},{"x":762,"y":-23,"t":0},{"x":785,"y":-46,"t":1},{"x":832,"y":73,"t":0},{"x":858,"y":50,"t":0},{"x":915,"y":62,"t":0},{"x":941,"y":47,"t":1},{"x":998,"y":59,"t":0},{"x":1022,"y":60,"t":0},{"x":1095,"y":-20,"t":0},{"x":1114,"y":-50,"t":1},{"x":1171,"y":-8,"t":0},{"x":1187,"y":-53,"t":0},{"x":1233,"y":47,"t":0},{"x":1252,"y":51,"t":1},{"x":1305,"y":57,"t":0},{"x":1323,"y":58,"t":0},{"x":1388,"y":54,"t":0},{"x":1400,"y":51,"t":1},{"x":1458,"y":46,"t":0},{"x":1480,"y":49,"t":0},{"x":1545,"y":47,"t":0},{"x":1567,"y":51,"t":1},{"x":1625,"y":-17,"t":0},{"x":1642,"y":-59,"t":0},{"x":1696,"y":52,"t":0},{"x":1714,"y":57,"t":1},{"x":1788,"y":54,"t":0},{"x":1800,"y":50,"t":0},{"x":1856,"y":47,"t":0},{"x":1874,"y":50,"t":1}],"ok":true,"minW":0.1,"lowY":112},{"id":16,"name":"a4l16","area":4,"seed":3,"anchors":[{"x":40,"y":75,"L":45,"k":0,"cp":true},{"x":120,"y":65,"L":36,"k":0,"cp":false},{"x":193,"y":49,"L":42,"k":0,"cp":false},{"x":280,"y":53,"L":37,"k":0,"cp":false},{"x":366,"y":41,"L":40,"k":0,"cp":false},{"x":448,"y":26,"L":46,"k":0,"cp":true},{"x":536,"y":24,"L":47,"k":0,"cp":false},{"x":605,"y":29,"L":45,"k":0,"cp":false},{"x":689,"y":28,"L":45,"k":0,"cp":false},{"x":770,"y":32,"L":41,"k":0,"cp":false},{"x":856,"y":28,"L":46,"k":0,"cp":true},{"x":949,"y":49,"L":42,"k":0,"cp":false},{"x":1037,"y":28,"L":47,"k":0,"cp":false},{"x":1113,"y":31,"L":42,"k":0,"cp":false},{"x":1201,"y":33,"L":41,"k":0,"cp":false},{"x":1272,"y":30,"L":45,"k":0,"cp":true},{"x":1366,"y":54,"L":43,"k":0,"cp":false},{"x":1459,"y":29,"L":47,"k":0,"cp":false},{"x":1532,"y":39,"L":43,"k":0,"cp":false},{"x":1602,"y":28,"L":47,"k":2,"cp":false,"brk":true,"bit":1},{"x":1674,"y":29,"L":44,"k":0,"cp":true},{"x":1743,"y":36,"L":38,"k":0,"cp":false},{"x":1832,"y":30,"L":44,"k":0,"cp":false},{"x":1919,"y":28,"L":43,"k":0,"cp":false},{"x":1998,"y":33,"L":38,"k":0,"cp":false}],"goal":{"x":2074,"y":75},"leaves":[],"drafts":[{"x":571,"y":-9,"w":28,"h":150},{"x":647,"y":-7,"w":28,"h":150},{"x":993,"y":-5,"w":28,"h":150},{"x":1237,"y":-6,"w":28,"h":150},{"x":1413,"y":-4,"w":28,"h":150},{"x":1567,"y":-5,"w":28,"h":150},{"x":1788,"y":-6,"w":28,"h":150}],"tper":3.2,"killY":240,"minX":-60,"maxX":2214,"pickups":[{"x":81,"y":96,"t":0},{"x":93,"y":95,"t":0},{"x":157,"y":84,"t":0},{"x":165,"y":81,"t":1},{"x":231,"y":71,"t":0},{"x":248,"y":71,"t":0},{"x":312,"y":71,"t":0},{"x":333,"y":74,"t":1},{"x":409,"y":65,"t":0},{"x":421,"y":60,"t":0},{"x":487,"y":50,"t":0},{"x":505,"y":49,"t":1},{"x":582,"y":-23,"t":0},{"x":593,"y":-43,"t":0},{"x":634,"y":63,"t":0},{"x":659,"y":61,"t":1},{"x":722,"y":48,"t":0},{"x":742,"y":50,"t":0},{"x":802,"y":51,"t":0},{"x":823,"y":53,"t":1},{"x":898,"y":52,"t":0},{"x":921,"y":56,"t":0},{"x":975,"y":76,"t":0},{"x":996,"y":75,"t":1},{"x":1085,"y":49,"t":0},{"x":1096,"y":46,"t":0},{"x":1147,"y":50,"t":0},{"x":1164,"y":54,"t":1},{"x":1252,"y":-18,"t":0},{"x":1264,"y":-44,"t":0},{"x":1305,"y":54,"t":0},{"x":1330,"y":65,"t":1},{"x":1397,"y":85,"t":0},{"x":1420,"y":82,"t":0},{"x":1511,"y":51,"t":0},{"x":1522,"y":50,"t":1},{"x":1571,"y":-8,"t":0},{"x":1587,"y":-56,"t":0},{"x":1637,"y":49,"t":0},{"x":1650,"y":48,"t":1},{"x":1706,"y":49,"t":0},{"x":1718,"y":50,"t":0},{"x":1768,"y":62,"t":0},{"x":1790,"y":67,"t":1},{"x":1874,"y":53,"t":0},{"x":1891,"y":52,"t":0},{"x":1952,"y":48,"t":0},{"x":1970,"y":49,"t":1},{"x":2032,"y":48,"t":0},{"x":2049,"y":51,"t":0}],"ok":true,"minW":0.08333333333333333,"lowY":106},{"id":17,"name":"a5l17","area":5,"seed":9,"anchors":[{"x":40,"y":82,"L":38,"k":0,"cp":true},{"x":103,"y":84,"L":46,"k":0,"cp":false},{"x":169,"y":99,"L":44,"k":3,"cp":false,"mv":{"A":19,"ph":4.39}},{"x":235,"y":105,"L":43,"k":0,"cp":false},{"x":303,"y":105,"L":44,"k":0,"cp":false},{"x":373,"y":103,"L":46,"k":0,"cp":false},{"x":434,"y":109,"L":40,"k":0,"cp":true},{"x":505,"y":93,"L":42,"k":0,"cp":false},{"x":569,"y":77,"L":44,"k":3,"cp":false,"mv":{"A":16,"ph":4.14}},{"x":641,"y":96,"L":40,"k":0,"cp":false},{"x":712,"y":92,"L":38,"k":0,"cp":false},{"x":785,"y":88,"L":46,"k":0,"cp":false},{"x":856,"y":80,"L":44,"k":0,"cp":true},{"x":929,"y":82,"L":47,"k":0,"cp":false},{"x":1011,"y":98,"L":44,"k":3,"cp":false,"mv":{"A":20,"ph":0.6}},{"x":1085,"y":102,"L":44,"k":0,"cp":false},{"x":1150,"y":98,"L":46,"k":3,"cp":false,"mv":{"A":22,"ph":4.31}},{"x":1218,"y":102,"L":46,"k":0,"cp":false},{"x":1280,"y":101,"L":46,"k":0,"cp":true},{"x":1352,"y":100,"L":40,"k":3,"cp":false,"mv":{"A":15,"ph":5.15}},{"x":1425,"y":101,"L":44,"k":3,"cp":false,"mv":{"A":16,"ph":3.74}},{"x":1489,"y":93,"L":44,"k":0,"cp":false},{"x":1549,"y":92,"L":44,"k":3,"cp":false,"mv":{"A":16,"ph":0.7}},{"x":1613,"y":91,"L":38,"k":0,"cp":false},{"x":1692,"y":97,"L":38,"k":0,"cp":true},{"x":1760,"y":103,"L":46,"k":0,"cp":false}],"goal":{"x":1841,"y":154},"leaves":[],"drafts":[],"tper":3.2,"killY":269,"minX":-60,"maxX":1981,"pickups":[{"x":75,"y":101,"t":0},{"x":85,"y":101,"t":0},{"x":142,"y":94,"t":0},{"x":152,"y":102,"t":1},{"x":221,"y":116,"t":0},{"x":235,"y":117,"t":0},{"x":266,"y":123,"t":0},{"x":278,"y":124,"t":1},{"x":336,"y":124,"t":0},{"x":349,"y":124,"t":0},{"x":409,"y":118,"t":0},{"x":422,"y":118,"t":1},{"x":463,"y":126,"t":0},{"x":476,"y":127,"t":0},{"x":596,"y":101,"t":0},{"x":609,"y":107,"t":0},{"x":673,"y":114,"t":0},{"x":686,"y":111,"t":1},{"x":739,"y":109,"t":0},{"x":756,"y":112,"t":0},{"x":820,"y":107,"t":0},{"x":832,"y":104,"t":1},{"x":889,"y":99,"t":0},{"x":905,"y":99,"t":0},{"x":968,"y":99,"t":0},{"x":989,"y":105,"t":1},{"x":1051,"y":123,"t":0},{"x":1062,"y":124,"t":0},{"x":1184,"y":116,"t":0},{"x":1194,"y":121,"t":0},{"x":1254,"y":117,"t":0},{"x":1265,"y":116,"t":1},{"x":1310,"y":123,"t":0},{"x":1321,"y":121,"t":0},{"x":1382,"y":118,"t":0},{"x":1396,"y":119,"t":1},{"x":1464,"y":115,"t":0},{"x":1469,"y":115,"t":0},{"x":1525,"y":101,"t":0},{"x":1530,"y":104,"t":1},{"x":1639,"y":109,"t":0},{"x":1660,"y":116,"t":1},{"x":1733,"y":112,"t":0},{"x":1753,"y":113,"t":0},{"x":1796,"y":124,"t":0},{"x":1813,"y":128,"t":1}],"ok":true,"minW":0.16666666666666666,"lowY":147},{"id":18,"name":"a5l18","area":5,"seed":103,"anchors":[{"x":40,"y":81,"L":39,"k":0,"cp":true},{"x":106,"y":87,"L":47,"k":3,"cp":false,"mv":{"A":11,"ph":2.99}},{"x":186,"y":85,"L":36,"k":3,"cp":false,"mv":{"A":11,"ph":1.41}},{"x":258,"y":63,"L":42,"k":0,"cp":false},{"x":339,"y":64,"L":44,"k":0,"cp":false},{"x":414,"y":68,"L":44,"k":0,"cp":false},{"x":480,"y":90,"L":38,"k":0,"cp":true},{"x":562,"y":90,"L":37,"k":0,"cp":false},{"x":642,"y":92,"L":38,"k":3,"cp":false,"mv":{"A":12,"ph":0.41}},{"x":720,"y":99,"L":46,"k":0,"cp":false},{"x":787,"y":100,"L":39,"k":3,"cp":false,"mv":{"A":11,"ph":1.17}},{"x":870,"y":107,"L":42,"k":3,"cp":false,"mv":{"A":13,"ph":2.67}},{"x":944,"y":90,"L":42,"k":0,"cp":true},{"x":1016,"y":101,"L":39,"k":0,"cp":false},{"x":1097,"y":101,"L":42,"k":0,"cp":false},{"x":1163,"y":84,"L":45,"k":3,"cp":false,"mv":{"A":11,"ph":3.97}},{"x":1235,"y":93,"L":41,"k":0,"cp":false},{"x":1320,"y":99,"L":42,"k":0,"cp":false},{"x":1396,"y":112,"L":38,"k":0,"cp":true},{"x":1461,"y":106,"L":41,"k":0,"cp":false},{"x":1543,"y":103,"L":41,"k":0,"cp":false},{"x":1615,"y":106,"L":39,"k":0,"cp":false},{"x":1690,"y":96,"L":48,"k":0,"cp":false},{"x":1775,"y":84,"L":46,"k":0,"cp":false},{"x":1841,"y":67,"L":46,"k":0,"cp":true},{"x":1923,"y":76,"L":45,"k":3,"cp":false,"mv":{"A":15,"ph":5.56}},{"x":2002,"y":75,"L":43,"k":0,"cp":false},{"x":2081,"y":85,"L":36,"k":3,"cp":false,"mv":{"A":12,"ph":1.22}}],"goal":{"x":2144,"y":120},"leaves":[],"drafts":[],"tper":3,"killY":270,"minX":-60,"maxX":2284,"pickups":[{"x":77,"y":97,"t":0},{"x":90,"y":100,"t":0},{"x":150,"y":109,"t":0},{"x":164,"y":109,"t":1},{"x":223,"y":98,"t":0},{"x":231,"y":96,"t":0},{"x":296,"y":86,"t":0},{"x":310,"y":85,"t":1},{"x":372,"y":83,"t":0},{"x":389,"y":84,"t":0},{"x":450,"y":86,"t":0},{"x":466,"y":89,"t":1},{"x":510,"y":107,"t":0},{"x":526,"y":112,"t":0},{"x":601,"y":116,"t":0},{"x":608,"y":113,"t":1},{"x":670,"y":109,"t":0},{"x":690,"y":115,"t":0},{"x":758,"y":109,"t":0},{"x":770,"y":109,"t":1},{"x":827,"y":115,"t":0},{"x":842,"y":117,"t":0},{"x":906,"y":127,"t":0},{"x":917,"y":125,"t":1},{"x":987,"y":110,"t":0},{"x":1004,"y":109,"t":0},{"x":1044,"y":119,"t":0},{"x":1064,"y":124,"t":1},{"x":1192,"y":107,"t":0},{"x":1205,"y":114,"t":1},{"x":1274,"y":116,"t":0},{"x":1292,"y":116,"t":0},{"x":1351,"y":116,"t":0},{"x":1371,"y":119,"t":1},{"x":1427,"y":123,"t":0},{"x":1440,"y":121,"t":0},{"x":1490,"y":125,"t":0},{"x":1511,"y":129,"t":1},{"x":1584,"y":123,"t":0},{"x":1595,"y":121,"t":0},{"x":1643,"y":123,"t":0},{"x":1660,"y":126,"t":1},{"x":1732,"y":118,"t":0},{"x":1745,"y":115,"t":0},{"x":1876,"y":87,"t":0},{"x":1895,"y":89,"t":0},{"x":1953,"y":100,"t":0},{"x":1970,"y":104,"t":1},{"x":2041,"y":103,"t":0},{"x":2052,"y":99,"t":0},{"x":2114,"y":98,"t":0},{"x":2125,"y":100,"t":1}],"ok":true,"minW":0.08333333333333333,"lowY":142},{"id":19,"name":"a5l19","area":5,"seed":46,"anchors":[{"x":40,"y":83,"L":37,"k":0,"cp":true},{"x":117,"y":85,"L":47,"k":3,"cp":false,"mv":{"A":12,"ph":3.86}},{"x":201,"y":106,"L":36,"k":0,"cp":false},{"x":283,"y":111,"L":38,"k":0,"cp":false},{"x":355,"y":84,"L":47,"k":3,"cp":false,"mv":{"A":12,"ph":6.22}},{"x":429,"y":82,"L":43,"k":0,"cp":false},{"x":498,"y":82,"L":41,"k":0,"cp":true},{"x":581,"y":69,"L":42,"k":0,"cp":false},{"x":659,"y":53,"L":47,"k":0,"cp":false},{"x":730,"y":58,"L":46,"k":0,"cp":false},{"x":806,"y":62,"L":43,"k":0,"cp":false},{"x":894,"y":64,"L":40,"k":0,"cp":false},{"x":979,"y":74,"L":42,"k":0,"cp":true},{"x":1055,"y":60,"L":43,"k":0,"cp":false},{"x":1122,"y":59,"L":44,"k":0,"cp":false},{"x":1195,"y":57,"L":47,"k":0,"cp":false},{"x":1280,"y":64,"L":40,"k":0,"cp":false},{"x":1366,"y":55,"L":45,"k":0,"cp":false},{"x":1442,"y":69,"L":43,"k":0,"cp":true},{"x":1517,"y":88,"L":44,"k":0,"cp":false},{"x":1587,"y":85,"L":48,"k":3,"cp":false,"mv":{"A":12,"ph":0.76}},{"x":1673,"y":112,"L":38,"k":0,"cp":false}],"goal":{"x":1751,"y":156},"leaves":[],"drafts":[],"tper":2.8,"killY":270,"minX":-60,"maxX":1891,"pickups":[{"x":74,"y":101,"t":0},{"x":87,"y":103,"t":0},{"x":149,"y":110,"t":0},{"x":169,"y":117,"t":1},{"x":235,"y":122,"t":0},{"x":259,"y":121,"t":0},{"x":315,"y":119,"t":0},{"x":325,"y":116,"t":1},{"x":391,"y":111,"t":0},{"x":404,"y":108,"t":0},{"x":463,"y":100,"t":0},{"x":475,"y":99,"t":1},{"x":532,"y":98,"t":0},{"x":548,"y":102,"t":0},{"x":628,"y":90,"t":0},{"x":635,"y":86,"t":1},{"x":697,"y":73,"t":0},{"x":712,"y":73,"t":0},{"x":765,"y":78,"t":0},{"x":781,"y":78,"t":1},{"x":841,"y":80,"t":0},{"x":858,"y":84,"t":0},{"x":932,"y":87,"t":0},{"x":954,"y":88,"t":1},{"x":1012,"y":89,"t":0},{"x":1025,"y":87,"t":0},{"x":1094,"y":78,"t":0},{"x":1105,"y":77,"t":1},{"x":1155,"y":78,"t":0},{"x":1168,"y":78,"t":0},{"x":1230,"y":79,"t":0},{"x":1251,"y":81,"t":1},{"x":1313,"y":79,"t":0},{"x":1334,"y":80,"t":0},{"x":1403,"y":78,"t":0},{"x":1424,"y":80,"t":1},{"x":1475,"y":90,"t":0},{"x":1492,"y":95,"t":0},{"x":1552,"y":103,"t":0},{"x":1566,"y":102,"t":1},{"x":1614,"y":111,"t":0},{"x":1637,"y":120,"t":0},{"x":1718,"y":114,"t":0},{"x":1735,"y":118,"t":1}],"ok":true,"minW":0.08333333333333333,"lowY":144},{"id":20,"name":"a5l20","area":5,"seed":640,"anchors":[{"x":40,"y":73,"L":47,"k":0,"cp":true},{"x":125,"y":92,"L":46,"k":0,"cp":false},{"x":214,"y":103,"L":43,"k":3,"cp":false,"mv":{"A":11,"ph":0.69}},{"x":292,"y":103,"L":42,"k":0,"cp":false},{"x":372,"y":109,"L":38,"k":0,"cp":false},{"x":454,"y":88,"L":43,"k":0,"cp":false},{"x":533,"y":103,"L":40,"k":0,"cp":true},{"x":618,"y":101,"L":41,"k":2,"cp":false,"brk":true,"bit":1},{"x":687,"y":81,"L":43,"k":0,"cp":false},{"x":765,"y":91,"L":46,"k":0,"cp":false},{"x":842,"y":79,"L":41,"k":0,"cp":false},{"x":924,"y":61,"L":45,"k":0,"cp":false},{"x":1014,"y":59,"L":46,"k":0,"cp":true},{"x":1086,"y":64,"L":41,"k":2,"cp":false,"brk":true,"bit":2},{"x":1159,"y":64,"L":38,"k":0,"cp":false},{"x":1232,"y":77,"L":45,"k":0,"cp":false},{"x":1314,"y":77,"L":42,"k":2,"cp":false,"brk":true,"bit":4},{"x":1394,"y":86,"L":40,"k":0,"cp":false},{"x":1483,"y":91,"L":47,"k":0,"cp":true},{"x":1574,"y":88,"L":48,"k":2,"cp":false,"brk":true,"bit":8}],"goal":{"x":1655,"y":128},"leaves":[],"drafts":[],"tper":2.6,"killY":267,"minX":-60,"maxX":1795,"pickups":[{"x":84,"y":98,"t":0},{"x":106,"y":102,"t":0},{"x":157,"y":115,"t":0},{"x":176,"y":120,"t":1},{"x":243,"y":117,"t":0},{"x":260,"y":117,"t":0},{"x":324,"y":120,"t":0},{"x":342,"y":121,"t":1},{"x":403,"y":121,"t":0},{"x":420,"y":120,"t":0},{"x":497,"y":111,"t":0},{"x":517,"y":110,"t":1},{"x":565,"y":120,"t":0},{"x":582,"y":125,"t":0},{"x":725,"y":103,"t":0},{"x":745,"y":104,"t":0},{"x":800,"y":109,"t":0},{"x":812,"y":108,"t":1},{"x":881,"y":99,"t":0},{"x":893,"y":97,"t":0},{"x":968,"y":86,"t":0},{"x":985,"y":84,"t":1},{"x":1048,"y":79,"t":0},{"x":1060,"y":79,"t":0},{"x":1116,"y":82,"t":0},{"x":1128,"y":83,"t":1},{"x":1194,"y":83,"t":0},{"x":1211,"y":86,"t":0},{"x":1265,"y":97,"t":0},{"x":1282,"y":98,"t":1},{"x":1348,"y":98,"t":0},{"x":1366,"y":99,"t":0},{"x":1428,"y":104,"t":0},{"x":1448,"y":108,"t":1},{"x":1520,"y":110,"t":0},{"x":1544,"y":108,"t":0},{"x":1611,"y":108,"t":0},{"x":1631,"y":109,"t":1}],"ok":true,"minW":0.11666666666666667,"lowY":142},{"id":21,"name":"a6l21","area":6,"seed":66,"anchors":[{"x":40,"y":82,"L":38,"k":0,"cp":true},{"x":105,"y":91,"L":36,"k":0,"cp":false},{"x":166,"y":65,"L":46,"k":0,"cp":false},{"x":226,"y":67,"L":39,"k":0,"cp":false},{"x":305,"y":81,"L":40,"k":4,"cp":false,"fold":1.46,"bit":1},{"x":369,"y":63,"L":47,"k":0,"cp":false},{"x":433,"y":55,"L":45,"k":0,"cp":true},{"x":503,"y":66,"L":37,"k":0,"cp":false},{"x":569,"y":63,"L":38,"k":4,"cp":false,"fold":1.43,"bit":2},{"x":644,"y":68,"L":48,"k":0,"cp":false},{"x":716,"y":85,"L":38,"k":0,"cp":false},{"x":787,"y":93,"L":40,"k":0,"cp":false},{"x":853,"y":84,"L":41,"k":0,"cp":true},{"x":932,"y":70,"L":41,"k":4,"cp":false,"fold":1.28,"bit":4},{"x":1012,"y":76,"L":46,"k":4,"cp":false,"fold":1.36,"bit":8},{"x":1086,"y":71,"L":46,"k":4,"cp":false,"fold":1.39,"bit":16},{"x":1149,"y":69,"L":47,"k":4,"cp":false,"fold":1.3,"bit":32},{"x":1210,"y":86,"L":37,"k":4,"cp":false,"fold":1.3,"bit":64},{"x":1272,"y":82,"L":39,"k":0,"cp":true},{"x":1351,"y":89,"L":45,"k":0,"cp":false},{"x":1412,"y":88,"L":43,"k":0,"cp":false},{"x":1484,"y":88,"L":36,"k":4,"cp":false,"fold":1.25,"bit":128},{"x":1545,"y":73,"L":47,"k":4,"cp":false,"fold":1.34,"bit":256},{"x":1605,"y":76,"L":42,"k":0,"cp":false},{"x":1665,"y":94,"L":39,"k":0,"cp":true},{"x":1732,"y":95,"L":37,"k":4,"cp":false,"fold":1.37,"bit":512},{"x":1799,"y":101,"L":41,"k":4,"cp":false,"fold":1.27,"bit":1024},{"x":1875,"y":102,"L":43,"k":4,"cp":false,"fold":1.42,"bit":2048},{"x":1935,"y":98,"L":42,"k":4,"cp":false,"fold":1.6,"bit":4096},{"x":2005,"y":96,"L":38,"k":4,"cp":false,"fold":1.58,"bit":8192},{"x":2077,"y":95,"L":42,"k":0,"cp":true}],"goal":{"x":2157,"y":143},"leaves":[],"drafts":[],"tper":3.2,"killY":265,"minX":-60,"maxX":2297,"pickups":[{"x":75,"y":101,"t":0},{"x":85,"y":101,"t":0},{"x":129,"y":105,"t":0},{"x":138,"y":103,"t":1},{"x":257,"y":85,"t":0},{"x":273,"y":90,"t":1},{"x":336,"y":94,"t":0},{"x":349,"y":88,"t":0},{"x":403,"y":81,"t":0},{"x":414,"y":78,"t":1},{"x":467,"y":74,"t":0},{"x":483,"y":74,"t":0},{"x":531,"y":80,"t":0},{"x":543,"y":80,"t":1},{"x":597,"y":81,"t":0},{"x":617,"y":86,"t":0},{"x":680,"y":88,"t":0},{"x":699,"y":90,"t":1},{"x":743,"y":102,"t":0},{"x":760,"y":105,"t":0},{"x":816,"y":108,"t":0},{"x":828,"y":104,"t":1},{"x":884,"y":100,"t":0},{"x":899,"y":102,"t":0},{"x":975,"y":96,"t":0},{"x":990,"y":96,"t":1},{"x":1045,"y":97,"t":0},{"x":1056,"y":98,"t":0},{"x":1125,"y":90,"t":0},{"x":1134,"y":90,"t":1},{"x":1181,"y":92,"t":0},{"x":1190,"y":94,"t":0},{"x":1237,"y":100,"t":0},{"x":1248,"y":102,"t":1},{"x":1301,"y":101,"t":0},{"x":1322,"y":105,"t":0},{"x":1387,"y":102,"t":0},{"x":1400,"y":101,"t":1},{"x":1444,"y":106,"t":0},{"x":1456,"y":106,"t":0},{"x":1512,"y":104,"t":0},{"x":1520,"y":102,"t":1},{"x":1577,"y":94,"t":0},{"x":1586,"y":93,"t":0},{"x":1640,"y":91,"t":0},{"x":1654,"y":94,"t":1},{"x":1693,"y":111,"t":0},{"x":1705,"y":113,"t":0},{"x":1762,"y":112,"t":0},{"x":1778,"y":114,"t":1},{"x":1828,"y":120,"t":0},{"x":1845,"y":122,"t":0},{"x":1912,"y":116,"t":0},{"x":1921,"y":115,"t":1},{"x":1963,"y":119,"t":0},{"x":1975,"y":124,"t":0},{"x":2045,"y":120,"t":0},{"x":2055,"y":118,"t":1},{"x":2111,"y":113,"t":0},{"x":2131,"y":120,"t":0}],"ok":true,"minW":0.11666666666666667,"lowY":138},{"id":22,"name":"a6l22","area":6,"seed":90,"anchors":[{"x":40,"y":84,"L":36,"k":0,"cp":true},{"x":109,"y":76,"L":39,"k":0,"cp":false},{"x":184,"y":61,"L":44,"k":4,"cp":false,"fold":1.26,"bit":1},{"x":254,"y":73,"L":47,"k":0,"cp":false},{"x":318,"y":90,"L":48,"k":0,"cp":false},{"x":383,"y":101,"L":38,"k":0,"cp":false},{"x":453,"y":105,"L":42,"k":0,"cp":true},{"x":520,"y":110,"L":37,"k":0,"cp":false},{"x":597,"y":97,"L":41,"k":4,"cp":false,"fold":1.17,"bit":2},{"x":681,"y":106,"L":43,"k":4,"cp":false,"fold":1.43,"bit":4},{"x":751,"y":102,"L":46,"k":4,"cp":false,"fold":1.21,"bit":8},{"x":836,"y":102,"L":46,"k":0,"cp":false},{"x":915,"y":97,"L":48,"k":0,"cp":true},{"x":996,"y":95,"L":40,"k":0,"cp":false},{"x":1076,"y":91,"L":46,"k":4,"cp":false,"fold":1.19,"bit":16},{"x":1159,"y":85,"L":47,"k":0,"cp":false},{"x":1241,"y":77,"L":42,"k":0,"cp":false},{"x":1310,"y":85,"L":41,"k":0,"cp":false},{"x":1386,"y":98,"L":41,"k":0,"cp":true},{"x":1463,"y":97,"L":44,"k":0,"cp":false},{"x":1540,"y":94,"L":39,"k":0,"cp":false},{"x":1620,"y":100,"L":42,"k":4,"cp":false,"fold":1.36,"bit":32},{"x":1686,"y":86,"L":40,"k":4,"cp":false,"fold":1.47,"bit":64},{"x":1762,"y":76,"L":44,"k":0,"cp":false},{"x":1840,"y":88,"L":41,"k":0,"cp":true},{"x":1916,"y":90,"L":41,"k":4,"cp":false,"fold":1.12,"bit":128},{"x":1999,"y":101,"L":37,"k":4,"cp":false,"fold":1.33,"bit":256},{"x":2071,"y":88,"L":41,"k":4,"cp":false,"fold":1.33,"bit":512},{"x":2144,"y":97,"L":40,"k":4,"cp":false,"fold":1.33,"bit":1024},{"x":2228,"y":92,"L":43,"k":4,"cp":false,"fold":1.49,"bit":2048},{"x":2310,"y":97,"L":47,"k":0,"cp":true},{"x":2392,"y":89,"L":46,"k":0,"cp":false}],"goal":{"x":2462,"y":127},"leaves":[],"drafts":[],"tper":3.2,"killY":269,"minX":-60,"maxX":2602,"pickups":[{"x":69,"y":104,"t":0},{"x":81,"y":103,"t":0},{"x":144,"y":96,"t":0},{"x":155,"y":92,"t":1},{"x":220,"y":85,"t":0},{"x":234,"y":87,"t":0},{"x":296,"y":90,"t":0},{"x":314,"y":97,"t":1},{"x":354,"y":109,"t":0},{"x":365,"y":109,"t":0},{"x":410,"y":118,"t":0},{"x":427,"y":121,"t":1},{"x":485,"y":122,"t":0},{"x":498,"y":121,"t":0},{"x":547,"y":126,"t":0},{"x":563,"y":128,"t":1},{"x":641,"y":124,"t":0},{"x":656,"y":123,"t":0},{"x":712,"y":125,"t":0},{"x":725,"y":126,"t":1},{"x":783,"y":124,"t":0},{"x":803,"y":129,"t":0},{"x":878,"y":124,"t":0},{"x":890,"y":123,"t":1},{"x":951,"y":117,"t":0},{"x":965,"y":116,"t":0},{"x":1029,"y":114,"t":0},{"x":1046,"y":115,"t":1},{"x":1111,"y":112,"t":0},{"x":1127,"y":113,"t":0},{"x":1200,"y":106,"t":0},{"x":1212,"y":104,"t":1},{"x":1278,"y":96,"t":0},{"x":1293,"y":95,"t":0},{"x":1340,"y":104,"t":0},{"x":1360,"y":108,"t":1},{"x":1418,"y":114,"t":0},{"x":1436,"y":114,"t":0},{"x":1495,"y":116,"t":0},{"x":1509,"y":116,"t":1},{"x":1573,"y":115,"t":0},{"x":1590,"y":117,"t":0},{"x":1651,"y":115,"t":0},{"x":1659,"y":111,"t":1},{"x":1716,"y":107,"t":0},{"x":1730,"y":111,"t":0},{"x":1812,"y":99,"t":0},{"x":1829,"y":96,"t":1},{"x":1869,"y":106,"t":0},{"x":1886,"y":109,"t":0},{"x":1949,"y":110,"t":0},{"x":1970,"y":113,"t":1},{"x":2030,"y":111,"t":0},{"x":2044,"y":109,"t":0},{"x":2100,"y":107,"t":0},{"x":2116,"y":109,"t":1},{"x":2175,"y":113,"t":0},{"x":2196,"y":115,"t":0},{"x":2264,"y":115,"t":0},{"x":2286,"y":116,"t":1},{"x":2345,"y":118,"t":0},{"x":2359,"y":117,"t":0},{"x":2432,"y":109,"t":0},{"x":2444,"y":108,"t":1}],"ok":true,"minW":0.1,"lowY":143},{"id":23,"name":"a6l23","area":6,"seed":881,"anchors":[{"x":40,"y":83,"L":37,"k":0,"cp":true},{"x":113,"y":68,"L":44,"k":4,"cp":false,"fold":1.19,"bit":1},{"x":199,"y":83,"L":47,"k":4,"cp":false,"fold":1.11,"bit":2},{"x":277,"y":100,"L":39,"k":0,"cp":false},{"x":355,"y":102,"L":41,"k":4,"cp":false,"fold":1.01,"bit":4},{"x":431,"y":100,"L":44,"k":4,"cp":false,"fold":1.1,"bit":8},{"x":517,"y":105,"L":42,"k":0,"cp":true},{"x":596,"y":92,"L":39,"k":0,"cp":false},{"x":679,"y":84,"L":43,"k":4,"cp":false,"fold":1.1,"bit":16},{"x":755,"y":62,"L":46,"k":4,"cp":false,"fold":1.22,"bit":32},{"x":841,"y":61,"L":47,"k":2,"cp":false,"brk":true,"bit":64},{"x":927,"y":74,"L":41,"k":0,"cp":false},{"x":999,"y":91,"L":42,"k":0,"cp":true},{"x":1070,"y":112,"L":36,"k":0,"cp":false},{"x":1144,"y":90,"L":48,"k":0,"cp":false},{"x":1229,"y":91,"L":40,"k":0,"cp":false},{"x":1311,"y":94,"L":48,"k":4,"cp":false,"fold":1.17,"bit":128},{"x":1397,"y":103,"L":45,"k":0,"cp":false},{"x":1470,"y":84,"L":45,"k":0,"cp":true},{"x":1552,"y":80,"L":42,"k":4,"cp":false,"fold":1.24,"bit":256},{"x":1630,"y":74,"L":39,"k":4,"cp":false,"fold":1.2,"bit":512},{"x":1708,"y":81,"L":46,"k":0,"cp":false},{"x":1777,"y":87,"L":36,"k":2,"cp":false,"brk":true,"bit":1024},{"x":1860,"y":100,"L":41,"k":0,"cp":false},{"x":1946,"y":108,"L":40,"k":0,"cp":true},{"x":2035,"y":107,"L":38,"k":4,"cp":false,"fold":1.04,"bit":2048},{"x":2125,"y":108,"L":39,"k":4,"cp":false,"fold":1.13,"bit":4096},{"x":2215,"y":101,"L":45,"k":4,"cp":false,"fold":1.35,"bit":8192},{"x":2301,"y":109,"L":41,"k":2,"cp":false,"brk":true,"bit":16384},{"x":2379,"y":103,"L":42,"k":0,"cp":false},{"x":2445,"y":106,"L":39,"k":0,"cp":true},{"x":2528,"y":106,"L":44,"k":2,"cp":false,"brk":true,"bit":32768},{"x":2618,"y":112,"L":38,"k":0,"cp":false}],"goal":{"x":2693,"y":158},"leaves":[],"drafts":[],"tper":3.2,"killY":270,"minX":-60,"maxX":2833,"pickups":[{"x":73,"y":102,"t":0},{"x":84,"y":103,"t":0},{"x":152,"y":98,"t":0},{"x":172,"y":101,"t":1},{"x":234,"y":104,"t":0},{"x":254,"y":107,"t":0},{"x":307,"y":116,"t":0},{"x":325,"y":117,"t":1},{"x":386,"y":119,"t":0},{"x":402,"y":118,"t":0},{"x":467,"y":119,"t":0},{"x":484,"y":122,"t":1},{"x":553,"y":121,"t":0},{"x":566,"y":119,"t":0},{"x":632,"y":113,"t":0},{"x":646,"y":112,"t":1},{"x":715,"y":106,"t":0},{"x":726,"y":103,"t":0},{"x":799,"y":92,"t":0},{"x":810,"y":92,"t":1},{"x":883,"y":85,"t":0},{"x":904,"y":85,"t":0},{"x":960,"y":92,"t":0},{"x":978,"y":96,"t":1},{"x":1029,"y":111,"t":0},{"x":1049,"y":115,"t":0},{"x":1099,"y":122,"t":0},{"x":1112,"y":121,"t":1},{"x":1184,"y":113,"t":0},{"x":1197,"y":111,"t":0},{"x":1260,"y":111,"t":0},{"x":1281,"y":114,"t":1},{"x":1346,"y":117,"t":0},{"x":1368,"y":119,"t":0},{"x":1430,"y":120,"t":0},{"x":1442,"y":116,"t":1},{"x":1509,"y":106,"t":0},{"x":1522,"y":105,"t":0},{"x":1586,"y":100,"t":0},{"x":1598,"y":100,"t":1},{"x":1666,"y":98,"t":0},{"x":1683,"y":99,"t":0},{"x":1743,"y":99,"t":0},{"x":1754,"y":99,"t":1},{"x":1805,"y":104,"t":0},{"x":1826,"y":113,"t":0},{"x":1901,"y":114,"t":0},{"x":1925,"y":114,"t":1},{"x":1979,"y":125,"t":0},{"x":1997,"y":130,"t":0},{"x":2077,"y":131,"t":0},{"x":2094,"y":130,"t":1},{"x":2160,"y":129,"t":0},{"x":2178,"y":133,"t":0},{"x":2263,"y":127,"t":0},{"x":2275,"y":125,"t":1},{"x":2331,"y":126,"t":0},{"x":2348,"y":128,"t":0},{"x":2418,"y":121,"t":0},{"x":2428,"y":120,"t":1},{"x":2476,"y":123,"t":0},{"x":2493,"y":128,"t":0},{"x":2568,"y":130,"t":0},{"x":2586,"y":129,"t":1},{"x":2653,"y":128,"t":0},{"x":2671,"y":131,"t":0}],"ok":true,"minW":0.1,"lowY":150},{"id":24,"name":"a6l24","area":6,"seed":783,"anchors":[{"x":40,"y":80,"L":40,"k":0,"cp":true},{"x":111,"y":94,"L":42,"k":0,"cp":false},{"x":196,"y":99,"L":45,"k":0,"cp":false},{"x":281,"y":83,"L":46,"k":4,"cp":false,"fold":1.06,"bit":1},{"x":363,"y":87,"L":39,"k":0,"cp":false},{"x":448,"y":80,"L":44,"k":4,"cp":false,"fold":1.15,"bit":2},{"x":525,"y":100,"L":37,"k":0,"cp":true},{"x":612,"y":113,"L":36,"k":4,"cp":false,"fold":1.06,"bit":4},{"x":697,"y":102,"L":36,"k":4,"cp":false,"fold":1.22,"bit":8},{"x":768,"y":82,"L":37,"k":0,"cp":false},{"x":838,"y":77,"L":40,"k":2,"cp":false,"brk":true,"bit":16},{"x":927,"y":78,"L":41,"k":4,"cp":false,"fold":1.29,"bit":32},{"x":1016,"y":70,"L":47,"k":0,"cp":true},{"x":1100,"y":65,"L":39,"k":0,"cp":false},{"x":1187,"y":65,"L":39,"k":0,"cp":false},{"x":1263,"y":68,"L":38,"k":4,"cp":false,"fold":1.08,"bit":64},{"x":1333,"y":91,"L":37,"k":4,"cp":false,"fold":1.2,"bit":128},{"x":1403,"y":76,"L":46,"k":4,"cp":false,"fold":1.11,"bit":256},{"x":1496,"y":92,"L":46,"k":0,"cp":true},{"x":1581,"y":98,"L":47,"k":4,"cp":false,"fold":0.96,"bit":512},{"x":1656,"y":97,"L":36,"k":0,"cp":false},{"x":1737,"y":77,"L":47,"k":0,"cp":false},{"x":1813,"y":75,"L":47,"k":4,"cp":false,"fold":1.24,"bit":1024},{"x":1887,"y":86,"L":38,"k":4,"cp":false,"fold":0.97,"bit":2048},{"x":1978,"y":94,"L":48,"k":0,"cp":true},{"x":2071,"y":98,"L":48,"k":0,"cp":false},{"x":2160,"y":108,"L":36,"k":0,"cp":false},{"x":2242,"y":102,"L":45,"k":4,"cp":false,"fold":1.18,"bit":4096},{"x":2332,"y":106,"L":37,"k":4,"cp":false,"fold":0.98,"bit":8192},{"x":2412,"y":101,"L":44,"k":0,"cp":false},{"x":2486,"y":104,"L":41,"k":0,"cp":true},{"x":2577,"y":111,"L":36,"k":0,"cp":false},{"x":2670,"y":110,"L":39,"k":0,"cp":false},{"x":2748,"y":104,"L":41,"k":0,"cp":false}],"goal":{"x":2819,"y":148},"leaves":[],"drafts":[],"tper":3.2,"killY":269,"minX":-60,"maxX":2959,"pickups":[{"x":75,"y":102,"t":0},{"x":91,"y":103,"t":0},{"x":145,"y":113,"t":0},{"x":162,"y":117,"t":1},{"x":233,"y":118,"t":0},{"x":247,"y":117,"t":0},{"x":322,"y":109,"t":0},{"x":335,"y":108,"t":1},{"x":395,"y":106,"t":0},{"x":415,"y":109,"t":0},{"x":490,"y":104,"t":0},{"x":509,"y":105,"t":1},{"x":554,"y":117,"t":0},{"x":575,"y":125,"t":0},{"x":652,"y":127,"t":0},{"x":666,"y":123,"t":1},{"x":728,"y":117,"t":0},{"x":741,"y":119,"t":0},{"x":811,"y":101,"t":0},{"x":818,"y":97,"t":1},{"x":870,"y":95,"t":0},{"x":890,"y":103,"t":0},{"x":973,"y":103,"t":0},{"x":985,"y":101,"t":1},{"x":1056,"y":92,"t":0},{"x":1069,"y":90,"t":0},{"x":1135,"y":86,"t":0},{"x":1152,"y":87,"t":1},{"x":1224,"y":84,"t":0},{"x":1237,"y":83,"t":0},{"x":1293,"y":86,"t":0},{"x":1310,"y":91,"t":1},{"x":1363,"y":103,"t":0},{"x":1378,"y":101,"t":0},{"x":1438,"y":100,"t":0},{"x":1460,"y":108,"t":1},{"x":1540,"y":110,"t":0},{"x":1558,"y":110,"t":0},{"x":1615,"y":119,"t":0},{"x":1627,"y":120,"t":1},{"x":1691,"y":115,"t":0},{"x":1704,"y":114,"t":0},{"x":1786,"y":98,"t":0},{"x":1797,"y":95,"t":1},{"x":1844,"y":100,"t":0},{"x":1857,"y":105,"t":0},{"x":1924,"y":109,"t":0},{"x":1942,"y":113,"t":1},{"x":2019,"y":116,"t":0},{"x":2039,"y":118,"t":0},{"x":2107,"y":119,"t":0},{"x":2129,"y":120,"t":1},{"x":2192,"y":120,"t":0},{"x":2213,"y":120,"t":0},{"x":2279,"y":121,"t":0},{"x":2296,"y":124,"t":1},{"x":2370,"y":125,"t":0},{"x":2384,"y":123,"t":0},{"x":2445,"y":120,"t":0},{"x":2458,"y":119,"t":1},{"x":2519,"y":123,"t":0},{"x":2540,"y":130,"t":0},{"x":2618,"y":134,"t":0},{"x":2637,"y":132,"t":1},{"x":2703,"y":129,"t":0},{"x":2717,"y":129,"t":0},{"x":2784,"y":124,"t":0},{"x":2803,"y":125,"t":1}],"ok":true,"minW":0.05,"lowY":150}];
+'use strict';
+/* محرك البكسل: مخزن معرّفات ألوان، سبرايتات نصية، تنقيط، ضجيج */
+var PIX = (function () {
+  var KEYS = ['J', 'L', 'M', 'H', 'T', 'C', 'F'];
+  var LEG = { J: 'ogGjJ', L: 'alLiI', M: 'dmMqQ', H: 'rhHpP', T: 'stTuU', C: 'vcCwW', F: 'zxXbB' };
+  var CH = {};
+  KEYS.forEach(function (k, ri) {
+    for (var l = 0; l < 5; l++) CH[LEG[k].charAt(l)] = ri * 5 + l;
+  });
+  var NONE = 255;
+  var warned = {};
+
+  function cid(k, l) { return KEYS.indexOf(k) * 5 + l; }
+  function ramp(c) { return (c / 5) | 0; }
+  function level(c) { return c % 5; }
+  function lift(c, n) {
+    if (c === NONE) return c;
+    var l = (c % 5) + (n === undefined ? 1 : n);
+    if (l > 4) l = 4;
+    if (l < 0) l = 0;
+    return ((c / 5) | 0) * 5 + l;
+  }
+  function hex(h) {
+    return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)];
+  }
+  function palette(r) {
+    var a = [];
+    KEYS.forEach(function (k) { r[k].forEach(function (h) { a.push(hex(h)); }); });
+    return a;
+  }
+
+  function Buf(w, h) { this.w = w; this.h = h; this.d = new Uint8Array(w * h); }
+  Buf.prototype.fill = function (c) { this.d.fill(c); };
+  Buf.prototype.set = function (x, y, c) {
+    x = Math.round(x); y = Math.round(y);
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
+    this.d[y * this.w + x] = c;
+  };
+  Buf.prototype.get = function (x, y) {
+    x = Math.round(x); y = Math.round(y);
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return NONE;
+    return this.d[y * this.w + x];
+  };
+
+  function sprite(rows, opt) {
+    opt = opt || {};
+    var h = rows.length, w = 0, i, j;
+    for (j = 0; j < h; j++) if (rows[j].length > w) w = rows[j].length;
+    var pad = opt.outline === false ? 0 : 1;
+    var W = w + pad * 2, H = h + pad * 2;
+    var d = new Uint8Array(W * H);
+    d.fill(NONE);
+    for (j = 0; j < h; j++) {
+      for (i = 0; i < rows[j].length; i++) {
+        var ch = rows[j].charAt(i);
+        if (ch === '.' || ch === ' ') continue;
+        if (CH[ch] === undefined) {
+          if (!warned[ch]) { warned[ch] = 1; if (typeof console !== 'undefined') console.warn('sprite: unknown key ' + ch); }
+          continue;
+        }
+        d[(j + pad) * W + i + pad] = CH[ch];
+      }
+    }
+    if (pad) {
+      var oc = opt.outlineId !== undefined ? opt.outlineId : CH.o;
+      var out = d.slice();
+      for (j = 0; j < H; j++) {
+        for (i = 0; i < W; i++) {
+          if (d[j * W + i] !== NONE) continue;
+          if ((i > 0 && d[j * W + i - 1] !== NONE) || (i < W - 1 && d[j * W + i + 1] !== NONE) ||
+              (j > 0 && d[(j - 1) * W + i] !== NONE) || (j < H - 1 && d[(j + 1) * W + i] !== NONE)) {
+            out[j * W + i] = oc;
+          }
+        }
+      }
+      d = out;
+    }
+    return { w: W, h: H, d: d, pad: pad };
+  }
+
+  function mirrorV(rows) {
+    var r = rows.slice();
+    for (var i = rows.length - 2; i >= 0; i--) r.push(rows[i]);
+    return r;
+  }
+
+  function stamp(buf, s, x, y, flip, fn) {
+    x = Math.round(x); y = Math.round(y);
+    for (var j = 0; j < s.h; j++) {
+      var py = y + j;
+      if (py < 0 || py >= buf.h) continue;
+      for (var i = 0; i < s.w; i++) {
+        var c = s.d[j * s.w + (flip ? s.w - 1 - i : i)];
+        if (c === NONE) continue;
+        var px = x + i;
+        if (px < 0 || px >= buf.w) continue;
+        buf.d[py * buf.w + px] = fn ? fn(c, px, py) : c;
+      }
+    }
+  }
+
+  function line(x0, y0, x1, y1, cb) {
+    x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
+    var dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+    var sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+    var err = dx - dy, i = 0, n = Math.max(dx, dy) + 1;
+    for (;;) {
+      cb(x0, y0, i, n);
+      i++;
+      if (x0 === x1 && y0 === y1) break;
+      var e2 = 2 * err;
+      if (e2 > -dy) { err -= dy; x0 += sx; }
+      if (e2 < dx) { err += dx; y0 += sy; }
+    }
+  }
+
+  var BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  function dth(x, y, t) {
+    x = Math.round(x); y = Math.round(y);
+    return t > (BAYER[((y & 3) << 2) | (x & 3)] + 0.5) / 16;
+  }
+  function grad(stops, t, x, y) {
+    var n = stops.length - 1;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    var p = t * n, i = Math.min(n - 1, Math.floor(p)), f = p - i;
+    return dth(x, y, f) ? stops[i + 1] : stops[i];
+  }
+
+  function rng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function hash(n) {
+    n = n | 0;
+    n = (n ^ 61) ^ (n >>> 16);
+    n = (n + (n << 3)) | 0;
+    n = n ^ (n >>> 4);
+    n = Math.imul(n, 0x27d4eb2d);
+    n = n ^ (n >>> 15);
+    return (n >>> 0) / 4294967296;
+  }
+  function vnoise(x, seed) {
+    var xi = Math.floor(x), f = x - xi;
+    f = f * f * (3 - 2 * f);
+    var s = Math.imul(seed | 0, 668265263);
+    var a = hash(Math.imul(xi, 374761393) + s);
+    var b = hash(Math.imul(xi + 1, 374761393) + s);
+    return a * (1 - f) + b * f;
+  }
+
+  function toImage(buf, pal, img) {
+    var d = buf.d, o = img.data, n = d.length;
+    for (var i = 0, k = 0; i < n; i++, k += 4) {
+      var c = d[i];
+      var p = c === NONE ? [255, 0, 255] : pal[c];
+      o[k] = p[0]; o[k + 1] = p[1]; o[k + 2] = p[2]; o[k + 3] = 255;
+    }
+  }
+
+  return {
+    KEYS: KEYS, CH: CH, NONE: NONE, cid: cid, ramp: ramp, level: level, lift: lift,
+    palette: palette, Buf: Buf, sprite: sprite, mirrorV: mirrorV, stamp: stamp, line: line,
+    dth: dth, grad: grad, rng: rng, hash: hash, vnoise: vnoise, toImage: toImage
+  };
+})();
+
+'use strict';
+/* خرائط بكسل للأوراق والحلقة */
+var FOLIAGE_MAPS = {
+ "c14": [
+ ".........JJ...",
+ ".....JJJJJJJJ.",
+ "...JJJJjJJJjG.",
+ "...JJJjJJjJjGg",
+ "...JjjjjJjGGGg",
+ "...JjjGjjGGgg.",
+ "...jGGGjggggg.",
+ "....ggggggg...",
+ "......g......."
+ ],
+ "c18": [
+ "..................",
+ ".....JJJJJJJJJJJ..",
+ "....JJjJjjjJJJJjj.",
+ "...JJJJjjjgJJJjjg.",
+ "..JJJJGGjjGJjJjGgg",
+ ".JJJjjjGGGgjjGjgg.",
+ ".JJjjGjGggggGgggg.",
+ ".jjGjGGggggGgg....",
+ "..jGgggggggggg....",
+ "..jgGggg..g.......",
+ "....ggg..........."
+ ],
+ "c24": [
+ ".....jJJJ....JJJJ.......",
+ "...JJJJJJJJJJJJJJJJ.....",
+ "..JJJJJJjJJjjJJjJJJj....",
+ ".JJJJJJJJJJjjGjjGGjjg...",
+ ".JJJJjJJJGjjGggjggjGg...",
+ "JJJJJJJJJjjGGggjGgjGGg..",
+ "JJJJJJjjGjGGGggGGgGGGg..",
+ "JJJjjjjjjGGgggGGggGGGg..",
+ "JJjjjjGGGgGgggGggGGGgg..",
+ ".jGjGGGgggggggggggggg...",
+ ".jjjjGGGGgggggggggggg...",
+ "..GGGGgggggggggggggg....",
+ "...gggggggggggggggg.....",
+ ".....gggg.....ggg......."
+ ],
+ "c30": [
+ "......................JJJJ....",
+ "........JJJJJjJJJjJJJJJJJJj...",
+ ".......JJJJJJJjJJJJJJJJJJjjj..",
+ "......JJJJJJJJJJJJJJJJjJjjjGg.",
+ ".....JJJJJJJJJJJJJJJjJjjjjGGg.",
+ ".....JJJJJJJJjJjjJJJJJjjjjGGg.",
+ "....JJJJJJJJjJjjJJjjjJjGGGjgg.",
+ "....jJJJjJJJJjjjJjjjJGGGGGggg.",
+ "....JJJJjjjJJjjjjjjjGGGGggggg.",
+ "....JJjJjjjjjJGGGjjjGGGggggg..",
+ "....jjJjjjjjGGGGGGjGGgggggg...",
+ ".....jJJJGjjGGGGGggggggggg....",
+ ".....jGjGGGGGggGggggggggg.....",
+ "......GGGgjGgggggggggggg......",
+ ".......gggggggggggggggg.......",
+ ".........gggggggggggg.........",
+ ".............................."
+ ],
+ "c40": [
+ "............JJjJJ....JJJJ...JJ..........",
+ ".........JJJJJJJJjJJJJJJJJJJJJJJjJ......",
+ "........JjJJJJJJJJJJJJJJJJJjJJJJJJj.....",
+ "......JJJJJJJJJJJJJJJJJJJjjjGJJJJjjj....",
+ "......JJJJJJJJJJJjjJJJjJjjjjGJJJJJJjj...",
+ ".....JJJJJJJJJJJJJJJJJjjjjjjggJJJjjjGg..",
+ ".....JJJJJJJJjJJJJJjJJjjjGGGggJJjjjgjg..",
+ "....JJJJJjJJJjjJJJJjjGjjGGGGGgGjjjjgGgg.",
+ "....JJJJJJJJJjJJJjJjjjGGGGggggJjjjGgGGg.",
+ "....JJJjJJJJJJJJJjjjGGGGGGgggjjjGGGggGg.",
+ "....JJJJJJJJJJjJjjGjGGgGgggggJGGGGgggGg.",
+ "....JJJJjJjJjGjjGjjGjGGgggggJGGGGGggGgg.",
+ "....JJjjjJJjjjjjjjjggggggggGGGGgGgggGgg.",
+ "....JJjjjjjjjGjjjjjGGGggGjGGGgGgggggggg.",
+ "....jjJJjGjjjjGGGGGGGGGgggGggggggggggg..",
+ ".....jjjjGGjGjGGGGGjjGgggggggggggggggg..",
+ ".....jjGjGGjGGjGGggGGggggggGgGggggggg...",
+ "......GjGGjGGggggggggggggGGGGggggggg....",
+ ".......GgGGgGgggggggggggggggggggggg.....",
+ ".........ggGggggggggggggg.ggggggg.......",
+ "...........ggggggg......................",
+ "........................................"
+ ],
+ "c56": [
+ "....................JJJJJJJJJJJJJJ......................",
+ "............JJJJJJJJJJjJJJJJjJJJJJJJ....................",
+ ".........JJJJJJJJJJJJJJJJJJJJJJJJJJJJJ..................",
+ "........JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ................",
+ ".......JJJJJJJJJJJJJJJJJJJJJjJJJJJJJJJJJJJJ.............",
+ "......JJJJJJJJJJJJJJJJJJJJJJJJjJJJJjJjJJJGJJJJ..........",
+ ".....JJJJJJJJJJJJJJJJJJJJJJJJGGjjJJJJJJjjjjJJjJJJ.......",
+ "....JJJJJJjJJJJJJJJJJjJJJJJjJjjjggJJJJjJjjJGJJJJJJ......",
+ "....JJJJJJJJJJJJJJJJJJJJJjjJjJjGGgJJJJjjGjjgjjGJjjGj....",
+ "...jJJJJJJJJJJJJJJJJJJJJJjjjjjGGGgjjJjjjGjjGgGggjjGj....",
+ "...JJJJJJJJJJJJJJJJJJJjJjjjGJGGGGgJjjjjGjjGGgJGgjjjJG...",
+ "..JJJJJJJJJJJJJjJjJJjJjjjjJGjGGGjgjjJjJGGGjGgGGgJjjjgg..",
+ "..JJJJJJJJJJJJJJJJJJJjjGGjGGGGGgggjjjjjGGGGGgGGggjjGGg..",
+ "..JJJJJJJJJJJJJJJJjjjjjGjGGGGgGgggJGjjGGGGGggGgggGGjGg..",
+ "..jJJJJJJJJJjJJGJJjjjJjjGGGGgGggggjGGGGGGGggggggGGGGGgg.",
+ "..JJJJJjjJJJJJjJJJjjjjJGGGggGggggGGGGGGGggggggGgjGGGGgg.",
+ "..JJjJJJJJjJjjjjjJjjGGGGGgGggggggGGGGGGGggggjgggGGGjGGg.",
+ "..jJJJJjjjJjJjJjjJjGjGGGGgggggggGGGGGgggggggggggGGgGGgg.",
+ "..jJjjJjGjGjJjjjjjjjjjggggggggGGGGGGgggggggggggGjGgggg..",
+ "..JJjjjjJGGjjjjJjjjjjjGjJgggGGGgGGjgggggggggggGGggGggg..",
+ "...jjGjjGGjjjjjGGGjjjjGGGGGGGGGggggggggggggggGgGgggggg..",
+ "...jjjjjjjGjjjjjjjGGjJGGjjGGGGGgggggggggggggGgggggggg...",
+ "....jGGJGGGGGGGGGGGGGGGGGGgGGggggggggggggggGGgggggggg...",
+ "....GjGGjjjGjGGGGGGjGGgGGggggggggggggggggggggggggggg....",
+ ".....jGGGGGGGGGGGGGGGGggggggggggggggggggggggggggggg.....",
+ "......GGGGGGGgGgGGGGgggggggggggggggggggggggggggggg......",
+ ".......GgGjGGGggggGggggggggggggggggggggggggggggg........",
+ "........gggGjgGgggggggggggggggggggggggg.................",
+ "..........ggggggggggggggggggggggggggg...................",
+ ".............ggggggg......gggggggg......................"
+ ],
+ "ring": [
+ "......ggggg......",
+ "....ggiiiiigg....",
+ "..ggiiiiiiiLLgg..",
+ "..giiii...iiLLg..",
+ ".giii.......LLLg.",
+ ".gii.........Llg.",
+ "giii.........Lllg",
+ "gii...........llg",
+ "gii...........llg",
+ "gii...........llg",
+ "giii.........Lllg",
+ ".gLi.........Llg.",
+ ".gLLL.......Lllg.",
+ "..gLLLL...LLllg..",
+ "..ggLllllllllgg..",
+ "....gglllllgg....",
+ "......ggggg......"
+ ]
+};
+
+'use strict';
+/* إطارات الجبّون: خرائط بكسل نصية، p = نقطة اليدين */
+var FRAME_MAPS = {"idle":[{"r":["ccc.........ccc","cwc.........cwc","ccc.........ccc","xXb.........bXx","xXb.........bXx","xXb..xXXXx..bXx","xXb.xXbbbXx.bXx","xXb.xcwwwcx.bXx","xXb.xcowocx.bXx","xXb.xcwwwcx.bXx","xXb.xcwxwcx.bXx",".xXb.xXXXx.bXx.","..xXbXXXXXbXx..","..xXXbbbbbXXx..","...xXbbbbbXx...","....xXbbbXx....","....xXbbbXx....","....xXbbbXx....","...xXx...xXx...","...xXb...bXx...","...xXb...bXx...","...xXb...bXx...","...xbb...bbx...","....cc...cc....","...ccc...ccc..."],"p":[7,1]},{"r":["ccc.........ccc","cwc.........cwc","ccc.........ccc","xXb.........bXx","xXb.........bXx","xXb..xXXXx..bXx","xXb.xXbbbXx.bXx","xXb.xcwwwcx.bXx","xXb.xcowocx.bXx","xXb.xcwwwcx.bXx","xXb.xcwxwcx.bXx",".xXb.xXXXx.bXx.","..xXbXXXXXbXx..","..xXXbbbbbXXx..","..xXXbbbbbXXx..","...xXbbbbbXx...","....xXbbbXx....","....xXbbbXx....","....xXbbbXx....","...xXx...xXx...","...xXb...bXx...","...xXb...bXx...","...xXb...bXx...","...xbb...bbx...","....cc...cc....","...ccc...ccc..."],"p":[7,1]},{"r":["ccc.........ccc","cwc.........cwc","ccc.........ccc","xXb.........bXx","xXb.........bXx","xXb..xXXXx..bXx","xXb.xXbbbXx.bXx","xXb.xcwwwcx.bXx","xXb.xcowocx.bXx","xXb.xcwwwcx.bXx","xXb.xcwxwcx.bXx",".xXb.xXXXx.bXx.","..xXbXXXXXbXx..","..xXXbbbbbXXx..","...xXbbbbbXx...","....xXbbbXx....","....xXbbbXx....","....xXbbbXx....","...xXx...xXx...","...xXb...bXx...","...xXb...bXx...","...xXb...bXx...","...xbb...bbx...","....cc...cc....","...ccc...ccc..."],"p":[7,1]},{"r":["ccc.........ccc","cwc.........cwc","ccc.........ccc","xXb.........bXx","xXb.........bXx","xXb..xXXXx..bXx","xXb.xXbbbXx.bXx","xXb.xcwwwcx.bXx","xXb.xcxwxcx.bXx","xXb.xcwwwcx.bXx","xXb.xcwxwcx.bXx",".xXb.xXXXx.bXx.","..xXbXXXXXbXx..","..xXXbbbbbXXx..","...xXbbbbbXx...","....xXbbbXx....","....xXbbbXx....","....xXbbbXx....","...xXx...xXx...","...xXb...bXx...","...xXb...bXx...","...xXb...bXx...","...xbb...bbx...","....cc...cc....","...ccc...ccc..."],"p":[7,1]}],"swing":[{"r":[".............c..........","............ccc.........","...........xcwc.........","..........xxXc..........",".........xxXb...........",".........xXbb...........","........xXbb............",".......xXXb.xx..........","......xXXb.xxXXX......c.",".......Xb.xxcwbXX....cwc",".......Xb.xcowwbx...bccc","......xXb.cwwwwcX..bbXc.","......xXbxxwwwccx.bbXx..","......xXbXXXwwcx..bXxx..","......xXbbXXXcx..bXxx...",".....xxXbbbXX.x.bXXx....","...xxxXbbbbbbbbXXXx.....","..xxXxbbbbbbXXxxxx......","..xXbb.bbXXxxxx.........",".xXbb...bXx.............",".cbb....xX..............","ccc....bXXx.............",".c....bXXx..............",".....bbXx...............","....cccx................",".....c..................","......c................."],"p":[18,6]},{"r":[".........c............","........ccc...........","........cwc...........",".......xXcc...........",".......xXb............","......xXXb............","......xXb..........cc.",".....xXbb..x.......cwc",".....xXb.xXXXX....cccc","....xXbb.xcwbbx...bXc.",".....Xb.xcowwwXx.bXxx.",".....Xbxxcwwocxx.bXx..",".....xX.xwwwwcx.bXxx..",".....XXbXXXwcx..bXx...",".....xXbXXXXxx.bXx....",".....xXbbbXXbbbbXx....",".....xXbbbbbbXXxx.....","....xxXbbbbXXxx.......","...xXXbbbbXxx.........","..xXXx.bbXx...........","..xXb...xXx...........",".xXbb...bXx...........","..bb...bbXx...........","ccc....bXx............","..c...bbXx............","......ccx.............","......cc..............",".......c.............."],"p":[15,5]},{"r":["...ccc...........","...cwc...........","..xcc............","..xXb..........cc","..xXb.........cwc",".xxXb.........ccc",".xXb..xXXX....bXx",".xXb.xXbbXx..bXxx",".xXb.xcwwbXx.bXx.","xXb.xxcowwcx.bXx.",".xb.xcwwwcxx.bXx.",".xXb.cwxwcx.bXx..","..xXbXXXXcx.bXx..","..XXbXXXXx.bXXx..","..xXbbbbXbXXx....","...xbbbbbXXx.....","..xxXbbbbXx......","..xXbbbXx........",".xXxbbbXx........",".xXb...Xx........","xXb....XXx.......","xXb...bXx........","xbb...bXx........","ccc...bXx........","cc...ccx.........",".....cc..........",".......c........."],"p":[10,3]},{"r":[".ccc............","cccc.........cc.","ccc.........cccc","xXb.........ccc.","xXb.........bXx.","xXb..xXX....bXx.","xXb.xXbXXx..bXx.","xXb.xcwbbXx.bXx.","xXb.xcowwcx.bXx.","xXb.xcwwocx.bXx.","xXb.xcwwwcx.bXx.",".xXbxxXXcxxbbXx.",".xXbXXXXXxbXxx..",".xXXbbbXXbXx....","..xXbbbbbXXx....","...xXbbbbXx.....","...xXbbbXx......","...xXbbbXx......","..xXx..bXx......","..xXb...xXx.....",".xxXb...bXx.....",".xXb...bbXx.....",".xbb...bbx......","..cc...bbx......",".ccc...cc.......",".......ccc......"],"p":[8,2]},{"r":["............ccc.",".cc.........cccc","cccc.........ccc",".ccc.........bXx",".xXb.........bXx",".xXb....XXx..bXx",".xXb..xXXbXx.bXx",".xXb.xXbbwcx.bXx",".xXb.xcwwocx.bXx",".xXb.xcowwcx.bXx",".xXb.xcwwwcx.bXx",".xxXbxxcXXxxbbx.","..xxXbxXXXXXbXx.","....xXbXXbbbXXx.","....xXXbbbbbXx..",".....xXbbbbXx...","......xXbbbXx...","......xXbbbXx...","......xXb..xXx..",".....xXx...bXx..",".....xXb...bXXx.",".....xxXb...bXx.","......xbb...bbx.","......xbb...cc..",".......cc...ccc.","......ccc......."],"p":[8,2]},{"r":["...........ccc...","...........cwc...","............ccx..","cc..........bXx..","cwc.........bXx..","ccc.........bXxx.","xXb....XXXx..bXx.","xxXb..xXbbXx.bXx.",".xXb.xXbwwcx.bXx.",".xXb.xcwwocxx.bXx",".xXb.xxcwwwcx.bx.","..xXb.xcwxwc.bXx.","..xXb.xcXXXXbXx..","..xXXb.xXXXXbXX..","....xXXbXbbbbXx..",".....xXXbbbbbx...","......xXbbbbXxx..","........xXbbbXx..","........xXbbbxXx.","........xX...bXx.",".......xXX....bXx","........xXb...bXx","........xXb...bbx","........xXb...ccc",".........xcc...cc","..........cc.....",".........c......."],"p":[7,3]},{"r":["............c.........","...........ccc........","...........cwc........","...........ccXx.......","............bXx.......","............bbXx......",".cc..........bXx......","cwc.......x..bbXx.....","cccc....XXXXx.bXx.....",".cXb...xbbwcx.bbXx....",".xxXb.xXwwwocx.bX.....","..xXb.xxcowwcxxbX.....","..xxXb.xcwwwwx.Xx.....","...xXb..xcwXXXbXX.....","....xXb.xxXXXXbXx.....","....xXbbbbXXbbbXx.....",".....xxXXbbbbbbXx.....",".......xxXXbbbbXXx....",".........xxXXbbbXXx...","...........xXbb.xXXx..","...........xxx...bXx..","...........xXb...bbXx.","...........xXXb...bb..","............xXb....ccc","............xxbb...c..",".............xcc......","..............cc......","..............c......."],"p":[7,5]},{"r":["..........c.............",".........ccc............",".........cwcx...........","..........cXxx..........","...........bXxx.........","...........bbXx.........","............bbXx........","..........xx.bXXx.......",".c......XXXxx.bXXx......","cwc....XXbwcxx.bX.......","cccb...xbwwocx.bX.......",".cXbb..Xcwwwwc.bXx......","..xXbb.xccwwwxxbXx......","..xxXb..xcwwXXXbXx......","...xxXb..xcXXXbbXx......","....xXXb.x.XXbbbXxx.....",".....xXXXbbbbbbbbXxxx...","......xxxxXXbbbbbbxXxx..",".........xxxxXXbb.bbXx..",".............xXb...bbXx.","..............Xx....bbc.",".............xXXb....ccc","..............xXXb....c.","...............xXbb.....","................xccc....","..................c.....",".................c......"],"p":[6,6]}],"fly":[{"r":[".........c............","........cccc..........","........ccc...........",".......xXcc...........",".......xXb............","......xXbb............",".....xxXb..........cc.",".....xXb..xx.......ccc","....xXXb.xXbXX....cccc","....xXb.xxcwbbx...bXc.","....xXb.xcowwbX..bXx..",".....Xbxccwwocx.bbXx..","....xXX.xwxwccx.bXx...",".....XXXXXXwcx.bXXx...",".....XXbXXXxxx.bXx....",".....xbbbbXX.bbXxx....","....xXXbbbbXXXXxx.....","...xxXbbbbbXXx........","..xXxbbbbXxx..........",".xxXb..bXXx...........",".xXb....xx............",".bbb...bXX............","ccb....bXx............","ccc...bXxx............",".....cbbx.............",".....ccx..............",".....cc..............."],"p":[15,5]},{"r":[".................cc.......","................cccc......","..............xxXccc......","............xxXXbc........","..........xxXXbb..........",".........xxXXbb...........",".........xXbb.............",".........Xb..xxXx.........","........xXbxxccbbX........","........XX.xccowbX........",".......xXXXxwwwwwbx.....c.","..x...xxbbXXXxwocXx...ccc.",".xXXXxXXbbbXXwccxx..bbcccc",".bbbbxXbbbbXXxcxx..bbXXcc.","ccb...bbbbbbX.x..bbXXxx...",".cc....bbXbXXXbbbXXxx.....",".......bXXxXXXXXXXxx......",".......xxx...x.xxx........","....c.bXx.................","...ccbXXx.................","....cbXx..................","......x..................."],"p":[21,7]},{"r":["...............xxxxxxxxcc.","..............xxxxxxxxcccc","............xxXXXXXXXXcccc","...xxxx....xxXbbbbbbbbbcc.","ccxxxxxxxxxXXbbxxxx.......","cccbXXXXxxXXXbxxxxxx......",".ccbbbbxXXbbbXxccccXx.....",".......bbbbbbXXwwwwbX.....",".......bbbbbbXXwwwwbX.....",".ccbbbbbbbbbbXXwccwXX.....","cccbbbXxXXXbbXxcccxx......","cccxXXXxxxxXXbxxxxx.......","...xxxx....xXXbbbbbbbbbcc.","............xxXbbbbbbbcccc","..............xXXXXXXXcccc","...............xxxxxxxxcc."],"p":[24,8]},{"r":["...cbxx..................","...cbXX..................","..ccbbXx.................","......xxx..xxxxXxx.......","......xXXxXXXXbbXXxxx....","......bbXXbXbb.bbbXXxxx..","ccc...bbbbbXxxx...bbXXccc","cbb.xXbbbbbXXccxxx..bbcwc","xbXbXxXXbbXXXwwccx....ccc",".xxxxxxXbbXXxwwwwXx......",".......xXXXxwwwwbX.......",".......xXX.xcccwbX.......","........xXb.xxcXX........",".........Xb...xxx........",".........xXbbb...........",".........xxXXbbb.........","...........xxXXbbb.......",".............xxXXccc.....","...............xxcwc.....",".................ccc....."],"p":[21,13]}],"grab":{"r":["ccc.........ccc","cwc.........cwc","ccc.........ccc","xXb.........bXx","xXb.........bXx","xXb.........bXx","xXb.........bXx","xXb..xXXXx..bXx","xXb.xXbbbXx.bXx","xXb.xcwwwcx.bXx","xXb.xcowocx.bXx","xXb.xcwwwcx.bXx","xXb.xcwxwcx.bXx",".xXb.xXXXx.bXx.","..xXbXXXXXbXx..","..xXXbbbbbXXx..","...xXbbbbbXx...","....xXbbbXx....","....xXbbbXx....","....xXbbbXx....","...xXx...xXx...","...xXb...bXx...","...xXb...bXx...","...xXb...bXx...","...xbb...bbx..."],"p":[7,1]},"joy":[{"r":["ccc.................ccc",".cwc...............cwc.",".ccc...............ccc.",".xXb...............bXx.","..xXb.............bXx..","..xXb....xXXXx....bXx..","..xXb...xXbbbXx...bXx..","...xXb..xcwwwcx..bXx...","...xXb..xcxwxcx..bXx...","...xXb..xcwwwcx..bXx...","....xXb.xcwowcx.bXx....",".....xXb.xXXXx.bXx.....","......xXbXXXXXbXx......","......xXXbbbbbXXx......",".......xXbbbbbXx.......","........xXbbbXx........","........xXbbbXx........","........xXbbbXx........",".......xXx...xXx.......","......xXb.....bXx......","......xXb.....bXx......",".....xXb.......bXx.....",".....xbb.......bbx.....","......cc.......cc......","....ccc.........ccc...."],"p":[11,1]},{"r":["ccc.....................ccc",".cwc...................cwc.",".ccc...................ccc.","..xXb.................bXx..","..xXb.................bXx..","...xXb.....xXXXx.....bXx...","...xXb....xXbbbXx....bXx...","....xXb...xcwwwcx...bXx....","....xXb...xcxwxcx...bXx....",".....xXb..xcwwwcx..bXx.....",".....xXb..xcwowcx..bXx.....",".......xXb.xXXXx.bXx.......","........xXbXXXXXbXx........","........xXXbbbbbXXx........",".........xXbbbbbXx.........","..........xXbbbXx..........","..........xXbbbXx..........","..........xXbbbXx..........",".........xXx...xXx.........",".........xXb...bXx.........","........xXb.....bXx........","........xXb.....bXx........","........xbb.....bbx........",".........cc.....cc.........","........ccc.....ccc........"],"p":[13,1]}],"fall":[{"r":["ccc.................ccc","cwc.................cwc",".ccc...............ccc.",".xXb...............bXx.","..xXb.............bXx..","..xXb....xXXXx....bXx..","..xXb...xXbbbXx...bXx..","...xXb..xcowocx..bXx...","...xXb..xcwwwcx..bXx...","...xXb..xcwwwcx..bXx...","....xXb.xcwoowx.bXx....",".....xXb.xXXXx.bXx.....","......xXbXXXXXbXx......","......xXXbbbbbXXx......",".......xXbbbbbXx.......","........xXbbbXx........","........xXbbbXx........","........xXbbbXx........","......xXx.....xXx......","......xXb.....bXx......",".....xXb.......bXx.....",".....xXb.......bXx.....","....xbb.........bbx....",".....cc.........cc.....","...ccc...........ccc..."],"p":[11,1]},{"r":["ccc.............ccc","cwc.............cwc","ccc.............ccc","xXb.............bXx",".xXb...........bXx.",".xXb...xXXXx...bXx.",".xXb..xXbbbXx..bXx.",".xXb..xcowocx..bXx.",".xXb..xcwwwcx..bXx.","..xXb.xcwwwcx.bXx..","..xXb.xcwoowx.bXx..","...xXb.xXXXx.bXx...","....xXbXXXXXbXx....","....xXXbbbbbXXx....",".....xXbbbbbXx.....","......xXbbbXx......","......xXbbbXx......","......xXbbbXx......",".....xXx...xXx.....","....xXb.....bXx....","....xXb.....bXx....","....xXb.....bXx....","...xbb.......bbx...","....cc.......cc....","...ccc.......ccc..."],"p":[9,1]}]};
+
+'use strict';
+/* السبرايتات: خرائط بكسل نصية. المفاتيح معرّفة في pix.js
+   J: ogGjJ  L: alLiI  M: dmMqQ  H: rhHpP  T: stTuU  C: vcCwW  F: zxXbB  (من الأغمق للأفتح) */
+var ART = (function () {
+  var S = PIX.sprite;
+  var A = {};
+
+  /* الجبّون: معلّق بيدين على غصن (وضع جاهز) */
+  A.GIB_HANG = S([
+    '...ccc.........ccc...',
+    '...cwc.........cwc...',
+    '...ccc.........ccc...',
+    '...xXb.........bXx...',
+    '...xXb.........bXx...',
+    '...xXb..xXXXx..bXx...',
+    '...xXb.xXbbbXx.bXx...',
+    '...xXb.xcwwwcx.bXx...',
+    '...xXb.xcowocx.bXx...',
+    '...xXb.xcwwwcx.bXx...',
+    '...xXb.xcwxwcx.bXx...',
+    '....xXb.xXXXx.bXx....',
+    '.....xXbXXXXXbXx.....',
+    '.....xXXbbbbbXXx.....',
+    '......xXbbbbbXx......',
+    '.......xXbbbXx.......',
+    '.......xXbbbXx.......',
+    '.......xXbbbXx.......',
+    '......xXx...xXx......',
+    '......xXb...bXx......',
+    '......xXb...bXx......',
+    '......xXb...bXx......',
+    '......xbb...bbx......',
+    '.......cc...cc.......',
+    '......ccc...ccc......'
+  ]);
+
+  /* أوراق صغيرة تتكدّس منها الأشجار */
+  A.LEAF_S = [
+    S([
+      '..gggg...',
+      '.gGGGGg..',
+      'gGGjGGGg.',
+      '.gGGGGGgg',
+      '..gGGGg..',
+      '...ggg...'
+    ]),
+    S([
+      '...gg....',
+      '..gGGg...',
+      '.gGjGGgg.',
+      'gGGjGGGGg',
+      '.gGGGGGg.',
+      '..gggg...'
+    ]),
+    S([
+      '.gg......',
+      'gGGgg....',
+      'gGjGGgg..',
+      '.gGGjGGgg',
+      '..gGGGGg.',
+      '...gggg..'
+    ])
+  ];
+
+  /* سعفة طويلة نازلة */
+  A.FROND = S([
+    '.gg..',
+    'gGGg.',
+    'gGjGg',
+    '.gGjg',
+    '.gGGg',
+    '..gGg',
+    '..gjg',
+    '..gGg',
+    '...gg'
+  ]);
+
+  /* ورقة كبيرة: نص علوي ويتعكس عموديًا */
+  A.LEAF_BIG = S(PIX.mirrorV([
+    '..........gggggggggg..........',
+    '.......gggGGGGGGGGGGggg.......',
+    '....ggGGGGGGGGGGGGGGGGGgg.....',
+    '..ggGGGGjGGGGGjGGGGGjGGGGgg...',
+    '.gGGGGGGGjGGGGjGGGGjGGGGGGGgg.',
+    'gGGGGGGGGGjjGGjGGjjGGGGGGGGGGg',
+    'gGGjjjjjjjjjjjjjjjjjjjjjjjjjjg'
+  ]));
+
+  /* فطر متوهج */
+  A.MUSH = S([
+    '..hHHh..',
+    '.hHpHHh.',
+    'hHHHpHHh',
+    '.hhhhhh.',
+    '...cw...',
+    '...cw...'
+  ]);
+
+  /* قطرة ندى */
+  A.DROP = S([
+    '..u..',
+    '.uWu.',
+    'uUWUt',
+    'uUUUt',
+    '.ttt.'
+  ], { outlineId: PIX.CH.s });
+
+  /* مانجو */
+  A.MANGO = S([
+    '...gL...',
+    '..mMMm..',
+    '.mMqQMm.',
+    'mMqQQMMm',
+    'mMqQMMmm',
+    '.mMMMmm.',
+    '..mmmm..'
+  ], { outlineId: PIX.CH.d });
+
+  /* فاكهة وردية بقشور خضراء */
+  A.PITAYA = S([
+    '..L..L..',
+    '...LL...',
+    '.hHHHHh.',
+    'hHpPpHHh',
+    'hHPpPpHh',
+    'hHpPpHHh',
+    '.hHHHHh.',
+    '..hhhh..'
+  ], { outlineId: PIX.CH.r });
+
+  /* أوراق متكدّسة وحلقة (من خرائط foliage.js) */
+  A.CL = {};
+  Object.keys(FOLIAGE_MAPS).forEach(function (k) {
+    if (k !== 'ring') A.CL[k] = S(FOLIAGE_MAPS[k], { outline: false });
+  });
+  A.RING = S(FOLIAGE_MAPS.ring, { outlineId: PIX.CH.o });
+
+  /* طائر وردي واقف */
+  A.BIRD = S([
+    '...hHH......',
+    '..hHHHh.....',
+    '.dhHoHHh....',
+    'ddhHHHHHh...',
+    '..hHpHHHHh..',
+    '..hHppppHhhh',
+    '...hHpppHHhh',
+    '....hHHHHhh.',
+    '.....dd.dd..'
+  ]);
+
+  /* عش منسوج */
+  A.NEST = S([
+    '....mmmmmmmm....',
+    '..mmMMqMMqMMmm..',
+    '.mMqMMMqMMMqMMm.',
+    'mMMqMqMMMqMqMMMm',
+    'dmMMMqMqMqMMMMmd',
+    '.dmmMMMMMMMMmmd.',
+    '...ddmmmmmmdd...'
+  ], { outlineId: PIX.CH.d });
+  /* طير يطير: إطاران */
+  A.BIRDF = [
+    S(['h.....h','.hh.hh.','..hhh..'], { outline: false }),
+    S(['..hhh..','.hh.hh.','h.....h'], { outline: false })
+  ];
+
+  /* أبو قرن (يشيل الحلقات المتحركة): إطاران، يواجه اليمين */
+  function padRows(rows) { var w = 0; rows.forEach(function (r) { if (r.length > w) w = r.length; }); return rows.map(function (r) { while (r.length < w) r += '.'; return r; }); }
+  A.HORN = [
+    S(padRows([
+      '.gg....gg.....',
+      '..ggo.ggo.....',
+      '..gggoggg..qq.',
+      '...ggggggoqMMm',
+      '..oggggggwMMMm',
+      '.ogoggwwwwqMm.',
+      '..o.gwwww.....',
+      '.....c.c......'
+    ])),
+    S(padRows([
+      '..............',
+      '.....ggg..qq..',
+      '...gggggggqMMm',
+      '..ogggggggMMMm',
+      '.ogoggwwwwqMm.',
+      '..ggggwwww....',
+      '.gg.ggc.c.....',
+      'ggo...........'
+    ]))
+  ];
+
+  return A;
+})();
+
+'use strict';
+/* فيزياء اللعبة: خطوة ثابتة، تُستخدم في اللعب والحلّال والمحاكاة بنفس الأرقام بالضبط */
+var SIM = (function () {
+  var DT = 1 / 120;
+  var TAU = Math.PI * 2;
+  var C = {
+    G: 420,          /* جاذبية (بكسل/ث²) */
+    GRAB_R: 22,      /* مدى المسك حول الحلقة */
+    PUMP: 4.0,       /* دفع زاوي لما تضغط (راد/ث²) */
+    THMAX: 1.3,      /* أقصى زاوية تمرجح */
+    OMMAX: 7,        /* أقصى سرعة زاوية */
+    CD: 0.28,        /* بعد الترك ما تمسك نفس الحلقة */
+    RSLACK_LO: 8,    /* الحبل يقصر لين كذا */
+    RSLACK_HI: 10,   /* ويطول لين كذا */
+    GOAL_R: 14,
+    LEAF_MIN: 210,   /* أدنى سرعة ارتداد من الورقة */
+    LEAF_MAX: 330,   /* وأقصاها */
+    LEAF_USES: 2,    /* كم ارتداد تتحمل الورقة */
+    DRAFT_A: 760,    /* تسارع التيار الصاعد */
+    DRAFT_T: 1.2     /* أقصى مدة رفع بين مسكتين (يمنع التعليق في الهواء) */
+  };
+  var READY = 0, HANG = 1, FREE = 2;
+  /* تعديلات القدرات: pump مضاعِف الدفع، dL زيادة طول الحبل، rescue عدد النجدات */
+  var M = { pump: 1, dL: 0, rescue: 0 };
+  function setMods(m) { M.pump = m.pump || 1; M.dL = m.dL || 0; M.rescue = m.rescue || 0; }
+  function getMods() { return { pump: M.pump, dL: M.dL, rescue: M.rescue }; }
+
+  function eff(a) { return a.L + M.dL; }
+  /* موضع نقطة التعليق الأفقي (الحلقات المتحركة تحملها الطيور) */
+  function ax(lv, a, t) { return a.mv ? a.x + a.mv.A * Math.sin(TAU * t / lv.tper + a.mv.ph) : a.x; }
+  function avx(lv, a, t) { return a.mv ? a.mv.A * (TAU / lv.tper) * Math.cos(TAU * t / lv.tper + a.mv.ph) : 0; }
+
+  function cloneState(s) {
+    return {
+      mode: s.mode, x: s.x, y: s.y, vx: s.vx, vy: s.vy, ix: s.ix, th: s.th, om: s.om, L: s.L,
+      idle: s.idle, hold: s.hold, t: s.t, cd: s.cd, last: s.last, cp: s.cp, dead: s.dead, won: s.won,
+      cut: s.cut, lcut: s.lcut, grabbed: s.grabbed, resc: s.resc, dtm: s.dtm
+    };
+  }
+
+  function anchorRest(lv, i, t) {
+    var a = lv.anchors[i];
+    return { x: ax(lv, a, t || 0), y: a.y + eff(a) };
+  }
+
+  /* حالة البداية: معلّق على حلقة ix جاهز */
+  function spawnAt(lv, ix, s) {
+    s = s || {};
+    var a = lv.anchors[ix];
+    s.t = s.t || 0;
+    s.mode = HANG; s.ix = ix; s.th = 0; s.om = 0; s.L = eff(a);
+    s.x = ax(lv, a, s.t); s.y = a.y + s.L; s.vx = 0; s.vy = 0;
+    s.idle = true; s.hold = 0; s.cd = 0; s.last = -1; s.dead = false; s.won = false;
+    s.cp = ix; s.cut = 0; s.lcut = 0; s.grabbed = 0; s.resc = s.resc || 0; s.dtm = 0;
+    return s;
+  }
+  function makeState(lv) { return spawnAt(lv, 0, { t: 0, resc: 0 }); }
+
+  function respawn(lv, s) {
+    var keepT = s.t, keepR = s.resc;
+    spawnAt(lv, s.cp, s);
+    s.t = keepT; s.resc = keepR;
+    var a = lv.anchors[s.ix]; s.x = ax(lv, a, s.t);
+    return s;
+  }
+
+  function releaseVel(lv, s) {
+    var a = lv.anchors[s.ix];
+    var c = Math.cos(s.th), sn = Math.sin(s.th);
+    return [s.L * s.om * c + avx(lv, a, s.t), -s.L * s.om * sn];
+  }
+
+  function doRelease(lv, s, forced, ev) {
+    var a = lv.anchors[s.ix];
+    var v = releaseVel(lv, s);
+    s.vx = v[0]; s.vy = v[1];
+    s.x = ax(lv, a, s.t) + s.L * Math.sin(s.th); s.y = a.y + s.L * Math.cos(s.th);
+    s.mode = FREE; s.last = s.ix; s.cd = C.CD; s.hold = 0;
+    if (a.bit) s.cut |= a.bit;
+    if (ev) ev.push({ t: 'release', vx: s.vx, vy: s.vy, ix: s.ix, forced: forced, cut: !!a.bit });
+  }
+
+  /* خطوة وحدة. held: هل الإصبع نازل؟  ev: مصفوفة أحداث اختيارية */
+  function step(lv, s, held, ev) {
+    var i, a, dx, dy, d, best, bd, th, r, c, sn, pxv;
+    s.t += DT;
+    if (s.mode === HANG) {
+      a = lv.anchors[s.ix];
+      if (s.idle) {
+        if (held) s.idle = false;
+        else { s.x = ax(lv, a, s.t) + s.L * Math.sin(s.th); return; }
+      }
+      if (!held) { doRelease(lv, s, false, ev); return; }
+      s.hold += DT;
+      if (a.fold && s.hold > a.fold) { doRelease(lv, s, true, ev); return; }
+      var dir = s.om > 0 ? 1 : (s.om < 0 ? -1 : 1);
+      /* الدفع يقل كلما قربت الطاقة من طاقة أقصى زاوية */
+      var gl = C.G / s.L;
+      var en = 0.5 * s.om * s.om + gl * (1 - Math.cos(s.th));
+      var emax = gl * (1 - Math.cos(C.THMAX));
+      var k = 1 - en / emax;
+      if (k < 0) k = 0;
+      var al = -gl * Math.sin(s.th) + C.PUMP * M.pump * dir * k;
+      s.om += al * DT;
+      if (s.om > C.OMMAX) s.om = C.OMMAX; else if (s.om < -C.OMMAX) s.om = -C.OMMAX;
+      s.th += s.om * DT;
+      s.x = ax(lv, a, s.t) + s.L * Math.sin(s.th); s.y = a.y + s.L * Math.cos(s.th);
+      return;
+    }
+    /* طيران */
+    var oy = s.y;
+    s.vy += C.G * DT;
+    if (lv.drafts) {
+      for (i = 0; i < lv.drafts.length; i++) {
+        d = lv.drafts[i];
+        if (s.dtm < C.DRAFT_T && s.x >= d.x - d.w / 2 && s.x <= d.x + d.w / 2 && s.y >= d.y && s.y <= d.y + d.h) { s.vy -= C.DRAFT_A * DT; s.dtm += DT; }
+      }
+    }
+    s.x += s.vx * DT; s.y += s.vy * DT;
+    if (s.cd > 0) s.cd -= DT;
+    /* ورق يرتد */
+    if (lv.leaves && s.vy > 0) {
+      for (i = 0; i < lv.leaves.length; i++) {
+        var lf = lv.leaves[i], used = (s.lcut >> (2 * i)) & 3;
+        if (used >= C.LEAF_USES) continue;
+        if (oy <= lf.y && s.y >= lf.y && Math.abs(s.x - lf.x) <= lf.w / 2) {
+          s.y = lf.y;
+          s.vy = -Math.min(Math.max(s.vy * 0.92, C.LEAF_MIN), C.LEAF_MAX);
+          s.lcut += 1 << (2 * i);
+          if (ev) ev.push({ t: 'bounce', i: i, x: s.x, y: s.y });
+          break;
+        }
+      }
+    }
+    /* مسك */
+    if (held) {
+      best = -1; bd = C.GRAB_R * C.GRAB_R;
+      for (i = 0; i < lv.anchors.length; i++) {
+        a = lv.anchors[i];
+        if (i === s.last && s.cd > 0) continue;
+        if (a.bit && (s.cut & a.bit)) continue;
+        dx = s.x - ax(lv, a, s.t); dy = s.y - (a.y + eff(a));
+        d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = i; }
+      }
+      if (best >= 0) {
+        a = lv.anchors[best];
+        pxv = ax(lv, a, s.t);
+        dx = s.x - pxv; dy = s.y - a.y;
+        r = Math.sqrt(dx * dx + dy * dy);
+        var lo = eff(a) - C.RSLACK_LO, hi = eff(a) + C.RSLACK_HI;
+        if (r < lo) r = lo; else if (r > hi) r = hi;
+        th = Math.atan2(dx, dy);
+        if (th > 1.2) th = 1.2; else if (th < -1.2) th = -1.2;
+        c = Math.cos(th); sn = Math.sin(th);
+        s.mode = HANG; s.ix = best; s.L = r; s.th = th;
+        s.om = ((s.vx - avx(lv, a, s.t)) * c - s.vy * sn) / r;
+        if (s.om > C.OMMAX) s.om = C.OMMAX; else if (s.om < -C.OMMAX) s.om = -C.OMMAX;
+        s.x = pxv + r * sn; s.y = a.y + r * c;
+        s.idle = false; s.hold = 0; s.dtm = 0;
+        if (a.cp) s.cp = best;
+        s.grabbed++;
+        if (ev) ev.push({ t: 'grab', ix: best, speed: Math.sqrt(s.vx * s.vx + s.vy * s.vy) });
+        return;
+      }
+    }
+    /* هدف */
+    dx = s.x - lv.goal.x; dy = s.y - lv.goal.y;
+    if (dx * dx + dy * dy < C.GOAL_R * C.GOAL_R) {
+      s.won = true;
+      if (ev) ev.push({ t: 'win' });
+      return;
+    }
+    /* سقوط */
+    if (s.y > lv.killY && M.rescue > s.resc) {
+      s.resc++; s.y = lv.killY - 40; s.vy = -300;
+      if (ev) ev.push({ t: 'rescue', x: s.x, y: s.y });
+      return;
+    }
+    if (s.y > lv.killY || s.x < lv.minX || s.x > lv.maxX) {
+      s.dead = true;
+      if (ev) ev.push({ t: 'dead' });
+    }
+  }
+
+  return {
+    DT: DT, C: C, READY: READY, HANG: HANG, FREE: FREE, TAU: TAU,
+    makeState: makeState, cloneState: cloneState, spawnAt: spawnAt, respawn: respawn, step: step,
+    anchorRest: anchorRest, releaseVel: releaseVel, eff: eff, ax: ax, avx: avx, setMods: setMods, getMods: getMods
+  };
+})();
+
+'use strict';
+/* الحلّال: يستخدم نفس فيزياء SIM بالضبط. يبحث عن توقيتات الترك اللي توصّل للهدف */
+var SOLVER = (function () {
+  var DT = SIM.DT;
+
+  function qkey(s, tper) {
+    return s.ix + ':' + Math.round(s.th * 8) + ':' + Math.round(s.om * 3) + ':' + s.cut + ':' + s.lcut + ':' + (tper ? Math.round((s.t % tper) * 6) : 0);
+  }
+
+  /* من حالة تعليق: يجرّب الترك كل relStep خطوة، وبعدها مسك متأخر بفجوات مختلفة */
+  function releases(lv, hang, opt, cb) {
+    var relStep = opt.relStep, maxHold = opt.maxHold, gaps = opt.gaps;
+    var sw = SIM.cloneState(hang);
+    var maxSteps = Math.round(maxHold / DT);
+    for (var st = 0; st <= maxSteps; st++) {
+      if (sw.mode !== SIM.HANG) break;
+      if (st % relStep === 0) {
+        for (var gi = 0; gi < gaps.length; gi++) {
+          var res = flight(lv, sw, gaps[gi], opt);
+          cb(st, gaps[gi], res);
+        }
+      }
+      SIM.step(lv, sw, true);
+    }
+  }
+
+  /* يترك ثم يطير. النتيجة: {k:'arrive'|'win'|'dead'|'timeout', s:state} */
+  function flight(lv, hang, gap, opt) {
+    var f = SIM.cloneState(hang);
+    SIM.step(lv, f, false);              /* ترك */
+    var gapSteps = Math.round(gap / DT);
+    var maxFlight = Math.round(opt.maxFlight / DT);
+    for (var i = 0; i < maxFlight; i++) {
+      SIM.step(lv, f, i >= gapSteps);
+      if (f.won) return { k: 'win', s: f };
+      if (f.dead) return { k: 'dead', s: f };
+      if (f.mode === SIM.HANG) return { k: 'arrive', s: f };
+    }
+    return { k: 'timeout', s: f };
+  }
+
+  var DEF = { relStep: 8, maxHold: 3.2, gaps: [0, 0.12], maxFlight: 2.4, maxNodes: 600 };
+  function opts(o) {
+    var r = {};
+    for (var k in DEF) r[k] = (o && o[k] !== undefined) ? o[k] : DEF[k];
+    return r;
+  }
+
+  /* بحث: هل في طريق من الحلقة start للهدف؟ يرجّع المسار */
+  function solve(lv, startAi, o) {
+    var opt = opts(o);
+    var start = SIM.spawnAt(lv, startAi || 0, { t: 0 });
+    var nodes = [{ s: start, par: -1, act: null }];
+    var seen = {}; seen[qkey(start, lv.tper)] = 1;
+    var open = [0], expanded = 0, winNode = -1, winAct = null;
+    while (open.length && expanded < opt.maxNodes && winNode < 0) {
+      /* نختار الأبعد تقدّمًا */
+      var bi = 0, bs = -1;
+      for (var q = 0; q < open.length; q++) {
+        var sc = nodes[open[q]].s.ix * 1000 - nodes[open[q]].depth * 0 + nodes[open[q]].s.x;
+        if (sc > bs) { bs = sc; bi = q; }
+      }
+      var ni = open.splice(bi, 1)[0];
+      var node = nodes[ni];
+      expanded++;
+      var hang = node.s;
+      releases(lv, hang, opt, function (st, gap, res) {
+        if (winNode >= 0) return;
+        if (res.k === 'win') { winNode = ni; winAct = { rel: st, gap: gap }; return; }
+        if (res.k !== 'arrive') return;
+        var key = qkey(res.s, lv.tper);
+        if (seen[key]) return;
+        seen[key] = 1;
+        nodes.push({ s: res.s, par: ni, act: { rel: st, gap: gap, from: hang.ix }, depth: (node.depth || 0) + 1 });
+        open.push(nodes.length - 1);
+      });
+    }
+    if (winNode < 0) return { ok: false, expanded: expanded, seen: nodes.length };
+    var path = [winAct], cur = winNode;
+    while (nodes[cur].par >= 0) { path.unshift(nodes[cur].act); cur = nodes[cur].par; }
+    return { ok: true, path: path, expanded: expanded, seen: nodes.length };
+  }
+
+  /* نافذة الترك: من حالة تعليق، كم خطوة ترك تنجح في الوصول للحلقة target (أو الهدف) */
+  function winRange(lv, hang, target, o) {
+    var opt = opts(o);
+    opt.relStep = (o && o.relStep) || 1;
+    var good = [], gapsOK = {};
+    var sw = SIM.cloneState(hang);
+    var maxSteps = Math.round(opt.maxHold / DT);
+    for (var st = 0; st <= maxSteps; st += opt.relStep) {
+      if (sw.mode !== SIM.HANG) break;
+      var res = flight(lv, sw, opt.gaps[0], opt);
+      var ok = (target === 'goal') ? res.k === 'win' : (res.k === 'arrive' && res.s.ix === target);
+      if (ok && res.s.resc === hang.resc) good.push(st);
+      for (var q = 0; q < opt.relStep; q++) SIM.step(lv, sw, true);
+    }
+    /* أطول مقطع متصل */
+    var best = [0, 0], run = null;
+    for (var i = 0; i < good.length; i++) {
+      if (run && good[i] - run[1] <= opt.relStep) run[1] = good[i];
+      else { run = [good[i], good[i]]; }
+      if (run[1] - run[0] > best[1] - best[0]) best = [run[0], run[1]];
+    }
+    return { count: good.length, from: best[0], to: best[1], width: (best[1] - best[0] + opt.relStep) * DT, any: good.length > 0 };
+  }
+
+
+  /* مسار متسلسل: من كل حلقة للي بعدها بنافذة ترك مركزية. يرجّع أضيق نافذة */
+  function seqPath(lv, o, startIx, t0) {
+    var opt = opts(o);
+    opt.relStep = 2;
+    var s = SIM.spawnAt(lv, startIx || 0, { t: t0 || 0 });
+    var path = [], minW = 99, ws = [];
+    var n = lv.anchors.length;
+    for (var ti = (startIx || 0) + 1; ti <= n; ti++) {
+      var target = ti < n ? ti : 'goal';
+      var w = winRange(lv, s, target, opt);
+      if (!w.any) return { ok: false, at: ti };
+      var mid = Math.round((w.from + w.to) / 2);
+      mid -= mid % 2;
+      path.push({ rel: mid, gap: opt.gaps[0], target: target, width: w.width });
+      ws.push(w.width);
+      if (w.width < minW) minW = w.width;
+      var c = SIM.cloneState(s);
+      for (var q = 0; q < mid; q++) SIM.step(lv, c, true);
+      var f = flight(lv, c, opt.gaps[0], opt);
+      if (target === 'goal') break;
+      if (f.k !== 'arrive' || f.s.ix !== ti) return { ok: false, at: ti, why: 'arrive' };
+      s = f.s;
+    }
+    return { ok: true, path: path, minWidth: minW, widths: ws };
+  }
+
+  return { solve: solve, seqPath: seqPath, flight: flight, winRange: winRange, releases: releases, qkey: qkey };
+})();
+
+'use strict';
+/* بناء المراحل: توليد حتمي من بذرة + معاملات، والتحقق بالحلّال */
+var LEVELS = (function () {
+  var TAU = Math.PI * 2;
+  function rng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function rr(R, lo, hi) { return lo + (hi - lo) * R(); }
+  function r2(v) { return Math.round(v * 100) / 100; }
+
+  /* مولّد عام: سلسلة حلقات + ميزات حسب المنطقة */
+  function gen(p) {
+    var R = rng(p.seed), anchors = [], leaves = [], drafts = [], i, bits = 0;
+    var yr = p.yr || [100, 150];
+    var x = 40, ry = 120, prevRy = 120;
+    var mvAny = false;
+    for (i = 0; i < p.n; i++) {
+      var L = Math.round(rr(R, p.L[0], p.L[1]));
+      var draft = false;
+      if (i > 0) {
+        var gx = Math.round(rr(R, p.dx[0], p.dx[1]));
+        var gy = Math.round(rr(R, p.dy[0], p.dy[1]));
+        if (p.draft && R() < p.draft && i < p.n - 1) { draft = true; gy -= Math.round(rr(R, 36, 56)); }
+        x += gx; prevRy = ry; ry += gy;
+        if (ry < yr[0]) ry = yr[0] + Math.round(R() * 6);
+        if (ry > yr[1]) ry = yr[1] - Math.round(R() * 6);
+      }
+      var a = { x: x, y: ry - L, L: L, k: 0, cp: (i % p.cpEvery) === 0 };
+      if (i > 0 && !a.cp) {
+        var q = R();
+        if (p.brk && q < p.brk && bits < 28) { a.brk = true; a.bit = 1 << bits++; a.k = 2; }
+        else if (p.fold && q < (p.brk || 0) + p.fold && bits < 28) { a.fold = r2(rr(R, p.foldT[0], p.foldT[1])); a.bit = 1 << bits++; a.k = 4; }
+        else if (p.mv && q < (p.brk || 0) + (p.fold || 0) + p.mv) { a.mv = { A: Math.round(rr(R, p.mvA[0], p.mvA[1])), ph: r2(R() * TAU) }; a.k = 3; mvAny = true; }
+      }
+      if (i > 0) {
+        var pa = anchors[i - 1];
+        if (p.leaf && R() < p.leaf && leaves.length < 14) {
+          leaves.push({ x: Math.round((pa.x + x) / 2 + rr(R, -6, 6)), y: Math.round(Math.max(pa.y + pa.L, ry) + rr(R, p.leafDy[0], p.leafDy[1])), w: Math.round(rr(R, 34, 44)) });
+        }
+        if (draft) drafts.push({ x: Math.round((pa.x + x) / 2), y: Math.round(Math.min(pa.y + pa.L, ry) - 80), w: 28, h: 150 });
+      }
+      anchors.push(a);
+    }
+    var last = anchors[anchors.length - 1];
+    var gx2 = last.x + Math.round(rr(R, p.dx[0], p.dx[1]));
+    var gy2 = last.y + last.L + Math.round(rr(R, p.dy[0], p.dy[1]) * 0.5);
+    var maxY = 0;
+    anchors.forEach(function (a2) { if (a2.y + a2.L > maxY) maxY = a2.y + a2.L; });
+    leaves.forEach(function (l) { if (l.y > maxY) maxY = l.y; });
+    return {
+      id: p.id, name: p.name, area: p.area || 1, seed: p.seed,
+      anchors: anchors, goal: { x: gx2, y: gy2 }, leaves: leaves, drafts: drafts,
+      tper: p.tper || 3.2,
+      killY: maxY + 120, minX: -60, maxX: gx2 + 140, pickups: []
+    };
+  }
+
+  /* يضع قطرات على مسار الحل الفعلي */
+  function addPickups(lv, path) {
+    var s = SIM.makeState(lv), pk = [], lowY = 0;
+    for (var i = 0; i < path.length; i++) {
+      var act = path[i];
+      for (var q = 0; q < act.rel; q++) SIM.step(lv, s, true);
+      var gapSteps = Math.round(act.gap / SIM.DT);
+      var pts = [];
+      SIM.step(lv, s, false);
+      for (var f = 0; f < 700; f++) {
+        SIM.step(lv, s, f >= gapSteps);
+        if (f % 4 === 0) pts.push([s.x, s.y]);
+        if (s.y > lowY) lowY = s.y;
+        if (s.mode === SIM.HANG || s.won || s.dead) break;
+      }
+      if (pts.length > 6) {
+        var a = pts[Math.floor(pts.length * 0.3)], b = pts[Math.floor(pts.length * 0.7)];
+        pk.push({ x: Math.round(a[0]), y: Math.round(a[1]) - 4, t: 0 });
+        pk.push({ x: Math.round(b[0]), y: Math.round(b[1]) - 4, t: (i % 2 === 1) ? 1 : 0 });
+      }
+    }
+    lv.pickups = pk; lv.lowY = Math.round(lowY);
+  }
+
+  /* مواصفات المراحل (بدون بذور): ٦ مناطق × ٤ مراحل، الطول والصعوبة يزيدان تدريجيًا */
+  function makeSpecs() {
+    var out = [], a, w;
+    for (a = 1; a <= 6; a++) {
+      for (w = 0; w < 4; w++) {
+        var i = (a - 1) * 4 + w;
+        var sp = {
+          area: a, n: Math.round(8 + i * 1.15), dx: [60 + 3 * w, 78 + 4 * w + (a > 1 ? 4 : 0)], dy: [-16 - 2 * w, 16 + 2 * w], L: [36, 48],
+          cpEvery: 4 + (a >= 3 ? 1 : 0) + (a >= 5 ? 1 : 0)
+        };
+        if (a === 2) { sp.leaf = [0.9, 0.85, 0.8, 0.8][w]; sp.leafDy = [40, 64]; }
+        if (a === 3) { sp.brk = [0.45, 0.55, 0.6, 0.7][w]; if (w === 3) { sp.leaf = 0.25; sp.leafDy = [44, 66]; } }
+        if (a === 4) { sp.draft = [0.45, 0.45, 0.5, 0.5][w]; sp.yr = [70, 165]; if (w === 3) sp.brk = 0.15; }
+        if (a === 5) { sp.mv = [0.5, 0.4, 0.34, 0.3][w]; if (w === 3) sp.n = 20; if (w === 2) sp.n = 22; sp.mvA = w ? [10, 17] : [14, 22]; sp.tper = [3.2, 3.0, 2.8, 2.6][w]; if (w === 3) sp.brk = 0.1; }
+        if (a === 6) { sp.fold = [0.45, 0.5, 0.55, 0.55][w]; sp.foldT = [[1.2, 1.6], [1.1, 1.5], [1.0, 1.4], [0.95, 1.3]][w]; if (w >= 2) sp.brk = 0.1; }
+        out.push(sp);
+      }
+    }
+    return out;
+  }
+  var SPECS = makeSpecs();
+  /* بذور مثبّتة بعد التحقق (tools/find-seeds.js) */
+  var SEEDS = [5,1,27,14,3,6,9,9,2,5,2,17,9,4,24,3,9,103,46,640,66,90,881,783];
+
+  function specFor(i) {
+    var sp = {};
+    for (var k in SPECS[i]) sp[k] = SPECS[i][k];
+    var g = i / (SPECS.length - 1), within = i % 4;
+    sp.hi = Math.round((0.24 - 0.15 * g + (within === 0 ? 0.03 : 0)) * 100) / 100;
+    sp.lo = Math.max(0.05, Math.round((sp.hi - 0.06) * 100) / 100);
+    sp.id = i + 1; sp.name = 'a' + sp.area + 'l' + (i + 1); sp.seed = SEEDS[i] || 1;
+    return sp;
+  }
+
+  /* مسار حل متسلسل (مع نتيجة التحقق) */
+  function solveLevel(lv) {
+    return SOLVER.seqPath(lv, {});
+  }
+  /* يبني ويحلّ؛ يرجّع المستوى مع lv.minW و lv.ok */
+  function finish(lv) {
+    var r = (typeof SOLVER !== 'undefined') ? solveLevel(lv) : null;
+    lv.ok = !!(r && r.ok);
+    lv.minW = r && r.ok ? r.minWidth : 0;
+    if (r && r.ok) addPickups(lv, r.path);
+    return lv;
+  }
+  function build(def) { return finish(gen(def)); }
+
+  var cache = {};
+  function get(i) {
+    if (!cache[i]) {
+      if (typeof CORE_DATA !== 'undefined' && CORE_DATA[i]) cache[i] = CORE_DATA[i];
+      else { var sv = SIM.getMods(); SIM.setMods({}); cache[i] = build(specFor(i)); SIM.setMods(sv); }
+    }
+    return cache[i];
+  }
+
+  /* نسخة النجمة p من المرحلة i: أطول وأصعب، تتولد وتتحقق (بالخيط الخلفي) */
+  function starLevel(i, p, modsList, maxAttempts) {
+    var saved = SIM.getMods();
+    maxAttempts = maxAttempts || 60;
+    for (var at = 0; at < maxAttempts; at++) {
+      var sp = specFor(i);
+      sp.seed = 7000 + i * 131 + p * 977 + at * 31; sp.n += (at < 24 ? 3 : 1) * p;
+      sp.hi = Math.max(0.11, sp.hi - 0.01 * p) + (at >= 24 ? 0.05 : 0); sp.lo = at >= 24 ? 0.06 : Math.max(0.07, sp.lo - 0.01 * p);
+      sp.id = 3000 + p * 100 + i; sp.name = 's' + p + 'l' + i;
+      SIM.setMods({});
+      var lv = finish(gen(sp));
+      if (!lv.ok || lv.minW < sp.lo || lv.minW > sp.hi) continue;
+      var ok = true;
+      for (var mi = 0; mi < (modsList || []).length && ok; mi++) {
+        SIM.setMods(modsList[mi]);
+        if (!SOLVER.seqPath(lv, {}).ok) ok = false;
+      }
+      SIM.setMods(saved);
+      if (ok) { lv.attempt = at; return lv; }
+    }
+    SIM.setMods(saved);
+    return get(i);   /* احتياط: مرحلة الأساس نفسها (متحقَّقة) بدل مرحلة سهلة */
+  }
+
+  /* ---------- مسارات لا نهائية: تخلط كل القواعد، وتصعب تدريجيًا ---------- */
+  function endlessSpec(k, attempt) {
+    var h = rng(k * 7919 + 13 + attempt * 104729);
+    var d = Math.min(1, k / 40);          /* صعوبة */
+    var n = 8 + Math.floor(h() * 4) + Math.floor(d * 3);
+    var p = {
+      area: 7, n: n, dx: [60 + Math.round(d * 4), 80 + Math.round(d * 8)], dy: [-16, 16], L: [36, 48],
+      cpEvery: d > 0.6 ? 5 : 4, yr: [70, 165], tper: 2.8 + h() * 0.6, mvA: [12, 24], foldT: [1.0, 1.5], leafDy: [42, 66],
+      lo: 0.2 - 0.09 * d
+    };
+    /* نختار ٣-٤ قواعد من الخمس لكل مسار */
+    var rules = ['leaf', 'brk', 'draft', 'mv', 'fold'];
+    for (var i = rules.length - 1; i > 0; i--) { var j = Math.floor(h() * (i + 1)); var t = rules[i]; rules[i] = rules[j]; rules[j] = t; }
+    var cnt = 2 + Math.floor(h() * 2) + (d > 0.5 ? 1 : 0);
+    for (i = 0; i < cnt; i++) {
+      var r = rules[i];
+      p[r] = r === 'leaf' ? 0.6 : (r === 'draft' ? 0.4 : (r === 'brk' ? 0.35 : (r === 'mv' ? 0.35 : 0.3)));
+    }
+    var sum = (p.brk || 0) + (p.fold || 0) + (p.mv || 0);
+    if (sum > 0.9) { var sc = 0.9 / sum; if (p.brk) p.brk *= sc; if (p.fold) p.fold *= sc; if (p.mv) p.mv *= sc; }
+    p.id = 1000 + k; p.name = 'e' + k; p.seed = 1 + k * 977 + attempt * 31;
+    return p;
+  }
+  /* يرجّع أول محاولة تنجح (مع القدرات المطلوبة) */
+  function endless(k, modsList, maxAttempts) {
+    var saved = SIM.getMods();
+    maxAttempts = maxAttempts || 40;
+    for (var at = 0; at < maxAttempts; at++) {
+      var sp = endlessSpec(k, at);
+      var lv, ok = true, mi;
+      SIM.setMods({});
+      lv = finish(gen(sp));
+      if (!lv.ok || lv.minW < sp.lo) continue;
+      for (mi = 0; mi < (modsList || []).length && ok; mi++) {
+        SIM.setMods(modsList[mi]);
+        var r2_ = SOLVER.seqPath(lv, {});
+        if (!r2_.ok) ok = false;
+      }
+      SIM.setMods(saved);
+      if (ok) { lv.attempt = at; return lv; }
+    }
+    SIM.setMods(saved);
+    return null;
+  }
+
+  return {
+    SPECS: SPECS, SEEDS: SEEDS, gen: gen, build: build, finish: finish, get: get, specFor: specFor,
+    count: function () { return SPECS.length; }, addPickups: addPickups, rng: rng, endless: endless, starLevel: starLevel, endlessSpec: endlessSpec
+  };
+})();
+
+'use strict';
+/* غلاف منصّة الألعاب: كل شي يشتغل حتى لو ما في SDK */
+var YT = (function () {
+  var g = null;
+  try { g = (typeof ytgame !== 'undefined' && ytgame) ? ytgame : null; } catch (e) { g = null; }
+  var t0 = Date.now(), lastAd = 0, audio = true;
+  var INTER_GAP = 150000, INTER_FIRST = 3000;
+  function safe(fn, dflt) { try { return fn(); } catch (e) { return dflt; } }
+  function P(v) { return (v && typeof v.then === 'function') ? v : Promise.resolve(v); }
+
+  /* حفظ: SDK أولًا ثم localStorage */
+  function saveData(str) {
+    try { localStorage.setItem('cf1', str); } catch (e) {}
+    if (g && g.game && g.game.saveData) safe(function () { P(g.game.saveData(str)).catch(function () {}); });
+  }
+  function loadData() {
+    var local = null;
+    try { local = localStorage.getItem('cf1'); } catch (e) {}
+    if (!(g && g.game && g.game.loadData)) return Promise.resolve(local);
+    return safe(function () { return P(g.game.loadData()); }, Promise.resolve(local))
+      .then(function (d) { return (typeof d === 'string' && d) ? d : local; }, function () { return local; });
+  }
+  function getLanguage() {
+    if (!(g && g.system && g.system.getLanguage)) return Promise.resolve('');
+    return safe(function () { return P(g.system.getLanguage()); }, Promise.resolve('')).then(function (l) { return typeof l === 'string' ? l : ''; }, function () { return ''; });
+  }
+  function firstFrame() { if (g && g.game && g.game.firstFrameReady) safe(function () { g.game.firstFrameReady(); }); }
+  function ready() { if (g && g.game && g.game.gameReady) safe(function () { g.game.gameReady(); }); }
+  function audioOn() { return audio; }
+  function init(o) {
+    if (!g || !g.system) return;
+    if (g.system.isAudioEnabled) { audio = !!safe(function () { return g.system.isAudioEnabled(); }, true); }
+    if (g.system.onAudioEnabledChange) safe(function () { g.system.onAudioEnabledChange(function (on) { audio = !!on; if (o.onAudio) o.onAudio(audio); }); });
+    if (g.system.onPause) safe(function () { g.system.onPause(function () { if (o.onPause) o.onPause(); }); });
+    if (g.system.onResume) safe(function () { g.system.onResume(function () { if (o.onResume) o.onResume(); }); });
+  }
+  function canRewarded() { return !!(g && g.ads && g.ads.requestRewardedAd); }
+  /* إعلان مكافأة: يرجّع Promise<true> فقط إذا كمّله اللاعب */
+  function rewarded(id) {
+    if (!canRewarded()) return Promise.resolve(false);
+    lastAd = Date.now();
+    return Promise.resolve().then(function () { return g.ads.requestRewardedAd(id); }).then(function () { lastAd = Date.now(); return true; }, function () { lastAd = Date.now(); return false; });
+  }
+  /* إعلان بيني: بس بعد إنجاز كبير، مرة كل ٢٫٥ دقيقة، وأبدًا في أول ٣ ثواني */
+  function interstitialAllowed() {
+    var n = Date.now();
+    return !!(g && g.ads && g.ads.requestInterstitialAd) && n - t0 >= INTER_FIRST && (lastAd === 0 || n - lastAd >= INTER_GAP);
+  }
+  function interstitial() {
+    if (!interstitialAllowed()) return Promise.resolve(false);
+    lastAd = Date.now();
+    return safe(function () { return P(g.ads.requestInterstitialAd()); }, Promise.resolve()).then(function () { lastAd = Date.now(); return true; }, function () { lastAd = Date.now(); return false; });
+  }
+  return { present: !!g, init: init, saveData: saveData, loadData: loadData, getLanguage: getLanguage, firstFrame: firstFrame, ready: ready, audioOn: audioOn, canRewarded: canRewarded, rewarded: rewarded, interstitial: interstitial, interstitialAllowed: interstitialAllowed };
+})();
+
+'use strict';
+/* اللعبة: عرض، إدخال، صوت، واجهة */
+var GAME = (function () {
+  var PAL = PIX.palette(WARM_RAMPS());
+  function WARM_RAMPS() {
+    return {
+      J: ['#0a2a26', '#0f3b33', '#16513f', '#1f6b4d', '#2f8a55'],
+      L: ['#3a7a2a', '#5a9a2a', '#7fb82e', '#a8d83f', '#d4ec7a'],
+      M: ['#6b3016', '#c4561a', '#ff8a1e', '#ffb347', '#ffd98a'],
+      H: ['#7a1f4a', '#a82c5c', '#e0457b', '#f272a0', '#ffa8c5'],
+      T: ['#1d5f64', '#2f857f', '#4fb8b0', '#86d6cc', '#c4ece3'],
+      C: ['#b89a72', '#d9b98a', '#f0d7a2', '#fff1d0', '#fffaea'],
+      F: ['#2a160f', '#4a2616', '#7a4220', '#a8662e', '#d49858']
+    };
+  }
+  var cv, ctx, VW = 144, VH = 256, SC = 1;
+  var $ = function (id) { return document.getElementById(id); };
+  var C = PIX.cid;
+  function clampL(l) { return l < 0 ? 0 : (l > 4 ? 4 : l); }
+  function tintFn(ramp, d) { var rk = PIX.KEYS.indexOf(ramp); return function (c) { return rk * 5 + clampL(PIX.level(c) + d); }; }
+
+  /* ---------- لغة ---------- */
+  var T = {
+    ar: {
+      t1: 'اضغط مطوّلًا على الشاشة', t2: 'اترك وإنت تتأرجح لقدّام', t3: 'اضغط قبل الحلقة اللي بعدها', level: 'المرحلة', win: 'ممتاز!', next: 'التالي', title: 'أرجوحة الغيل', again: 'من جديد',
+      endless: 'مسار بلا نهاية', area: 'المنطقة',
+      r2t: 'أوراق نطّاطة', r2: 'الورقة العملاقة تنطّك لفوق، بس تتعب بعد نطّتين',
+      r3t: 'كروم ضعيفة', r3: 'الكرمة الفاتحة تنقطع بعد أول مسكة، ما فيه رجعة',
+      r4t: 'ضباب الشلال', r4: 'الضباب الصاعد يرفعك لفوق',
+      r5t: 'طيور تشيل الحلقات', r5: 'الطيور تحرّك الحلقات، اضبط توقيتك',
+      r6t: 'أغصان تنطوي', r6: 'الغصن الوردي ينطوي لو طوّلت الضغط',
+      r7t: 'مسار بلا نهاية', r7: 'كل القواعد مخلوطة، وما فيه نهاية',
+      shop: 'القدرات', bal: 'قطراتك', buy: 'اشترِ', max: 'أقصى', close: 'إغلاق',
+      ab_rope: 'حبل أطول', ab_rope_d: 'تمسك أبعد وتتأرجح أوسع',
+      ab_swing: 'تمرجح أسرع', ab_swing_d: 'الدفع أقوى وإنت ماسك',
+      ab_magnet: 'مغناطيس القطرات', ab_magnet_d: 'القطرات والفواكه تجيك',
+      ab_rescue: 'نجدة بالهواء', ab_rescue_d: 'مرة وحدة بالمرحلة ينطّك من تحت',
+      pres: 'نجمة جديدة', presOk: 'اضغط مرة ثانية للتأكيد', presInfo: 'تبدأ من المرحلة الأولى، وتاخذ نجمة: قطرات +٢٥٪ وهالة ذهبية للأبد',
+      presLock: 'تفتح بعد المنطقة السادسة', stars: 'النجوم',
+      rare1: 'زائر نادر! +١٠', rare2: 'مطر! القطرات ×٢', rare3: 'بركة مؤقتة تحتك', adx2: 'القطرات ×٢  (إعلان)', adfree: 'قطرات مجانية  (إعلان)', adnone: 'ما اكتمل الإعلان', areaDone: 'خلصت المناطق الست! المسارات بلا نهاية فتحت',
+      best: 'أفضل',
+      loading: 'جاري تجهيز المسار...', sub: 'تأرجح بين كروم الغابة', play: 'العب', resume: 'كمّل', restart: 'من أول المرحلة', upgrades: 'القدرات', paused: 'إيقاف', langName: 'English',
+      rare1: 'زائر نادر!', rare2: 'مطر! القطرات'
+    },
+    en: {
+      t1: 'Press and hold the screen', t2: 'Let go as you swing forward', t3: 'Press again before the next ring', level: 'Level', win: 'Great!', next: 'Next', title: 'Canopy Fling', again: 'Again',
+      endless: 'Endless path', area: 'Area',
+      r2t: 'Bouncy leaves', r2: 'Giant leaves bounce you up, but tire after two bounces',
+      r3t: 'Weak vines', r3: 'Pale vines snap after one grab, no way back',
+      r4t: 'Waterfall mist', r4: 'Rising mist lifts you up',
+      r5t: 'Hornbill rings', r5: 'Birds carry the rings, time your grab',
+      r6t: 'Folding branches', r6: 'Pink branches fold if you hold too long',
+      r7t: 'Endless path', r7: 'Every rule mixed, no end in sight',
+      shop: 'Upgrades', bal: 'Your drops', buy: 'Buy', max: 'Max', close: 'Close',
+      ab_rope: 'Longer rope', ab_rope_d: 'Reach further, swing wider',
+      ab_swing: 'Faster swing', ab_swing_d: 'Stronger pump while holding',
+      ab_magnet: 'Drop magnet', ab_magnet_d: 'Drops and fruit come to you',
+      ab_rescue: 'Air rescue', ab_rescue_d: 'Once per level, bounced back from below',
+      pres: 'New star', presOk: 'Tap again to confirm', presInfo: 'Restart from level 1 and earn a star: drops +25% and a golden halo forever',
+      presLock: 'Unlocks after area six', stars: 'Stars',
+      rare1: 'Rare visitor! +10', rare2: 'Rain shower! Drops x2', rare3: 'A pond appears below', adx2: 'Drops x2  (ad)', adfree: 'Free drops  (ad)', adnone: 'Ad not finished', areaDone: 'All six areas done! Endless paths unlocked',
+      best: 'Best',
+      loading: 'Preparing your path...', sub: 'Swing through the rainforest', play: 'Play', resume: 'Resume', restart: 'Restart level', upgrades: 'Upgrades', paused: 'Paused', langName: 'العربية',
+      rare1: 'Rare visitor!', rare2: 'Rain shower! Drops'
+    }
+  };
+  var lang = 'en';
+  function tr(k) { return T[lang][k]; }
+  function num(n) {
+    if (lang !== 'ar') return String(n);
+    return String(n).replace(/\d/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.charAt(+d); });
+  }
+
+  function isol(txt) { return '\u2066' + txt + '\u2069'; }
+  function plus(n) { return isol('+' + num(n)); }
+  function times(n) { return isol('\u00D7' + num(n)); }
+
+  /* ---------- أيقونات بكسل (قناع SVG) ---------- */
+  var ICONS = {
+    pause: ['........', '.##..##.', '.##..##.', '.##..##.', '.##..##.', '.##..##.', '.##..##.', '........'],
+    drop: ['...##...', '...##...', '..####..', '.######.', '.######.', '.######.', '..####..', '........'],
+    star: ['...##...', '...##...', '########', '.######.', '..####..', '.##..##.', '.#....#.', '........'],
+    snd1: ['...#......', '..##...#..', '####....#.', '####..#..#', '####..#..#', '####....#.', '..##...#..', '...#......'],
+    snd0: ['...#......', '..##.#..#.', '####..##..', '####..##..', '####.#..#.', '####......', '..##......', '...#......']
+  };
+  function iconURI(rows) {
+    var d = '', y, x;
+    for (y = 0; y < rows.length; y++) for (x = 0; x < rows[y].length; x++) if (rows[y].charAt(x) === '#') d += 'M' + x + ' ' + y + 'h1v1h-1z';
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + rows[0].length + ' ' + rows.length + "' shape-rendering='crispEdges'><path d='" + d + "'/></svg>";
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+  function setIcon(el, name) { var u = iconURI(ICONS[name]); el.style.webkitMaskImage = u; el.style.maskImage = u; }
+  function starEl() { var i = document.createElement('i'); i.className = 'ic'; setIcon(i, 'star'); i.style.color = '#ffb347'; return i; }
+
+  /* ---------- تخزين ---------- */
+  var save = { lang: '', lvl: 0, drops: 0, tip: 0, ab: { rope: 0, swing: 0, magnet: 0, rescue: 0 }, pr: 0, seen: 0, best: 0, plays: 0 };
+  try { var raw = localStorage.getItem('cf1'); if (raw) { var o = JSON.parse(raw); for (var k in o) save[k] = o[k]; } } catch (e) {}
+  if (save.lang === 'ar' || save.lang === 'en') lang = save.lang;
+  function persist() { YT.saveData(JSON.stringify(save)); }
+  var dbl = false, ytHold = false, adBusy = false, lastWin = 0;
+  var AB = {
+    rope: { max: 3, cost: [20, 50, 120] }, swing: { max: 3, cost: [20, 60, 140] },
+    magnet: { max: 3, cost: [15, 40, 100] }, rescue: { max: 2, cost: [60, 160] }
+  };
+  function applyMods() {
+    SIM.setMods({ dL: 3 * save.ab.rope, pump: 1 + 0.12 * save.ab.swing, rescue: save.ab.rescue });
+  }
+
+  /* ---------- سبرايتات إلى كانفس ---------- */
+  function toCanvas(spr, fn) {
+    var c = document.createElement('canvas'); c.width = spr.w; c.height = spr.h;
+    var x = c.getContext('2d'), img = x.createImageData(spr.w, spr.h);
+    for (var i = 0; i < spr.d.length; i++) {
+      var v = spr.d[i], k = i * 4;
+      if (v === PIX.NONE) { img.data[k + 3] = 0; continue; }
+      if (fn) v = fn(v);
+      var p = PAL[v]; img.data[k] = p[0]; img.data[k + 1] = p[1]; img.data[k + 2] = p[2]; img.data[k + 3] = 255;
+    }
+    x.putImageData(img, 0, 0);
+    return c;
+  }
+  function bufCanvas(buf) {
+    var c = document.createElement('canvas'); c.width = buf.w; c.height = buf.h;
+    var x = c.getContext('2d'), img = x.createImageData(buf.w, buf.h);
+    for (var i = 0; i < buf.d.length; i++) {
+      var v = buf.d[i], k = i * 4;
+      if (v === PIX.NONE) { img.data[k + 3] = 0; continue; }
+      var p = PAL[v]; img.data[k] = p[0]; img.data[k + 1] = p[1]; img.data[k + 2] = p[2]; img.data[k + 3] = 255;
+    }
+    x.putImageData(img, 0, 0);
+    return c;
+  }
+  var SPR = {};
+  function buildSprites() {
+    SPR.ring = toCanvas(ART.RING);
+    SPR.drop = toCanvas(ART.DROP); SPR.mango = toCanvas(ART.MANGO); SPR.pit = toCanvas(ART.PITAYA);
+    SPR.nest = toCanvas(ART.NEST);
+    SPR.birdf = ART.BIRDF.map(function (s) { return toCanvas(s); });
+    SPR.horn = ART.HORN.map(function (s2) { return toCanvas(s2); });
+    SPR.hornGold = ART.HORN.map(function (s2) { return toCanvas(s2, function (c) { var r = PIX.ramp(c); return r === 6 || r === 0 ? PIX.cid('M', Math.min(4, PIX.level(c) + 1)) : (r === 5 ? PIX.cid('C', 4) : c); }); });
+    SPR.ringB = toCanvas(ART.RING, function (c) { return PIX.cid('L', PIX.level(c)); });
+    SPR.ringF = toCanvas(ART.RING, function (c) { return PIX.cid('H', PIX.level(c)); });
+    SPR.leafCache = {};
+    SPR.fr = {};
+    ['idle', 'swing', 'fly', 'joy', 'fall'].forEach(function (k) {
+      SPR.fr[k] = FRAME_MAPS[k].map(function (fm) { return { c: toCanvas(PIX.sprite(fm.r)), p: [fm.p[0] + 1, fm.p[1] + 1] }; });
+    });
+    SPR.fr.grab = { c: toCanvas(PIX.sprite(FRAME_MAPS.grab.r)), p: [FRAME_MAPS.grab.p[0] + 1, FRAME_MAPS.grab.p[1] + 1] };
+  }
+
+  /* ورقة نطّاطة بعرض معيّن وحالة (0 جديدة، 1 تعبت، 2 خلصت): تمديد أعمدة المنتصف بأعداد صحيحة */
+  function leafSprite(w, state, pond) {
+    var key = w + ':' + state + ':' + (pond ? 1 : 0);
+    if (SPR.leafCache[key]) return SPR.leafCache[key];
+    var b = ART.LEAF_BIG, nw = Math.max(b.w, w), h = b.h, d = new Array(nw * h), x, y, sx;
+    for (y = 0; y < h; y++) for (x = 0; x < nw; x++) {
+      sx = x < (b.w >> 1) ? x : (x >= nw - (b.w >> 1) ? x - (nw - b.w) : (b.w >> 1));
+      d[y * nw + x] = b.d[y * b.w + sx];
+    }
+    var rk = pond ? 'T' : (state === 0 ? 'J' : (state === 1 ? 'L' : 'M'));
+    var c = toCanvas({ w: nw, h: h, d: d }, function (v) { return PIX.cid(rk, state === 0 && !pond ? Math.min(4, PIX.level(v) + 1) : Math.min(4, PIX.level(v) + 1)); });
+    return (SPR.leafCache[key] = c);
+  }
+
+  /* ---------- خلفيات مخبوزة ---------- */
+  var LAY = {};
+  function pnoise(x, per, seed) {
+    x = ((x % per) + per) % per;
+    return PIX.vnoise(x * 0.04, seed) * (1 - x / per) + PIX.vnoise((x - per) * 0.04, seed) * (x / per);
+  }
+  function bakeLayers() {
+    var W = VW, H = VH, i, x, y;
+    /* سما + شمس + أشعة */
+    var b = new PIX.Buf(W, H);
+    var sky = ['T2', 'T3', 'C3', 'M4', 'M3'].map(function (s) { return C(s.charAt(0), +s.charAt(1)); });
+    for (y = 0; y < H; y++) for (x = 0; x < W; x++) b.d[y * W + x] = PIX.grad(sky, y / (H * 0.8), x, y);
+    var sx = W * 0.8, sy = H * 0.1;
+    for (y = 0; y < H; y++) for (x = 0; x < W; x++) {
+      var dx = x - sx, dy = y - sy, d = Math.sqrt(dx * dx + dy * dy) + 0.001;
+      if (d < 7) { b.d[y * W + x] = C('C', 4); continue; }
+      var tt = 1 - (d - 7) / (W * 0.95);
+      if (tt > 0) { tt *= tt; if (PIX.dth(x, y, tt * 0.95)) b.d[y * W + x] = tt > 0.4 ? C('C', 4) : C('M', 4); }
+      var a = Math.atan2(dy, dx) * 8;
+      var v = Math.pow((Math.sin(a + 1.3) * 0.5 + 0.5) * (Math.sin(a * 2.3 + 1.7) * 0.5 + 0.5), 1.3);
+      var tr = v * Math.max(0, 1 - d / (Math.max(W, H) * 1.2));
+      if (PIX.dth(x, y, tr)) { var c0 = b.d[y * W + x]; b.d[y * W + x] = tr > 0.4 ? PIX.cid(PIX.ramp(c0) === 4 ? 'C' : (PIX.ramp(c0) === 5 ? 'M' : PIX.KEYS[PIX.ramp(c0)]), clampL(PIX.level(c0) + 1)) : PIX.lift(c0, 1); }
+    }
+    LAY.sky = bufCanvas(b);
+    var mb = new PIX.Buf(W, H); mb.fill(PIX.NONE);
+    for (y = 0; y < H; y++) { var my = 1 - Math.abs(y / H - 0.52) / 0.3; if (my <= 0) continue; for (x = 0; x < W; x++) if (PIX.dth(x, y, my * 0.38)) mb.d[y * W + x] = (y + x) % 5 === 0 ? C('M', 4) : C('C', 3); }
+    LAY.mist = bufCanvas(mb);
+
+    var SW = 256;
+    /* سلاسل + شلالات */
+    function ridgeStrip(base, amp, col, rim, seed, falls) {
+      var h = Math.round(H * 0.5), r = new PIX.Buf(SW, h); r.fill(PIX.NONE);
+      for (x = 0; x < SW; x++) {
+        var y0 = Math.round(h * 0.15 + (pnoise(x, SW, seed) - 0.5) * 2 * amp + (pnoise(x * 2.7, SW, seed + 9) - 0.5) * amp * 0.5);
+        for (y = y0; y < h; y++) r.d[y * SW + x] = (y <= y0 + 1) ? rim : col;
+      }
+      (falls || []).forEach(function (fx) {
+        for (var j = 0; j < 22; j++) for (var q = 0; q < 2; q++) r.set(fx + q, Math.round(h * 0.15 + amp + j), ((j + q * 3) % 7) === 0 ? C('T', 3) : C('C', 4));
+      });
+      return bufCanvas(r);
+    }
+    LAY.ridge1 = ridgeStrip(0, 9, C('T', 3), C('T', 4), 11, [60, 170]);
+    LAY.ridge2 = ridgeStrip(0, 8, C('T', 2), C('T', 3), 21, []);
+    /* بحر القمم */
+    function crowns(rowH, n, keys, tint, seed, fogCol, fogStr) {
+      var r = new PIX.Buf(SW, rowH), R = PIX.rng(seed); r.fill(PIX.NONE);
+      var list = [];
+      for (var q = 0; q < n; q++) list.push({ x: (q / n) * SW + (R() - 0.5) * 8, y: rowH * 0.55 + (R() - 0.5) * 6, s: ART.CL[keys[(R() * keys.length) | 0]], f: R() < 0.5 });
+      list.sort(function (a, b2) { return a.y - b2.y; });
+      list.forEach(function (p) {
+        [-SW, 0, SW].forEach(function (o) { PIX.stamp(r, p.s, p.x + o - p.s.w / 2, p.y - p.s.h / 2, p.f, tint); });
+      });
+      if (fogCol !== undefined) for (y = 0; y < rowH; y++) for (var xx = 0; xx < SW; xx++) {
+        var vv = r.d[y * SW + xx];
+        if (vv !== PIX.NONE && PIX.dth(xx, y, fogStr * (1 - y / rowH))) r.d[y * SW + xx] = fogCol;
+      }
+      return bufCanvas(r);
+    }
+    LAY.crown1 = crowns(60, 9, ['c40', 'c56'], tintFn('T', -1), 5, C('T', 4), 0.8);
+    LAY.crown2 = crowns(56, 10, ['c30', 'c40'], function (c) { return C('T', clampL(PIX.level(c) - 1)); }, 6, C('T', 3), 0.6);
+    LAY.crown3 = crowns(60, 9, ['c40', 'c56'], function (c) { return C('J', clampL(PIX.level(c) - 1)); }, 7);
+    /* إطار علوي: أوراق وكروم */
+    var fh = 78, fb = new PIX.Buf(SW, fh), FR = PIX.rng(31); fb.fill(PIX.NONE);
+    var fl = [];
+    for (i = 0; i < 40; i++) fl.push({ x: FR() * SW, y: -4 + FR() * 56, s: ART.CL[['c18', 'c24', 'c30', 'c40'][(FR() * 4) | 0]], f: FR() < 0.5, lime: FR() < 0.45 });
+    fl.sort(function (a, b2) { return a.y - b2.y; });
+    fl.forEach(function (p) {
+      var up = p.y < 24 ? 1 : 0;
+      [-SW, 0, SW].forEach(function (o) { PIX.stamp(fb, p.s, p.x + o - p.s.w / 2, p.y - p.s.h / 2, p.f, p.lime ? tintFn('L', -1 + up) : tintFn('J', -1 + up)); });
+    });
+    LAY.frame = bufCanvas(fb);
+    /* ورق قريب */
+    var nb = new PIX.Buf(512, 70), NR = PIX.rng(77); nb.fill(PIX.NONE);
+    for (i = 0; i < 6; i++) {
+      var lx = i * 85 + NR() * 30, ly = (i % 2) ? 4 : 40;
+      [-512, 0, 512].forEach(function (o) { PIX.stamp(nb, ART.LEAF_BIG, lx + o, ly, NR() < 0.5, function (c) { return c === 0 ? C('J', 0) : C('J', clampL(PIX.level(c) - 2)); }); });
+    }
+    LAY.near = bufCanvas(nb);
+  }
+
+  /* ---------- حالة اللعب ---------- */
+  var lv, st, held = false, camX = 0, camY = 110, parts = [], flash = 0, shake = 0;
+  var phase = 'play', phaseT = 0, grabAnim = 0, picked = {}, lvlDrops = 0, tipStep = 0, birds = [];
+  var levelIdx = 0, CORE = 24, leafAnim = [], rare = null, rain = false, pondDone = false, cardT = 0, toastT = 0, menuOpen = false, screenMode = null, shopBack = null;
+  var deathsHere = 0, deadX = 0;
+
+  /* ---------- مسارات لا نهائية: تتولد وتتحقق بخيط خلفي ---------- */
+  var worker = null, ecache = {}, epend = {};
+  var ALLMODS = [];
+  [0, 3, 6, 9].forEach(function (dl) { [1, 1.12, 1.24, 1.36].forEach(function (pm) { ALLMODS.push({ dL: dl, pump: pm, rescue: (dl + (pm > 1.2 ? 1 : 0)) % 3 }); }); });
+  function modsList() { return ALLMODS; }
+  function initWorker() {
+    try {
+      var src = document.getElementById('wsrc');
+      if (!src || !window.Worker || !window.Blob || !window.URL) return;
+      var url = URL.createObjectURL(new Blob([src.textContent], { type: 'text/javascript' }));
+      worker = new Worker(url);
+      worker.onmessage = function (e) { var d = e.data; if (d && d.lv) ecache[d.k] = d.lv; if (d) delete epend[d.k]; };
+      worker.onerror = function () { worker = null; };
+    } catch (e) { worker = null; }
+  }
+  function wantEndless(k) { want('e' + k, { k: 'e' + k, ek: k, mods: modsList() }); }
+  function wantStar(i, p) { want('s' + p + ':' + i, { k: 's' + p + ':' + i, i: i, star: p, mods: modsList() }); }
+  function want(key, msg) {
+    if (ecache[key] || epend[key]) return;
+    if (worker) { epend[key] = 1; try { worker.postMessage(msg); } catch (e) { worker = null; delete epend[key]; } }
+  }
+  function getEndless(k) {
+    var key = 'e' + k;
+    if (!ecache[key]) { ecache[key] = LEVELS.endless(k, modsList(), 60); delete epend[key]; }
+    return ecache[key];
+  }
+  function getStar(i, p) {
+    var key = 's' + p + ':' + i;
+    if (!ecache[key]) { ecache[key] = LEVELS.starLevel(i, p, modsList(), 60); delete epend[key]; }
+    return ecache[key];
+  }
+  function getCore(i) {
+    var sv = SIM.getMods(); SIM.setMods({});
+    var l = LEVELS.get(i);
+    SIM.setMods(sv);
+    return l;
+  }
+
+  function areaOf(i) { return i < CORE ? ((i / 4) | 0) + 1 : 7; }
+  function rollSurprises() {
+    rare = null; rain = false;
+    if (levelIdx < 3) return;
+    var R = LEVELS.rng(save.plays * 131 + levelIdx * 7 + 5), q = R();
+    if (q < 0.12 && lv.pickups.length > 4) {
+      var pk = lv.pickups[Math.floor(lv.pickups.length * (0.35 + 0.3 * R()))];
+      rare = { cx: pk.x, cy: pk.y - 6, t: 0, got: false };
+    } else if (q < 0.22) { rain = true; }
+  }
+  function showCard(title, body, secs) {
+    $('cardt').textContent = title; $('cardb').textContent = body;
+    $('card').style.display = 'flex'; cardT = secs || 4.5;
+  }
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.style.display = 'block'; toastT = 2.2; }
+
+  function needKey(i) { return i >= CORE ? 'e' + (i - CORE) : (save.pr > 0 ? 's' + save.pr + ':' + i : null); }
+  var waitI = -1;
+  function loadLevel(i) {
+    applyMods();
+    var nk = needKey(i);
+    if (nk && !ecache[nk] && worker) {
+      /* المسار قيد التحقق بالخيط الخلفي: ننتظر بدون تجميد */
+      if (i >= CORE) wantEndless(i - CORE); else wantStar(i, save.pr);
+      waitI = i; phase = 'loading'; levelIdx = i;
+      showCard(tr('title'), tr('loading'), 600);
+      return;
+    }
+    waitI = -1;
+    levelIdx = i;
+    var base = i < CORE ? (save.pr > 0 ? getStar(i, save.pr) : getCore(i)) : getEndless(i - CORE);
+    if (!base) base = getCore(0);
+    lv = {}; for (var k in base) lv[k] = base[k];
+    lv.leaves = base.leaves.slice();
+    lv.pickups = base.pickups.map(function (q) { return { x: q.x, y: q.y, t: q.t }; });
+    st = SIM.makeState(lv);
+    picked = {}; lvlDrops = 0; parts = []; birds = []; phase = 'play'; phaseT = 0; flash = 0; leafAnim = []; deathsHere = 0; pondDone = false;
+    camX = st.x - VW * 0.38; camY = st.y - VH * 0.54 + 12;
+    tipStep = (levelIdx === 0 && !save.tip) ? 1 : 0;
+    $('win').style.display = 'none';
+    save.plays++;
+    rollSurprises();
+    var ar = areaOf(i);
+    if (ar >= 2 && !(save.seen & (1 << ar))) {
+      save.seen |= (1 << ar); persist();
+      showCard(tr('r' + ar + 't'), tr('r' + ar), 5);
+    } else { $('card').style.display = 'none'; cardT = 0; }
+    if (rain) toast(tr('rare2') + ' ' + times(2));
+    if (i >= CORE - 1) wantEndless(i + 1 - CORE);
+    if (i < CORE - 1 && save.pr > 0) wantStar(i + 1, save.pr);
+    if (save.lvl >= CORE - 1) wantStar(0, save.pr + 1);
+    hud();
+  }
+  function hud() {
+    $('dropn').textContent = num(save.drops + lvlDrops);
+    var lt = levelIdx < CORE ? tr('level') + ' ' + num(levelIdx + 1) : '\u221E ' + num(levelIdx - CORE + 1);
+    var lel = $('lvl'); lel.textContent = lt;
+    if (save.pr) { lel.appendChild(document.createTextNode(' ')); lel.appendChild(starEl()); lel.appendChild(document.createTextNode(num(save.pr))); }
+    document.querySelector('.hud').style.visibility = menuOpen ? 'hidden' : 'visible';
+    $('card').style.visibility = (screenMode || menuOpen) ? 'hidden' : 'visible';
+    var tip = $('tip');
+    if (tipStep >= 1 && tipStep <= 3 && !screenMode && !menuOpen) { tip.textContent = tr('t' + tipStep); tip.style.display = 'block'; } else tip.style.display = 'none';
+  }
+
+  /* ---------- متجر القدرات ---------- */
+  var presArm = 0, shopDirty = false;
+  function shopRender() {
+    $('shoph').textContent = tr('shop');
+    $('bfree').style.display = YT.canRewarded() ? '' : 'none'; $('bfree').textContent = tr('adfree') + ' +' + num(25);
+    $('shopbal').textContent = tr('bal') + ': ' + num(save.drops) + (save.pr ? '   ' + tr('stars') + ': ' + num(save.pr) : '');
+    var box = $('shoplist'); box.innerHTML = '';
+    ['rope', 'swing', 'magnet', 'rescue'].forEach(function (k) {
+      var lvn = save.ab[k], def = AB[k], row = document.createElement('div'); row.className = 'row';
+      var info = document.createElement('div');
+      var nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = tr('ab_' + k);
+      var ds = document.createElement('div'); ds.className = 'ds'; ds.textContent = tr('ab_' + k + '_d');
+      var pips = document.createElement('div'); pips.className = 'pips'; for (var pi = 0; pi < def.max; pi++) { var pe = document.createElement('i'); if (pi >= lvn) pe.className = 'off'; pips.appendChild(pe); }
+      info.appendChild(nm); info.appendChild(ds); info.appendChild(pips);
+      var bt = document.createElement('button');
+      if (lvn >= def.max) { bt.textContent = tr('max'); bt.disabled = true; }
+      else { var cost = def.cost[lvn]; bt.textContent = num(cost); bt.disabled = save.drops < cost; bt.onclick = function () { buy(k); }; }
+      row.appendChild(info); row.appendChild(bt); box.appendChild(row);
+    });
+    var bp = $('bpres'), ok = save.lvl >= CORE;
+    bp.textContent = ok ? (presArm ? tr('presOk') : tr('pres')) : tr('presLock');
+    bp.disabled = !ok; bp.style.opacity = ok ? 1 : 0.5;
+    $('bclose').textContent = tr('close');
+  }
+  function buy(k) {
+    var def = AB[k], lvn = save.ab[k];
+    if (lvn >= def.max || save.drops < def.cost[lvn]) return;
+    save.drops -= def.cost[lvn]; save.ab[k]++; shopDirty = true; applyMods(); persist(); sfx('pick', 3); shopRender(); hud();
+  }
+  function openShop() { if (menuOpen) return; menuOpen = true; held = false; presArm = 0; shopRender(); $('shop').style.display = 'flex'; hud(); }
+  function closeShop() {
+    menuOpen = false; presArm = 0; $('shop').style.display = 'none';
+    if (shopDirty && phase === 'play') {
+      shopDirty = false; save.plays--; loadLevel(levelIdx);
+      if (screenMode === 'start') hud();
+    } else hud();
+  }
+  function doPrestige() {
+    if (save.lvl < CORE) return;
+    if (!presArm) { presArm = 1; shopRender(); return; }
+    save.pr++; save.lvl = 0; save.seen = 0; presArm = 0; persist();
+    closeShop(); loadLevel(0); toast(tr('stars') + ' ' + num(save.pr));
+    if (save.tip && YT.interstitialAllowed()) { adBusy = true; held = false; suspendAudio(true); YT.interstitial().then(function () { adBusy = false; suspendAudio(false); }); }
+  }
+
+  /* ---------- صوت ---------- */
+  var AU = { ctx: null, master: null, on: true, sdk: true, started: false, nextNote: 0, step: 0 };
+  function audioInit() {
+    if (AU.ctx) return;
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      AU.ctx = new AC();
+      AU.master = AU.ctx.createGain(); AU.master.gain.value = (AU.on && AU.sdk) ? 0.8 : 0; AU.master.connect(AU.ctx.destination);
+      /* ضجيج للمطر/الحفيف */
+      var len = AU.ctx.sampleRate * 2, buf = AU.ctx.createBuffer(1, len, AU.ctx.sampleRate), d = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      AU.noise = buf;
+      AU.nextNote = AU.ctx.currentTime + 0.1;
+      /* مطر خفيف دايم */
+      var ns = AU.ctx.createBufferSource(); ns.buffer = buf; ns.loop = true;
+      var f = AU.ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 3200; f.Q.value = 0.6;
+      var g = AU.ctx.createGain(); g.gain.value = 0.035;
+      ns.connect(f); f.connect(g); g.connect(AU.master); ns.start();
+    } catch (e) { AU.ctx = null; }
+  }
+  function tone(freq, t, dur, type, vol, dest) {
+    var o = AU.ctx.createOscillator(), g = AU.ctx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dest || AU.master); o.start(t); o.stop(t + dur + 0.05);
+  }
+  function sfx(name, a) {
+    if (!AU.ctx || !AU.on || !AU.sdk) return;
+    var t = AU.ctx.currentTime;
+    if (name === 'grab') { tone(392, t, 0.25, 'triangle', 0.22); tone(587, t + 0.04, 0.2, 'sine', 0.12); }
+    else if (name === 'release') {
+      var ns = AU.ctx.createBufferSource(); ns.buffer = AU.noise;
+      var f = AU.ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.2;
+      f.frequency.setValueAtTime(600, t); f.frequency.exponentialRampToValueAtTime(2600, t + 0.25);
+      var g = AU.ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.18, t + 0.04); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+      ns.connect(f); f.connect(g); g.connect(AU.master); ns.start(t); ns.stop(t + 0.35);
+    }
+    else if (name === 'pick') { var n = (a || 0) % 5; var sc = [784, 880, 1047, 1175, 1319]; tone(sc[n], t, 0.35, 'sine', 0.2); tone(sc[n] * 2, t, 0.2, 'sine', 0.06); }
+    else if (name === 'bounce') { tone(262, t, 0.3, 'sine', 0.2); tone(523, t + 0.03, 0.25, 'triangle', 0.1); tone(660, t + 0.08, 0.2, 'sine', 0.06); }
+    else if (name === 'snap') { tone(180, t, 0.12, 'square', 0.1); tone(120, t + 0.05, 0.18, 'triangle', 0.12); }
+    else if (name === 'rare') { [880, 1175, 1568].forEach(function (f2, i) { tone(f2, t + i * 0.07, 0.5, 'sine', 0.16); }); }
+    else if (name === 'dead') { tone(220, t, 0.35, 'triangle', 0.18); tone(147, t + 0.1, 0.4, 'triangle', 0.15); }
+    else if (name === 'win') { [523, 659, 784, 1047, 1319].forEach(function (f2, i) { tone(f2, t + i * 0.09, 0.7, 'triangle', 0.2); }); }
+  }
+  /* موسيقى: كاليمبا بسلّم خماسي + نقر مارمبا */
+  var MEL = [0, 2, 4, 7, 9, 12, 9, 7, 4, 2, 4, 7, 2, 0, -3, 0];
+  function music() {
+    if (!AU.ctx || !AU.on || !AU.sdk) return;
+    var now = AU.ctx.currentTime;
+    while (AU.nextNote < now + 0.4) {
+      var s = AU.step, t = AU.nextNote;
+      var semi = MEL[s % MEL.length];
+      var f = 261.63 * Math.pow(2, semi / 12);
+      if (s % 2 === 0) tone(f * 2, t, 0.5, 'sine', 0.07);
+      if (s % 4 === 0) tone(f / 2, t, 0.45, 'triangle', 0.08);
+      if (Math.random() < 0.08) { tone(1800 + Math.random() * 900, t, 0.12, 'sine', 0.025); tone(2400 + Math.random() * 600, t + 0.1, 0.1, 'sine', 0.02); }
+      if (Math.random() < 0.05) { tone(150, t, 0.1, 'square', 0.02); tone(170, t + 0.12, 0.1, 'square', 0.02); }
+      AU.nextNote += 0.3; AU.step++;
+    }
+  }
+  function setMute(on) {
+    AU.on = on; if (AU.master) AU.master.gain.value = (on && AU.sdk) ? 0.8 : 0;
+    setIcon($('bsi'), on ? 'snd1' : 'snd0');
+  }
+
+  /* ---------- إدخال ---------- */
+  function press() {
+    audioInit(); if (AU.ctx && AU.ctx.state === 'suspended') AU.ctx.resume();
+    held = true;
+  }
+  function lift() { held = false; }
+  /* ---------- قائمة البداية / الإيقاف ---------- */
+  function menuLabels() {
+    $('mtitle').textContent = screenMode === 'pause' ? tr('paused') : tr('title');
+    $('msub').textContent = tr('sub');
+    $('bplay').textContent = screenMode === 'pause' ? tr('resume') : tr('play');
+    $('brestart').textContent = tr('restart');
+    $('brestart').style.display = screenMode === 'pause' ? '' : 'none';
+    $('bshop').textContent = tr('upgrades');
+    $('blang').textContent = tr('langName');
+    setIcon($('bsi'), AU.on ? 'snd1' : 'snd0');
+  }
+  function showMenu(mode) {
+    if (screenMode === mode) return;
+    screenMode = mode; held = false;
+    var m = $('menu'); m.className = mode; m.style.display = 'flex';
+    menuLabels(); hud();
+  }
+  function hideMenu() {
+    screenMode = null; held = false; $('menu').style.display = 'none'; hud();
+  }
+  function togglePause() { if (menuOpen) return; if (screenMode === 'pause') hideMenu(); else if (!screenMode && $('win').style.display !== 'flex') showMenu('pause'); }
+
+  /* ---------- إعلانات (اختيارية، ما تاخذ شي إذا ما اكتملت) ---------- */
+  function suspendAudio(on) { try { if (AU.ctx) { if (on) AU.ctx.suspend(); else if (AU.on && AU.sdk) AU.ctx.resume(); } } catch (e) {} }
+  function runRewarded(id, grant) {
+    if (adBusy || !YT.canRewarded()) return;
+    adBusy = true; held = false; suspendAudio(true);
+    YT.rewarded(id).then(function (ok) {
+      adBusy = false; suspendAudio(false);
+      if (ok) grant(); else toast(tr('adnone'));
+    });
+  }
+  /* إنجاز كبير: نهاية منطقة، أو كل ١٠ مراحل في المسارات */
+  function bigWin() {
+    if (!save.tip || adBusy) return;
+    var big = (levelIdx < CORE && (levelIdx + 1) % 4 === 0) || (levelIdx >= CORE && (levelIdx - CORE + 1) % 10 === 0);
+    if (!big || !YT.interstitialAllowed()) return;
+    adBusy = true; held = false; suspendAudio(true);
+    YT.interstitial().then(function () { adBusy = false; suspendAudio(false); });
+  }
+  function bindInput() {
+    var tgt = $('stage');
+    tgt.addEventListener('pointerdown', function (e) { e.preventDefault(); if (menuOpen || screenMode) return; press(); }, { passive: false });
+    window.addEventListener('pointerup', lift);
+    window.addEventListener('pointercancel', lift);
+    window.addEventListener('blur', lift);
+    window.addEventListener('keydown', function (e) {
+      if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (!e.repeat && !menuOpen && !screenMode) press(); }
+      else if (e.code === 'Escape') { if (menuOpen) closeShop(); else togglePause(); }
+      else if (e.code === 'KeyR') restart();
+    });
+    window.addEventListener('keyup', function (e) { if (e.code === 'Space' || e.code === 'ArrowUp') lift(); });
+    function btn(id, fn) { var b = $(id); b.addEventListener('pointerdown', function (e) { e.stopPropagation(); }); b.addEventListener('click', function (e) { e.stopPropagation(); fn(); }); }
+    btn('bsound', function () { audioInit(); setMute(!AU.on); });
+    btn('blang', function () { lang = lang === 'ar' ? 'en' : 'ar'; save.lang = lang; persist(); applyLang(); });
+    btn('bpause', togglePause);
+    btn('bplay', function () { audioInit(); if (AU.ctx && AU.ctx.state === 'suspended') AU.ctx.resume(); hideMenu(); });
+    btn('brestart', function () { hideMenu(); save.plays--; loadLevel(levelIdx); });
+    btn('bshop', openShop);
+    btn('bclose', closeShop);
+    btn('bpres', doPrestige);
+    btn('bnext', function () { loadLevel(save.lvl); });
+    btn('badd', function () {
+      if (dbl) return;
+      runRewarded('double_drops', function () { dbl = true; save.drops += lastWin; persist(); hud(); $('badd').style.display = 'none'; sfx('pick', 3); toast('+' + num(lastWin)); });
+    });
+    btn('bfree', function () {
+      runRewarded('free_drops', function () { save.drops += 25; persist(); shopRender(); hud(); sfx('pick', 3); });
+    });
+  }
+  function applyLang() {
+    document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    $('winmsg').textContent = tr('win'); $('bnext').textContent = tr('next');
+    if (menuOpen) shopRender();
+    menuLabels(); hud();
+  }
+  function restart() { if (menuOpen || screenMode) return; save.plays--; loadLevel(levelIdx); }
+
+  /* ---------- جسيمات ---------- */
+  function burst(x, y, n, cols, sp) {
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * 6.283, v = (0.4 + Math.random()) * sp;
+      parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - sp * 0.4, life: 0.5 + Math.random() * 0.4, c: cols[(Math.random() * cols.length) | 0] });
+    }
+  }
+
+  /* ---------- تحديث ---------- */
+  var acc = 0, last = 0, tAll = 0;
+  function stepWorld() {
+    var ev = [];
+    var wasMode = st.mode;
+    SIM.step(lv, st, held, ev);
+    for (var i = 0; i < ev.length; i++) {
+      var e = ev[i];
+      if (e.t === 'grab') {
+        sfx('grab'); grabAnim = 0.14;
+        burst(st.x, st.y - 6, 7, [C('T', 4), C('T', 3), C('C', 4)], 55);
+        if (tipStep === 1) { tipStep = 2; hud(); }
+        else if (tipStep === 3) { tipStep = 0; save.tip = 1; persist(); hud(); }
+      } else if (e.t === 'release') {
+        sfx(e.cut ? 'snap' : 'release'); shake = 0.6;
+        if (e.cut || e.forced) burst(e.cut && !e.forced ? st.x : st.x, st.y - 10, 8, [C('L', 3), C('L', 2), C('M', 3)], 45);
+        if (tipStep === 2) { tipStep = 3; hud(); }
+      } else if (e.t === 'bounce') {
+        sfx('bounce'); leafAnim[e.i] = 0.2; shake = 0.5;
+        burst(e.x, e.y, 8, [C('L', 3), C('L', 4), C('T', 4)], 55);
+      } else if (e.t === 'rescue') {
+        sfx('rare'); burst(e.x, e.y + 6, 14, [C('C', 4), C('T', 4), C('M', 4)], 80); flash = 0.5;
+      } else if (e.t === 'dead') {
+        sfx('dead'); phase = 'dead'; phaseT = 0; deathsHere++; deadX = st.x;
+      } else if (e.t === 'win') {
+        sfx('win'); phase = 'win'; phaseT = 0; flash = 1;
+        for (var b = 0; b < 16; b++) birds.push({ x: st.x - 40 + Math.random() * 80, y: st.y + Math.random() * 30, vx: 40 + Math.random() * 60, vy: -30 - Math.random() * 60, ph: Math.random() * 6 });
+        burst(st.x, st.y, 30, [C('M', 3), C('M', 4), C('L', 3), C('C', 4), C('H', 3)], 90);
+      }
+    }
+    /* قطرات */
+    var mr = 14 + 9 * save.ab.magnet, gain = (1 + 0.25 * save.pr) * (rain ? 2 : 1);
+    for (var p = 0; p < lv.pickups.length; p++) {
+      if (picked[p]) continue;
+      var pk = lv.pickups[p], dx = st.x - pk.x, dy = (st.y + 6) - pk.y, dd = dx * dx + dy * dy;
+      if (save.ab.magnet && dd < mr * mr * 3 && dd > 1) { var dl = Math.sqrt(dd), pull = Math.min(1.6, 60 * SIM.DT * 1.2 / 1); pk.x += dx / dl * pull; pk.y += dy / dl * pull; }
+      if (dd < mr * mr) {
+        picked[p] = 1; lvlDrops += Math.round((pk.t ? 3 : 1) * gain); sfx('pick', p);
+        burst(pk.x, pk.y, 9, [C('T', 4), C('C', 4), pk.t ? C('M', 3) : C('T', 3)], 50);
+        hud();
+      }
+    }
+    /* زائر نادر */
+    if (rare && !rare.got) {
+      var rx = rare.cx + Math.cos(rare.t * 1.6) * 12, ry = rare.cy + Math.sin(rare.t * 2.2) * 6;
+      var ddx = st.x - rx, ddy = st.y - ry;
+      if (ddx * ddx + ddy * ddy < 18 * 18) {
+        rare.got = true; lvlDrops += 10; sfx('rare'); toast(tr('rare1') + ' ' + plus(10)); hud();
+        burst(rx, ry, 18, [C('M', 4), C('M', 3), C('C', 4)], 70);
+      }
+    }
+  }
+  function update(dt) {
+    tAll += dt;
+    if (ytHold || adBusy) return;
+    if (screenMode || menuOpen) { music(); return; }
+    if (phase === 'loading') {
+      var wk = needKey(waitI);
+      if (ecache[wk] || (!epend[wk] && worker)) { var wi = waitI; $('card').style.display = 'none'; cardT = 0; if (!ecache[wk]) { worker = null; } loadLevel(wi); }
+      return;
+    }
+    if (phase === 'play') {
+      acc += dt; var n = 0;
+      while (acc >= SIM.DT && n < 12) { stepWorld(); acc -= SIM.DT; n++; if (phase !== 'play') break; }
+      if (acc > 0.1) acc = 0;
+    } else if (phase === 'dead') {
+      phaseT += dt;
+      if (phaseT > 0.55) {
+        SIM.respawn(lv, st); st.idle = true; phase = 'play'; held = false; camX = st.x - VW * 0.38; leafAnim = [];
+        /* بركة مؤقتة بعد أول سقطة (أحيانًا) */
+        if (!pondDone && deathsHere >= 1 && lv.lowY && lv.killY - 30 > lv.lowY + 14 && ((save.plays * 7 + levelIdx) % 5 === 0)) {
+          pondDone = true; lv.leaves.push({ x: Math.round(Math.max(lv.anchors[0].x, Math.min(lv.goal.x, deadX))), y: lv.killY - 30, w: 90, pond: true });
+          toast(tr('rare3'));
+        }
+      }
+    } else if (phase === 'win') {
+      phaseT += dt;
+      if (phaseT > 1.4 && $('win').style.display !== 'flex') {
+        $('win').style.display = 'flex';
+        var bonus = Math.round(5 * (1 + 0.25 * save.pr));
+        lastWin = lvlDrops + bonus; save.drops += lastWin; lvlDrops = 0; dbl = false;
+        if (levelIdx + 1 > save.lvl) save.lvl = levelIdx + 1;
+        else if (levelIdx >= save.lvl) save.lvl = levelIdx + 1;
+        if (save.lvl > CORE && save.lvl - CORE > save.best) save.best = save.lvl - CORE;
+        persist(); hud();
+        $('winmsg').textContent = tr('win');
+        $('winsub').textContent = plus(bonus) + (levelIdx === CORE - 1 ? '  ' + tr('areaDone') : '');
+        $('badd').style.display = YT.canRewarded() ? '' : 'none'; $('badd').textContent = tr('adx2');
+        bigWin();
+        if (levelIdx + 1 >= CORE) wantEndless(levelIdx + 1 - CORE);
+        if (levelIdx + 1 >= CORE - 1) wantStar(0, save.pr + 1);
+      }
+    }
+    if (grabAnim > 0) grabAnim -= dt;
+    if (rare) rare.t += dt;
+    for (var li = 0; li < leafAnim.length; li++) if (leafAnim[li] > 0) leafAnim[li] -= dt;
+    if (cardT > 0) { cardT -= dt; if (cardT <= 0) $('card').style.display = 'none'; }
+    if (toastT > 0) { toastT -= dt; if (toastT <= 0) $('toast').style.display = 'none'; }
+    if (shake > 0) shake -= dt * 3;
+    if (flash > 0) flash -= dt * 0.9;
+    for (var i = parts.length - 1; i >= 0; i--) {
+      var q = parts[i]; q.life -= dt;
+      if (q.life <= 0) { parts.splice(i, 1); continue; }
+      q.vy += 160 * dt; q.x += q.vx * dt; q.y += q.vy * dt;
+    }
+    for (i = 0; i < birds.length; i++) { var bd = birds[i]; bd.x += bd.vx * dt; bd.y += bd.vy * dt; bd.vy += 10 * dt; }
+    /* كاميرا */
+    var tx = st.x - VW * 0.36 + Math.max(-30, Math.min(40, st.vx * 0.22));
+    camX += (tx - camX) * Math.min(1, dt * 4.5);
+    var ty = (st.mode === SIM.HANG ? st.y : st.y * 0.6 + 110 * 0.4) - VH * 0.54 + 12;
+    camY += (ty - camY) * Math.min(1, dt * 2.5);
+    music();
+  }
+
+  /* ---------- رسم ---------- */
+  function px(v) { return Math.round(v); }
+  function tile(img, w, offX, y, par) {
+    var o = -(((camX * par) % w) + w) % w;
+    for (var x = o; x < VW; x += w) ctx.drawImage(img, px(x), px(y));
+  }
+  function drawVine(x0, y0, x1, y1, ramp) {
+    var rk = ramp || 'J', lo = rk === 'L' ? 3 : (rk === 'F' ? 2 : 1), hi = rk === 'L' ? 4 : (rk === 'F' ? 3 : 2);
+    PIX.line(x0, y0, x1, y1, function (x, y, i) {
+      ctx.fillStyle = hexOf(C(rk, (i % 6 < 3) ? lo : hi)); ctx.fillRect(x, y, 1, 1);
+      if (i % 9 === 4) { ctx.fillStyle = hexOf(rk === 'L' ? C('M', 3) : C('L', 1)); ctx.fillRect(x + 1, y, 1, 1); }
+    });
+  }
+  /* غصن ينطوي: عارضة بنّية تنحني حسب مدة الضغط، وتومض بالوردي قرب الانطواء */
+  function drawLimb(sx, ay, k, held_) {
+    var d = Math.round(Math.min(1, k) * 5), flashOn = held_ && k > 0.62 && (((tAll * 12) | 0) & 1);
+    var cx = px(sx), cy = px(ay), j;
+    for (j = 0; j < 3; j++) {
+      var col = j === 0 ? C('F', 3) : (j === 1 ? (flashOn ? C('H', 3) : C('F', 2)) : C('F', 1));
+      var paint = function (x, y) { ctx.fillStyle = hexOf(col); ctx.fillRect(x, y, 1, 1); };
+      PIX.line(cx - 13, cy + j, cx, cy + d + j, paint);
+      PIX.line(cx, cy + d + j, cx + 13, cy + j, paint);
+    }
+    ctx.fillStyle = hexOf(C('L', 3)); ctx.fillRect(cx - 13, cy - 1, 2, 1); ctx.fillRect(cx + 12, cy - 1, 2, 1);
+  }
+  function drawLeaves(topY) {
+    for (var i = 0; i < lv.leaves.length; i++) {
+      var lf = lv.leaves[i], used = (st.lcut >> (2 * i)) & 3, sx = lf.x - camX;
+      if (sx < -60 || sx > VW + 60) continue;
+      var img = leafSprite(lf.w, used, lf.pond), sq = (leafAnim[i] > 0) ? 2 : 0, droop = used >= 2 ? 3 : 0;
+      var top = px(lf.y - camY) - (img.height >> 1) + sq + droop;
+      if (!lf.pond) drawVine(px(sx), px(topY), px(sx), top + (img.height >> 1) - 2, used >= 2 ? 'F' : 'J');
+      ctx.drawImage(img, px(sx) - (img.width >> 1), top);
+    }
+  }
+  function drawDrafts(topY) {
+    for (var i = 0; i < lv.drafts.length; i++) {
+      var d = lv.drafts[i], sx = d.x - camX;
+      if (sx < -40 || sx > VW + 40) continue;
+      var y0 = px(d.y - camY), j, yy, xx;
+      for (yy = topY; yy < y0 + d.h * 0.45; yy += 1) {
+        for (var cx = -1; cx <= 1; cx++) {
+          if (PIX.dth(cx + 3, yy + ((tAll * 40) | 0), 0.55)) { ctx.fillStyle = hexOf(((yy + cx) & 3) ? C('C', 4) : C('T', 4)); ctx.fillRect(px(sx) + cx, yy, 1, 1); }
+        }
+      }
+      for (j = 0; j < 34; j++) {
+        yy = d.y + d.h - ((tAll * 46 + j * 23) % d.h);
+        xx = d.x + Math.sin(j * 2.7 + tAll * 1.3) * (d.w * 0.5);
+        ctx.fillStyle = hexOf((j & 1) ? C('C', 4) : C('T', 4));
+        ctx.fillRect(px(xx - camX), px(yy - camY), (j % 3) ? 1 : 2, 1);
+      }
+    }
+  }
+  var HEX = [];
+  function hexOf(id) {
+    if (!HEX[id]) { var p = PAL[id]; HEX[id] = 'rgb(' + p[0] + ',' + p[1] + ',' + p[2] + ')'; }
+    return HEX[id];
+  }
+  function draw() {
+    var sx = 0, sy = 0;
+    if (shake > 0) { sx = Math.round((Math.random() - 0.5) * 2 * shake); sy = Math.round((Math.random() - 0.5) * 2 * shake); }
+    ctx.save(); ctx.translate(sx, sy);
+    ctx.drawImage(LAY.sky, 0, 0);
+    var cy = camY - 110;
+    tile(LAY.ridge1, 256, 0, VH * 0.36 - cy * 0.05, 0.08);
+    tile(LAY.ridge2, 256, 0, VH * 0.46 - cy * 0.08, 0.16);
+    ctx.drawImage(LAY.mist, 0, 0);
+    tile(LAY.crown1, 256, 0, VH * 0.5 - cy * 0.12, 0.28);
+    tile(LAY.crown2, 256, 0, VH * 0.62 - cy * 0.2, 0.42);
+    tile(LAY.crown3, 256, 0, VH * 0.76 - cy * 0.3, 0.6);
+    var fy = -14 - cy * 0.3;
+    tile(LAY.frame, 256, 0, fy, 0.75);
+    /* كروم العالم */
+    var i, a, x, y;
+    var topY = -20;
+    drawDrafts(topY);
+    drawLeaves(topY);
+    for (i = 0; i < lv.anchors.length; i++) {
+      a = lv.anchors[i];
+      var pxv = SIM.ax(lv, a, st.t), L = SIM.eff(a), sx = pxv - camX, ay = a.y - camY;
+      if (sx < -40 || sx > VW + 40) continue;
+      var snapped = a.bit && (st.cut & a.bit), held_ = (st.mode === SIM.HANG && st.ix === i);
+      var hx = pxv, hy = a.y + L;
+      if (held_) { hx = st.x; hy = st.y; } else hx += Math.sin(tAll * 1.3 + i) * 1.2;
+      var rimg = a.brk ? SPR.ringB : (a.fold ? SPR.ringF : SPR.ring);
+      if (a.mv) {
+        var hf = SPR.horn[((tAll * 7 + i) | 0) & 1], hl = SIM.avx(lv, a, st.t) < 0, hw = hf.width;
+        if (hl) { ctx.save(); ctx.translate(px(sx), 0); ctx.scale(-1, 1); ctx.drawImage(hf, -(hw >> 1), px(ay) - 8); ctx.restore(); }
+        else ctx.drawImage(hf, px(sx) - (hw >> 1), px(ay) - 8);
+        drawVine(px(sx), px(ay) + 2, px(hx - camX), px(hy - camY - 17), 'J');
+        ctx.drawImage(rimg, px(hx - camX) - 9, px(hy - camY) - 17);
+      } else if (snapped) {
+        drawVine(px(sx), px(topY), px(sx), px(ay) + 12, a.fold ? 'F' : 'L');
+        if (a.fold) drawLimb(sx, ay, 7, false);
+      } else {
+        drawVine(px(sx), px(topY), px(sx), px(ay), a.brk ? 'L' : 'J');
+        if (a.fold) drawLimb(sx, ay, held_ ? st.hold / a.fold : 0, held_);
+        drawVine(px(sx), px(ay), px(hx - camX), px(hy - camY - 17), a.brk ? 'L' : 'J');
+        ctx.drawImage(rimg, px(hx - camX) - 9, px(hy - camY) - 17);
+      }
+      if (a.cp && i > 0) { /* علامة نقطة حفظ: غصين ليموني */
+        ctx.fillStyle = hexOf(C('L', 3)); ctx.fillRect(px(sx) - 1, px(ay) + 2, 3, 3);
+      }
+    }
+    /* العش */
+    var gx = lv.goal.x - camX, gy = lv.goal.y - camY;
+    drawVine(px(gx), px(topY), px(gx), px(gy - 14), 0);
+    drawVine(px(gx) - 6, px(topY), px(gx) - 6, px(gy - 12), 0);
+    var gl = 0.5 + 0.5 * Math.sin(tAll * 3);
+    for (i = 0; i < 40; i++) {
+      var ga = i / 40 * 6.283, gr = 14 + gl * 2;
+      if (PIX.dth(i, i * 3, 0.5)) { ctx.fillStyle = hexOf(C('M', 4)); ctx.fillRect(px(gx + Math.cos(ga) * gr), px(gy + Math.sin(ga) * gr * 0.7), 1, 1); }
+    }
+    ctx.drawImage(SPR.nest, px(gx) - 9, px(gy) - 4);
+    /* قطرات وفواكه */
+    for (i = 0; i < lv.pickups.length; i++) {
+      if (picked[i]) continue;
+      var pk = lv.pickups[i], bob = Math.sin(tAll * 3 + i) * 1.5;
+      var im = pk.t ? SPR.mango : SPR.drop;
+      ctx.drawImage(im, px(pk.x - camX) - (im.width >> 1), px(pk.y - camY + bob) - (im.height >> 1));
+    }
+    /* زائر نادر: أبو قرن ذهبي */
+    if (rare && !rare.got) {
+      var rx = rare.cx + Math.cos(rare.t * 1.6) * 12, ry = rare.cy + Math.sin(rare.t * 2.2) * 6;
+      var gf = SPR.hornGold[((tAll * 8) | 0) & 1], gl = Math.sin(rare.t * 1.6) > 0;
+      if (gl) { ctx.save(); ctx.translate(px(rx - camX), 0); ctx.scale(-1, 1); ctx.drawImage(gf, -(gf.width >> 1), px(ry - camY) - 5); ctx.restore(); }
+      else ctx.drawImage(gf, px(rx - camX) - (gf.width >> 1), px(ry - camY) - 5);
+      if (PIX.dth(((tAll * 20) | 0), 3, 0.5)) { ctx.fillStyle = hexOf(C('C', 4)); ctx.fillRect(px(rx - camX) + ((tAll * 31) % 14 | 0) - 7, px(ry - camY) + ((tAll * 17) % 10 | 0) - 5, 1, 1); }
+    }
+    /* الجبّون */
+    drawGibbon();
+    /* جسيمات */
+    for (i = 0; i < parts.length; i++) { var q = parts[i]; ctx.fillStyle = hexOf(q.c); ctx.fillRect(px(q.x - camX), px(q.y - camY), 1, 1); }
+    /* خطوط سرعة */
+    if (st.mode === SIM.FREE && phase === 'play') {
+      var spd = Math.sqrt(st.vx * st.vx + st.vy * st.vy);
+      if (spd > 90) for (i = 1; i <= 4; i++) {
+        var tx = st.x - st.vx * 0.018 * i * 1.4 + (i % 2) * 2, ty = st.y - st.vy * 0.018 * i * 1.4 + 4 + (i % 3) * 3;
+        ctx.fillStyle = hexOf(C('C', 4)); ctx.fillRect(px(tx - camX), px(ty - camY), 2, 1);
+      }
+    }
+    for (i = 0; i < birds.length; i++) {
+      var bd = birds[i], fr = SPR.birdf[((tAll * 8 + bd.ph) | 0) & 1];
+      ctx.drawImage(fr, px(bd.x - camX), px(bd.y - camY));
+    }
+    tile(LAY.near, 512, 0, VH - 54 - cy * 0.4, 1.5);
+    if (rain) {
+      ctx.fillStyle = hexOf(C('T', 4));
+      for (i = 0; i < 46; i++) { var rxx = (i * 53 + tAll * 22) % VW, ryy = (i * 37 + tAll * 150) % VH; ctx.fillRect(px(rxx), px(ryy), 1, 3); }
+    }
+    if (flash > 0) { ctx.globalAlpha = Math.min(1, flash) * 0.55; ctx.fillStyle = hexOf(C('C', 4)); ctx.fillRect(0, 0, VW, VH); ctx.globalAlpha = 1; }
+    ctx.restore();
+    /* تعتيم لحظة السقوط */
+    if (phase === 'dead') { ctx.globalAlpha = Math.min(1, phaseT * 2.2); ctx.fillStyle = hexOf(C('J', 0)); ctx.fillRect(0, 0, VW, VH); ctx.globalAlpha = 1; }
+  }
+  function drawGibbon() {
+    var f, flip = false, X = st.x - camX, Y = st.y - camY;
+    if (phase === 'dead') { f = SPR.fr.fall[((tAll * 10) | 0) & 1]; }
+    else if (phase === 'win') { f = SPR.fr.joy[((tAll * 5) | 0) & 1]; }
+    else if (st.mode === SIM.HANG) {
+      if (st.idle) f = SPR.fr.idle[((tAll * 1.6) | 0) % 4];
+      else if (grabAnim > 0) f = SPR.fr.grab;
+      else {
+        var lean = Math.max(-40, Math.min(40, st.th * 57.3 * 0.55));
+        var bins = [-40, -28, -16, -6, 6, 16, 28, 40], bi = 0, bd = 1e9;
+        for (var k = 0; k < 8; k++) { var dd = Math.abs(lean - bins[k]); if (dd < bd) { bd = dd; bi = k; } }
+        f = SPR.fr.swing[bi];
+      }
+    } else {
+      var al = Math.atan2(-st.vy, Math.abs(st.vx)) * 57.3;
+      flip = st.vx < 0;
+      if (al < -38) { f = SPR.fr.fall[((tAll * 10) | 0) & 1]; flip = false; }
+      else if (al > 45) f = SPR.fr.fly[0];
+      else if (al > 12) f = SPR.fr.fly[1];
+      else if (al > -14) f = SPR.fr.fly[2];
+      else f = SPR.fr.fly[3];
+    }
+    if (save.pr > 0 && phase !== 'dead') {
+      for (var hh = 0; hh < 12; hh++) {
+        var ha = hh / 12 * 6.283 + tAll * 1.2;
+        ctx.fillStyle = hexOf((hh & 1) ? C('M', 4) : C('C', 4));
+        ctx.fillRect(px(X + Math.cos(ha) * 9), px(Y + 9 + Math.sin(ha) * 9), 1, 1);
+      }
+    }
+    var w = f.c.width;
+    if (flip) {
+      ctx.save(); ctx.translate(px(X), 0); ctx.scale(-1, 1);
+      ctx.drawImage(f.c, -f.p[0], px(Y) - f.p[1]); ctx.restore();
+    } else ctx.drawImage(f.c, px(X) - f.p[0], px(Y) - f.p[1]);
+  }
+
+  /* ---------- حجم الشاشة ---------- */
+  function resize() {
+    var dpr = window.devicePixelRatio || 1;
+    var W = window.innerWidth * dpr, H = window.innerHeight * dpr;
+    var shortSide = Math.min(W, H);
+    SC = Math.max(1, Math.floor(shortSide / 150));
+    VW = Math.ceil(W / SC); VH = Math.ceil(H / SC);
+    cv.width = VW; cv.height = VH;
+    cv.style.width = (VW * SC / dpr) + 'px'; cv.style.height = (VH * SC / dpr) + 'px';
+    ctx = cv.getContext('2d'); ctx.imageSmoothingEnabled = false;
+    bakeLayers();
+  }
+
+  function frame(ts) {
+    var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+    update(dt); draw();
+    if (!firstDone) { firstDone = true; afterFirstFrame(); }
+    requestAnimationFrame(frame);
+  }
+  var firstDone = false;
+  function applySdkAudio() {
+    AU.sdk = YT.audioOn();
+    if (AU.master) AU.master.gain.value = (AU.on && AU.sdk) ? 0.8 : 0;
+  }
+  /* بعد أول رسم: firstFrameReady ثم تحميل الحفظ ثم gameReady */
+  function afterFirstFrame() {
+    YT.firstFrame();
+    var langP = YT.getLanguage();
+    YT.loadData().then(function (raw) {
+      try { if (raw) { var o = JSON.parse(raw); for (var k in o) if (k !== 'ab') save[k] = o[k]; if (o.ab) for (var j in o.ab) save.ab[j] = o.ab[j]; } } catch (e) {}
+      return langP;
+    }).then(function (l) {
+      if (save.lang === 'ar' || save.lang === 'en') lang = save.lang;
+      else lang = (String(l).toLowerCase().indexOf('ar') === 0) ? 'ar' : 'en';
+      applyMods();
+      if (phase === 'play' && !st.grabbed && st.idle) loadLevel(Math.min(save.lvl || 0, CORE + 2000));
+      applyLang();
+      YT.ready();
+    }, function () { applyLang(); YT.ready(); });
+  }
+
+  function start() {
+    cv = $('cv');
+    buildSprites();
+    YT.init({
+      onAudio: applySdkAudio,
+      onPause: function () { ytHold = true; held = false; suspendAudio(true); persist(); },
+      onResume: function () { ytHold = false; suspendAudio(false); }
+    });
+    applySdkAudio();
+    applyMods();
+    initWorker();
+    resize();
+    window.addEventListener('resize', function () { resize(); });
+    bindInput();
+    Array.prototype.forEach.call(document.querySelectorAll('.ic-pause'), function (e) { setIcon(e, 'pause'); });
+    Array.prototype.forEach.call(document.querySelectorAll('.ic-drop'), function (e) { setIcon(e, 'drop'); });
+    var b0 = getCore(0); lv = {}; for (var kk in b0) lv[kk] = b0[kk]; lv.leaves = b0.leaves.slice(); lv.pickups = []; st = SIM.makeState(lv);
+    loadLevel(Math.min(save.lvl || 0, CORE + 2000));
+    applyLang();
+    showMenu('start');
+    setMute(true);
+    last = performance.now();
+    requestAnimationFrame(frame);
+  }
+  return { start: start, begin: hideMenu, pause: function () { showMenu('pause'); }, screen: function () { return screenMode; }, tick: function (dt) { update(dt); }, dbg: function () { return { worker: !!worker, ecache: Object.keys(ecache), mods: SIM.getMods(), rare: !!rare, rain: rain, menu: menuOpen, cam: [camX, camY], audio: AU.sdk, hold: ytHold, adBusy: adBusy }; }, buy: buy, doPrestige: doPrestige, openShop: openShop, closeShop: closeShop, get state() { return st; }, get level() { return lv; }, get phase() { return phase; }, setHeld: function (h) { held = h; }, loadLevel: loadLevel, view: function () { return [VW, VH, SC]; }, save: save, tip: function () { return tipStep; } };
+})();
+
+GAME.start();</script></body></html>
