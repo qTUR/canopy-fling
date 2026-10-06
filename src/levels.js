@@ -149,8 +149,8 @@ var LEVELS = (function () {
     maxAttempts = maxAttempts || 60;
     for (var at = 0; at < maxAttempts; at++) {
       var sp = specFor(i);
-      sp.seed = 7000 + i * 131 + p * 977 + at * 31; sp.n += 3 * p;
-      sp.hi = Math.max(0.08, sp.hi - 0.015 * p); sp.lo = Math.max(0.05, sp.lo - 0.015 * p);
+      sp.seed = 7000 + i * 131 + p * 977 + at * 31; sp.n += (at < 24 ? 3 : 1) * p;
+      sp.hi = Math.max(0.08, sp.hi - 0.015 * p) + (at >= 24 ? 0.05 : 0); sp.lo = at >= 24 ? 0.05 : Math.max(0.05, sp.lo - 0.015 * p);
       sp.id = 3000 + p * 100 + i; sp.name = 's' + p + 'l' + i;
       SIM.setMods({});
       var lv = finish(gen(sp));

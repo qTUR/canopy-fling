@@ -30,7 +30,7 @@ var GAME = (function () {
       r5t: 'طيور تشيل الحلقات', r5: 'الطيور تحرّك الحلقات، اضبط توقيتك',
       r6t: 'أغصان تنطوي', r6: 'الغصن الوردي ينطوي لو طوّلت الضغط',
       r7t: 'مسار بلا نهاية', r7: 'كل القواعد مخلوطة، وما فيه نهاية',
-      shop: 'المتجر', bal: 'قطراتك', buy: 'اشترِ', max: 'أقصى', close: 'إغلاق',
+      shop: 'القدرات', bal: 'قطراتك', buy: 'اشترِ', max: 'أقصى', close: 'إغلاق',
       ab_rope: 'حبل أطول', ab_rope_d: 'تمسك أبعد وتتأرجح أوسع',
       ab_swing: 'تمرجح أسرع', ab_swing_d: 'الدفع أقوى وإنت ماسك',
       ab_magnet: 'مغناطيس القطرات', ab_magnet_d: 'القطرات والفواكه تجيك',
@@ -38,7 +38,9 @@ var GAME = (function () {
       pres: 'نجمة جديدة', presOk: 'اضغط مرة ثانية للتأكيد', presInfo: 'تبدأ من المرحلة الأولى، وتاخذ نجمة: قطرات +٢٥٪ وهالة ذهبية للأبد',
       presLock: 'تفتح بعد المنطقة السادسة', stars: 'النجوم',
       rare1: 'زائر نادر! +١٠', rare2: 'مطر! القطرات ×٢', rare3: 'بركة مؤقتة تحتك', areaDone: 'خلصت المناطق الست! المسارات بلا نهاية فتحت',
-      best: 'أفضل'
+      best: 'أفضل',
+      loading: 'جاري تجهيز المسار...', sub: 'تأرجح بين كروم الغابة', play: 'العب', resume: 'كمّل', restart: 'من أول المرحلة', upgrades: 'القدرات', paused: 'إيقاف', langName: 'English',
+      rare1: 'زائر نادر!', rare2: 'مطر! القطرات'
     },
     en: {
       t1: 'Press and hold the screen', t2: 'Let go as you swing forward', t3: 'Press again before the next ring', level: 'Level', win: 'Great!', next: 'Next', title: 'Canopy Fling', again: 'Again',
@@ -49,7 +51,7 @@ var GAME = (function () {
       r5t: 'Hornbill rings', r5: 'Birds carry the rings, time your grab',
       r6t: 'Folding branches', r6: 'Pink branches fold if you hold too long',
       r7t: 'Endless path', r7: 'Every rule mixed, no end in sight',
-      shop: 'Shop', bal: 'Your drops', buy: 'Buy', max: 'Max', close: 'Close',
+      shop: 'Upgrades', bal: 'Your drops', buy: 'Buy', max: 'Max', close: 'Close',
       ab_rope: 'Longer rope', ab_rope_d: 'Reach further, swing wider',
       ab_swing: 'Faster swing', ab_swing_d: 'Stronger pump while holding',
       ab_magnet: 'Drop magnet', ab_magnet_d: 'Drops and fruit come to you',
@@ -57,20 +59,43 @@ var GAME = (function () {
       pres: 'New star', presOk: 'Tap again to confirm', presInfo: 'Restart from level 1 and earn a star: drops +25% and a golden halo forever',
       presLock: 'Unlocks after area six', stars: 'Stars',
       rare1: 'Rare visitor! +10', rare2: 'Rain shower! Drops x2', rare3: 'A pond appears below', areaDone: 'All six areas done! Endless paths unlocked',
-      best: 'Best'
+      best: 'Best',
+      loading: 'Preparing your path...', sub: 'Swing through the rainforest', play: 'Play', resume: 'Resume', restart: 'Restart level', upgrades: 'Upgrades', paused: 'Paused', langName: 'العربية',
+      rare1: 'Rare visitor!', rare2: 'Rain shower! Drops'
     }
   };
   var lang = 'en';
-  try { var nl = (navigator.language || 'en').toLowerCase(); lang = nl.indexOf('ar') === 0 ? 'ar' : 'en'; } catch (e) {}
   function tr(k) { return T[lang][k]; }
   function num(n) {
     if (lang !== 'ar') return String(n);
     return String(n).replace(/\d/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.charAt(+d); });
   }
 
+  function isol(txt) { return '\u2066' + txt + '\u2069'; }
+  function plus(n) { return isol('+' + num(n)); }
+  function times(n) { return isol('\u00D7' + num(n)); }
+
+  /* ---------- أيقونات بكسل (قناع SVG) ---------- */
+  var ICONS = {
+    pause: ['........', '.##..##.', '.##..##.', '.##..##.', '.##..##.', '.##..##.', '.##..##.', '........'],
+    drop: ['...##...', '...##...', '..####..', '.######.', '.######.', '.######.', '..####..', '........'],
+    star: ['...##...', '...##...', '########', '.######.', '..####..', '.##..##.', '.#....#.', '........'],
+    snd1: ['...#......', '..##...#..', '####....#.', '####..#..#', '####..#..#', '####....#.', '..##...#..', '...#......'],
+    snd0: ['...#......', '..##.#..#.', '####..##..', '####..##..', '####.#..#.', '####......', '..##......', '...#......']
+  };
+  function iconURI(rows) {
+    var d = '', y, x;
+    for (y = 0; y < rows.length; y++) for (x = 0; x < rows[y].length; x++) if (rows[y].charAt(x) === '#') d += 'M' + x + ' ' + y + 'h1v1h-1z';
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + rows[0].length + ' ' + rows.length + "' shape-rendering='crispEdges'><path d='" + d + "'/></svg>";
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+  function setIcon(el, name) { var u = iconURI(ICONS[name]); el.style.webkitMaskImage = u; el.style.maskImage = u; }
+  function starEl() { var i = document.createElement('i'); i.className = 'ic'; setIcon(i, 'star'); i.style.color = '#ffb347'; return i; }
+
   /* ---------- تخزين ---------- */
-  var save = { lvl: 0, drops: 0, tip: 0, ab: { rope: 0, swing: 0, magnet: 0, rescue: 0 }, pr: 0, seen: 0, best: 0, plays: 0 };
+  var save = { lang: '', lvl: 0, drops: 0, tip: 0, ab: { rope: 0, swing: 0, magnet: 0, rescue: 0 }, pr: 0, seen: 0, best: 0, plays: 0 };
   try { var raw = localStorage.getItem('cf1'); if (raw) { var o = JSON.parse(raw); for (var k in o) save[k] = o[k]; } } catch (e) {}
+  if (save.lang === 'ar' || save.lang === 'en') lang = save.lang;
   function persist() { try { localStorage.setItem('cf1', JSON.stringify(save)); } catch (e) {} }
   var AB = {
     rope: { max: 3, cost: [20, 50, 120] }, swing: { max: 3, cost: [20, 60, 140] },
@@ -219,7 +244,7 @@ var GAME = (function () {
   /* ---------- حالة اللعب ---------- */
   var lv, st, held = false, camX = 0, camY = 110, parts = [], flash = 0, shake = 0;
   var phase = 'play', phaseT = 0, grabAnim = 0, picked = {}, lvlDrops = 0, tipStep = 0, birds = [];
-  var levelIdx = 0, CORE = 24, leafAnim = [], rare = null, rain = false, pondDone = false, cardT = 0, toastT = 0, menuOpen = false;
+  var levelIdx = 0, CORE = 24, leafAnim = [], rare = null, rain = false, pondDone = false, cardT = 0, toastT = 0, menuOpen = false, screenMode = null, shopBack = null;
   var deathsHere = 0, deadX = 0;
 
   /* ---------- مسارات لا نهائية: تتولد وتتحقق بخيط خلفي ---------- */
@@ -276,8 +301,19 @@ var GAME = (function () {
   }
   function toast(msg) { var t = $('toast'); t.textContent = msg; t.style.display = 'block'; toastT = 2.2; }
 
+  function needKey(i) { return i >= CORE ? 'e' + (i - CORE) : (save.pr > 0 ? 's' + save.pr + ':' + i : null); }
+  var waitI = -1;
   function loadLevel(i) {
     applyMods();
+    var nk = needKey(i);
+    if (nk && !ecache[nk] && worker) {
+      /* المسار قيد التحقق بالخيط الخلفي: ننتظر بدون تجميد */
+      if (i >= CORE) wantEndless(i - CORE); else wantStar(i, save.pr);
+      waitI = i; phase = 'loading'; levelIdx = i;
+      showCard(tr('title'), tr('loading'), 600);
+      return;
+    }
+    waitI = -1;
     levelIdx = i;
     var base = i < CORE ? (save.pr > 0 ? getStar(i, save.pr) : getCore(i)) : getEndless(i - CORE);
     if (!base) base = getCore(0);
@@ -296,18 +332,19 @@ var GAME = (function () {
       save.seen |= (1 << ar); persist();
       showCard(tr('r' + ar + 't'), tr('r' + ar), 5);
     } else { $('card').style.display = 'none'; cardT = 0; }
-    if (rain) toast(tr('rare2'));
+    if (rain) toast(tr('rare2') + ' ' + times(2));
     if (i >= CORE - 1) wantEndless(i + 1 - CORE);
     if (i < CORE - 1 && save.pr > 0) wantStar(i + 1, save.pr);
     if (save.lvl >= CORE - 1) wantStar(0, save.pr + 1);
     hud();
   }
   function hud() {
-    $('drops').textContent = num(save.drops + lvlDrops);
-    var lt = levelIdx < CORE ? tr('level') + ' ' + num(levelIdx + 1) : '∞ ' + num(levelIdx - CORE + 1);
-    $('lvl').textContent = lt + (save.pr ? ' ★' + num(save.pr) : '');
+    $('dropn').textContent = num(save.drops + lvlDrops);
+    var lt = levelIdx < CORE ? tr('level') + ' ' + num(levelIdx + 1) : '\u221E ' + num(levelIdx - CORE + 1);
+    var lel = $('lvl'); lel.textContent = lt;
+    if (save.pr) { lel.appendChild(document.createTextNode(' ')); lel.appendChild(starEl()); lel.appendChild(document.createTextNode(num(save.pr))); }
     var tip = $('tip');
-    if (tipStep >= 1 && tipStep <= 3) { tip.textContent = tr('t' + tipStep); tip.style.display = 'block'; } else tip.style.display = 'none';
+    if (tipStep >= 1 && tipStep <= 3 && !screenMode && !menuOpen) { tip.textContent = tr('t' + tipStep); tip.style.display = 'block'; } else tip.style.display = 'none';
   }
 
   /* ---------- متجر القدرات ---------- */
@@ -321,7 +358,7 @@ var GAME = (function () {
       var info = document.createElement('div');
       var nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = tr('ab_' + k);
       var ds = document.createElement('div'); ds.className = 'ds'; ds.textContent = tr('ab_' + k + '_d');
-      var pips = document.createElement('div'); pips.className = 'pips'; pips.textContent = new Array(lvn + 1).join('●') + new Array(def.max - lvn + 1).join('○');
+      var pips = document.createElement('div'); pips.className = 'pips'; for (var pi = 0; pi < def.max; pi++) { var pe = document.createElement('i'); if (pi >= lvn) pe.className = 'off'; pips.appendChild(pe); }
       info.appendChild(nm); info.appendChild(ds); info.appendChild(pips);
       var bt = document.createElement('button');
       if (lvn >= def.max) { bt.textContent = tr('max'); bt.disabled = true; }
@@ -329,7 +366,7 @@ var GAME = (function () {
       row.appendChild(info); row.appendChild(bt); box.appendChild(row);
     });
     var bp = $('bpres'), ok = save.lvl >= CORE;
-    bp.textContent = ok ? (presArm ? tr('presOk') : '★ ' + tr('pres')) : tr('presLock');
+    bp.textContent = ok ? (presArm ? tr('presOk') : tr('pres')) : tr('presLock');
     bp.disabled = !ok; bp.style.opacity = ok ? 1 : 0.5;
     $('bclose').textContent = tr('close');
   }
@@ -338,16 +375,19 @@ var GAME = (function () {
     if (lvn >= def.max || save.drops < def.cost[lvn]) return;
     save.drops -= def.cost[lvn]; save.ab[k]++; shopDirty = true; applyMods(); persist(); sfx('pick', 3); shopRender(); hud();
   }
-  function openShop() { if (menuOpen) return; menuOpen = true; held = false; presArm = 0; shopRender(); $('shop').style.display = 'flex'; }
+  function openShop() { if (menuOpen) return; menuOpen = true; held = false; presArm = 0; shopRender(); $('shop').style.display = 'flex'; hud(); }
   function closeShop() {
     menuOpen = false; presArm = 0; $('shop').style.display = 'none';
-    if (shopDirty && phase === 'play') { shopDirty = false; save.plays--; loadLevel(levelIdx); } else hud();
+    if (shopDirty && phase === 'play') {
+      shopDirty = false; save.plays--; loadLevel(levelIdx);
+      if (screenMode === 'start') hud();
+    } else hud();
   }
   function doPrestige() {
     if (save.lvl < CORE) return;
     if (!presArm) { presArm = 1; shopRender(); return; }
     save.pr++; save.lvl = 0; save.seen = 0; presArm = 0; persist();
-    closeShop(); loadLevel(0); toast('★ ' + num(save.pr));
+    closeShop(); loadLevel(0); toast(tr('stars') + ' ' + num(save.pr));
   }
 
   /* ---------- صوت ---------- */
@@ -412,7 +452,7 @@ var GAME = (function () {
   }
   function setMute(on) {
     AU.on = on; if (AU.master) AU.master.gain.value = on ? 0.8 : 0;
-    $('bsound').textContent = on ? '♪' : '×';
+    setIcon($('bsi'), on ? 'snd1' : 'snd0');
   }
 
   /* ---------- إدخال ---------- */
@@ -421,23 +461,47 @@ var GAME = (function () {
     held = true;
   }
   function lift() { held = false; }
+  /* ---------- قائمة البداية / الإيقاف ---------- */
+  function menuLabels() {
+    $('mtitle').textContent = screenMode === 'pause' ? tr('paused') : tr('title');
+    $('msub').textContent = tr('sub');
+    $('bplay').textContent = screenMode === 'pause' ? tr('resume') : tr('play');
+    $('brestart').textContent = tr('restart');
+    $('brestart').style.display = screenMode === 'pause' ? '' : 'none';
+    $('bshop').textContent = tr('upgrades');
+    $('blang').textContent = tr('langName');
+    setIcon($('bsi'), AU.on ? 'snd1' : 'snd0');
+  }
+  function showMenu(mode) {
+    if (screenMode === mode) return;
+    screenMode = mode; held = false;
+    var m = $('menu'); m.className = mode; m.style.display = 'flex';
+    menuLabels(); hud();
+  }
+  function hideMenu() {
+    screenMode = null; held = false; $('menu').style.display = 'none'; hud();
+  }
+  function togglePause() { if (menuOpen) return; if (screenMode === 'pause') hideMenu(); else if (!screenMode && $('win').style.display !== 'flex') showMenu('pause'); }
+
   function bindInput() {
     var tgt = $('stage');
-    tgt.addEventListener('pointerdown', function (e) { e.preventDefault(); if (menuOpen) return; press(); }, { passive: false });
+    tgt.addEventListener('pointerdown', function (e) { e.preventDefault(); if (menuOpen || screenMode) return; press(); }, { passive: false });
     window.addEventListener('pointerup', lift);
     window.addEventListener('pointercancel', lift);
     window.addEventListener('blur', lift);
     window.addEventListener('keydown', function (e) {
-      if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (!e.repeat && !menuOpen) press(); }
-      else if (e.code === 'Escape' && menuOpen) closeShop();
+      if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (!e.repeat && !menuOpen && !screenMode) press(); }
+      else if (e.code === 'Escape') { if (menuOpen) closeShop(); else togglePause(); }
       else if (e.code === 'KeyR') restart();
     });
     window.addEventListener('keyup', function (e) { if (e.code === 'Space' || e.code === 'ArrowUp') lift(); });
     function btn(id, fn) { var b = $(id); b.addEventListener('pointerdown', function (e) { e.stopPropagation(); }); b.addEventListener('click', function (e) { e.stopPropagation(); fn(); }); }
     btn('bsound', function () { audioInit(); setMute(!AU.on); });
-    btn('blang', function () { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
-    btn('brestart', restart);
-    btn('bshop', function () { if (menuOpen) closeShop(); else openShop(); });
+    btn('blang', function () { lang = lang === 'ar' ? 'en' : 'ar'; save.lang = lang; persist(); applyLang(); });
+    btn('bpause', togglePause);
+    btn('bplay', function () { audioInit(); if (AU.ctx && AU.ctx.state === 'suspended') AU.ctx.resume(); hideMenu(); });
+    btn('brestart', function () { hideMenu(); save.plays--; loadLevel(levelIdx); });
+    btn('bshop', openShop);
     btn('bclose', closeShop);
     btn('bpres', doPrestige);
     btn('bnext', function () { loadLevel(save.lvl); });
@@ -446,9 +510,9 @@ var GAME = (function () {
     document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     $('winmsg').textContent = tr('win'); $('bnext').textContent = tr('next');
     if (menuOpen) shopRender();
-    hud();
+    menuLabels(); hud();
   }
-  function restart() { if (menuOpen) return; save.plays--; loadLevel(levelIdx); }
+  function restart() { if (menuOpen || screenMode) return; save.plays--; loadLevel(levelIdx); }
 
   /* ---------- جسيمات ---------- */
   function burst(x, y, n, cols, sp) {
@@ -505,13 +569,19 @@ var GAME = (function () {
       var rx = rare.cx + Math.cos(rare.t * 1.6) * 12, ry = rare.cy + Math.sin(rare.t * 2.2) * 6;
       var ddx = st.x - rx, ddy = st.y - ry;
       if (ddx * ddx + ddy * ddy < 18 * 18) {
-        rare.got = true; lvlDrops += 10; sfx('rare'); toast(tr('rare1')); hud();
+        rare.got = true; lvlDrops += 10; sfx('rare'); toast(tr('rare1') + ' ' + plus(10)); hud();
         burst(rx, ry, 18, [C('M', 4), C('M', 3), C('C', 4)], 70);
       }
     }
   }
   function update(dt) {
     tAll += dt;
+    if (screenMode || menuOpen) { music(); return; }
+    if (phase === 'loading') {
+      var wk = needKey(waitI);
+      if (ecache[wk] || (!epend[wk] && worker)) { var wi = waitI; $('card').style.display = 'none'; cardT = 0; if (!ecache[wk]) { worker = null; } loadLevel(wi); }
+      return;
+    }
     if (phase === 'play') {
       acc += dt; var n = 0;
       while (acc >= SIM.DT && n < 12) { stepWorld(); acc -= SIM.DT; n++; if (phase !== 'play') break; }
@@ -537,7 +607,7 @@ var GAME = (function () {
         if (save.lvl > CORE && save.lvl - CORE > save.best) save.best = save.lvl - CORE;
         persist(); hud();
         $('winmsg').textContent = tr('win');
-        $('winsub').textContent = '+' + num(bonus) + (levelIdx === CORE - 1 ? '  ' + tr('areaDone') : '');
+        $('winsub').textContent = plus(bonus) + (levelIdx === CORE - 1 ? '  ' + tr('areaDone') : '');
         if (levelIdx + 1 >= CORE) wantEndless(levelIdx + 1 - CORE);
         if (levelIdx + 1 >= CORE - 1) wantStar(0, save.pr + 1);
       }
@@ -781,11 +851,15 @@ var GAME = (function () {
     resize();
     window.addEventListener('resize', function () { resize(); });
     bindInput();
-    applyLang();
+    Array.prototype.forEach.call(document.querySelectorAll('.ic-pause'), function (e) { setIcon(e, 'pause'); });
+    Array.prototype.forEach.call(document.querySelectorAll('.ic-drop'), function (e) { setIcon(e, 'drop'); });
+    var b0 = getCore(0); lv = {}; for (var kk in b0) lv[kk] = b0[kk]; lv.leaves = b0.leaves.slice(); lv.pickups = []; st = SIM.makeState(lv);
     loadLevel(Math.min(save.lvl || 0, CORE + 2000));
+    applyLang();
+    showMenu('start');
     setMute(true);
     last = performance.now();
     requestAnimationFrame(frame);
   }
-  return { start: start, tick: function (dt) { update(dt); }, dbg: function () { return { worker: !!worker, ecache: Object.keys(ecache), mods: SIM.getMods(), rare: !!rare, rain: rain, menu: menuOpen }; }, buy: buy, doPrestige: doPrestige, openShop: openShop, closeShop: closeShop, get state() { return st; }, get level() { return lv; }, get phase() { return phase; }, setHeld: function (h) { held = h; }, loadLevel: loadLevel, view: function () { return [VW, VH, SC]; }, save: save, tip: function () { return tipStep; } };
+  return { start: start, begin: hideMenu, pause: function () { showMenu('pause'); }, screen: function () { return screenMode; }, tick: function (dt) { update(dt); }, dbg: function () { return { worker: !!worker, ecache: Object.keys(ecache), mods: SIM.getMods(), rare: !!rare, rain: rain, menu: menuOpen }; }, buy: buy, doPrestige: doPrestige, openShop: openShop, closeShop: closeShop, get state() { return st; }, get level() { return lv; }, get phase() { return phase; }, setHeld: function (h) { held = h; }, loadLevel: loadLevel, view: function () { return [VW, VH, SC]; }, save: save, tip: function () { return tipStep; } };
 })();
