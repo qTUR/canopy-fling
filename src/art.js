@@ -148,5 +148,21 @@ var ART = (function () {
     '.....dd.dd..'
   ]);
 
+  /* عش منسوج */
+  A.NEST = S([
+    '....mmmmmmmm....',
+    '..mmMMqMMqMMmm..',
+    '.mMqMMMqMMMqMMm.',
+    'mMMqMqMMMqMqMMMm',
+    'dmMMMqMqMqMMMMmd',
+    '.dmmMMMMMMMMmmd.',
+    '...ddmmmmmmdd...'
+  ], { outlineId: PIX.CH.d });
+  /* طير يطير: إطاران */
+  A.BIRDF = [
+    S(['h.....h','.hh.hh.','..hhh..'], { outline: false }),
+    S(['..hhh..','.hh.hh.','h.....h'], { outline: false })
+  ];
+
   return A;
 })();
