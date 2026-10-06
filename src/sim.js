@@ -16,7 +16,8 @@ var SIM = (function () {
     LEAF_MIN: 210,   /* أدنى سرعة ارتداد من الورقة */
     LEAF_MAX: 330,   /* وأقصاها */
     LEAF_USES: 2,    /* كم ارتداد تتحمل الورقة */
-    DRAFT_A: 760     /* تسارع التيار الصاعد */
+    DRAFT_A: 760,    /* تسارع التيار الصاعد */
+    DRAFT_T: 1.2     /* أقصى مدة رفع بين مسكتين (يمنع التعليق في الهواء) */
   };
   var READY = 0, HANG = 1, FREE = 2;
   /* تعديلات القدرات: pump مضاعِف الدفع، dL زيادة طول الحبل، rescue عدد النجدات */
@@ -33,7 +34,7 @@ var SIM = (function () {
     return {
       mode: s.mode, x: s.x, y: s.y, vx: s.vx, vy: s.vy, ix: s.ix, th: s.th, om: s.om, L: s.L,
       idle: s.idle, hold: s.hold, t: s.t, cd: s.cd, last: s.last, cp: s.cp, dead: s.dead, won: s.won,
-      cut: s.cut, lcut: s.lcut, grabbed: s.grabbed, resc: s.resc
+      cut: s.cut, lcut: s.lcut, grabbed: s.grabbed, resc: s.resc, dtm: s.dtm
     };
   }
 
@@ -50,7 +51,7 @@ var SIM = (function () {
     s.mode = HANG; s.ix = ix; s.th = 0; s.om = 0; s.L = eff(a);
     s.x = ax(lv, a, s.t); s.y = a.y + s.L; s.vx = 0; s.vy = 0;
     s.idle = true; s.hold = 0; s.cd = 0; s.last = -1; s.dead = false; s.won = false;
-    s.cp = ix; s.cut = 0; s.lcut = 0; s.grabbed = 0; s.resc = s.resc || 0;
+    s.cp = ix; s.cut = 0; s.lcut = 0; s.grabbed = 0; s.resc = s.resc || 0; s.dtm = 0;
     return s;
   }
   function makeState(lv) { return spawnAt(lv, 0, { t: 0, resc: 0 }); }
@@ -112,7 +113,7 @@ var SIM = (function () {
     if (lv.drafts) {
       for (i = 0; i < lv.drafts.length; i++) {
         d = lv.drafts[i];
-        if (s.x >= d.x - d.w / 2 && s.x <= d.x + d.w / 2 && s.y >= d.y && s.y <= d.y + d.h) s.vy -= C.DRAFT_A * DT;
+        if (s.dtm < C.DRAFT_T && s.x >= d.x - d.w / 2 && s.x <= d.x + d.w / 2 && s.y >= d.y && s.y <= d.y + d.h) { s.vy -= C.DRAFT_A * DT; s.dtm += DT; }
       }
     }
     s.x += s.vx * DT; s.y += s.vy * DT;
@@ -156,7 +157,7 @@ var SIM = (function () {
         s.om = ((s.vx - avx(lv, a, s.t)) * c - s.vy * sn) / r;
         if (s.om > C.OMMAX) s.om = C.OMMAX; else if (s.om < -C.OMMAX) s.om = -C.OMMAX;
         s.x = pxv + r * sn; s.y = a.y + r * c;
-        s.idle = false; s.hold = 0;
+        s.idle = false; s.hold = 0; s.dtm = 0;
         if (a.cp) s.cp = best;
         s.grabbed++;
         if (ev) ev.push({ t: 'grab', ix: best, speed: Math.sqrt(s.vx * s.vx + s.vy * s.vy) });

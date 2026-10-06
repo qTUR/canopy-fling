@@ -54,7 +54,7 @@ if (mode === 'core') {
   for (var i = 0; i < LEVELS.count(); i++) coreLevel(i);
 } else if (mode === 'endless') {
   var from = +(process.argv[3] || 0), to = +(process.argv[4] || 299);
-  var extremes = [{ dL: 0, pump: 1 }, { dL: 9, pump: 1.36 }, { dL: 9, pump: 1 }, { dL: 0, pump: 1.36 }];
+  var extremes = MODS;
   var maxAt = 0, t0 = Date.now(), cnt = 0, rules = {};
   for (var k = from; k <= to; k++) {
     var lv = LEVELS.endless(k, extremes, 60);
