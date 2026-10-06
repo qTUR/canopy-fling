@@ -11,8 +11,11 @@ var code = FILES.map(function (f) { return fs.readFileSync(path.join(root, 'src'
 var css = fs.readFileSync(path.join(root, 'src', 'style.css'), 'utf8');
 var body = fs.readFileSync(path.join(root, 'src', 'body.html'), 'utf8');
 
+var wsrc = ['sim.js', 'solver.js', 'levels.js'].map(function (f) { return fs.readFileSync(path.join(root, 'src', f), 'utf8'); }).join('\n') +
+  '\nonmessage = function (e) { var d = e.data; var lv = null; try { lv = LEVELS.endless(d.k, d.mods, 60); } catch (x) {} postMessage({ k: d.k, lv: lv }); };\n';
+var wtag = '<script type="text/plain" id="wsrc">' + wsrc + '</script>';
 function page(target) {
-  if (target === 'artifact') return '<title>Canopy Fling</title><style>' + css + '</style>' + body + '<script>' + code + '\nGAME.start();</script>';
+  if (target === 'artifact') return '<title>Canopy Fling</title><style>' + css + '</style>' + body + wtag + '<script>' + code + '\nGAME.start();</script>';
   var head = '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">';
   var title = 'Canopy Fling | أرجوحة الغيل';
   var extra = '';
@@ -23,7 +26,7 @@ function page(target) {
       '<meta property="og:type" content="website"><meta property="og:url" content="' + base + '"><meta property="og:image" content="' + base + 'og.png">';
   }
   var sdk = (target === 'youtube' || target === 'pages') ? '<script src="https://www.youtube.com/game_api/v1"></script>' : '';
-  return '<!doctype html><html lang="ar" dir="rtl"><head>' + head + '<title>' + title + '</title>' + extra + '<style>' + css + '</style>' + sdk + '</head><body>' + body +
+  return '<!doctype html><html lang="ar" dir="rtl"><head>' + head + '<title>' + title + '</title>' + extra + '<style>' + css + '</style>' + sdk + '</head><body>' + body + wtag +
     '<script>' + code + '\nGAME.start();</script></body></html>';
 }
 

@@ -164,5 +164,30 @@ var ART = (function () {
     S(['..hhh..','.hh.hh.','h.....h'], { outline: false })
   ];
 
+  /* أبو قرن (يشيل الحلقات المتحركة): إطاران، يواجه اليمين */
+  function padRows(rows) { var w = 0; rows.forEach(function (r) { if (r.length > w) w = r.length; }); return rows.map(function (r) { while (r.length < w) r += '.'; return r; }); }
+  A.HORN = [
+    S(padRows([
+      '.gg....gg.....',
+      '..ggo.ggo.....',
+      '..gggoggg..qq.',
+      '...ggggggoqMMm',
+      '..oggggggwMMMm',
+      '.ogoggwwwwqMm.',
+      '..o.gwwww.....',
+      '.....c.c......'
+    ])),
+    S(padRows([
+      '..............',
+      '.....ggg..qq..',
+      '...gggggggqMMm',
+      '..ogggggggMMMm',
+      '.ogoggwwwwqMm.',
+      '..ggggwwww....',
+      '.gg.ggc.c.....',
+      'ggo...........'
+    ]))
+  ];
+
   return A;
 })();

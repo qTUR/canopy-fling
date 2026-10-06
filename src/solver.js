@@ -3,8 +3,8 @@
 var SOLVER = (function () {
   var DT = SIM.DT;
 
-  function qkey(s) {
-    return s.ix + ':' + Math.round(s.th * 8) + ':' + Math.round(s.om * 3) + ':' + s.cut;
+  function qkey(s, tper) {
+    return s.ix + ':' + Math.round(s.th * 8) + ':' + Math.round(s.om * 3) + ':' + s.cut + ':' + s.lcut + ':' + (tper ? Math.round((s.t % tper) * 6) : 0);
   }
 
   /* من حالة تعليق: يجرّب الترك كل relStep خطوة، وبعدها مسك متأخر بفجوات مختلفة */
@@ -13,6 +13,7 @@ var SOLVER = (function () {
     var sw = SIM.cloneState(hang);
     var maxSteps = Math.round(maxHold / DT);
     for (var st = 0; st <= maxSteps; st++) {
+      if (sw.mode !== SIM.HANG) break;
       if (st % relStep === 0) {
         for (var gi = 0; gi < gaps.length; gi++) {
           var res = flight(lv, sw, gaps[gi], opt);
@@ -50,7 +51,7 @@ var SOLVER = (function () {
     var opt = opts(o);
     var start = SIM.spawnAt(lv, startAi || 0, { t: 0 });
     var nodes = [{ s: start, par: -1, act: null }];
-    var seen = {}; seen[qkey(start)] = 1;
+    var seen = {}; seen[qkey(start, lv.tper)] = 1;
     var open = [0], expanded = 0, winNode = -1, winAct = null;
     while (open.length && expanded < opt.maxNodes && winNode < 0) {
       /* نختار الأبعد تقدّمًا */
@@ -67,7 +68,7 @@ var SOLVER = (function () {
         if (winNode >= 0) return;
         if (res.k === 'win') { winNode = ni; winAct = { rel: st, gap: gap }; return; }
         if (res.k !== 'arrive') return;
-        var key = qkey(res.s);
+        var key = qkey(res.s, lv.tper);
         if (seen[key]) return;
         seen[key] = 1;
         nodes.push({ s: res.s, par: ni, act: { rel: st, gap: gap, from: hang.ix }, depth: (node.depth || 0) + 1 });
@@ -81,13 +82,14 @@ var SOLVER = (function () {
   }
 
   /* نافذة الترك: من حالة تعليق، كم خطوة ترك تنجح في الوصول للحلقة target (أو الهدف) */
-  function window(lv, hang, target, o) {
+  function winRange(lv, hang, target, o) {
     var opt = opts(o);
     opt.relStep = (o && o.relStep) || 1;
     var good = [], gapsOK = {};
     var sw = SIM.cloneState(hang);
     var maxSteps = Math.round(opt.maxHold / DT);
     for (var st = 0; st <= maxSteps; st += opt.relStep) {
+      if (sw.mode !== SIM.HANG) break;
       var res = flight(lv, sw, opt.gaps[0], opt);
       var ok = (target === 'goal') ? res.k === 'win' : (res.k === 'arrive' && res.s.ix === target);
       if (ok) good.push(st);
@@ -105,15 +107,15 @@ var SOLVER = (function () {
 
 
   /* مسار متسلسل: من كل حلقة للي بعدها بنافذة ترك مركزية. يرجّع أضيق نافذة */
-  function seqPath(lv, o) {
+  function seqPath(lv, o, startIx, t0) {
     var opt = opts(o);
     opt.relStep = 2;
-    var s = SIM.spawnAt(lv, 0, { t: 0 });
+    var s = SIM.spawnAt(lv, startIx || 0, { t: t0 || 0 });
     var path = [], minW = 99, ws = [];
     var n = lv.anchors.length;
-    for (var ti = 1; ti <= n; ti++) {
+    for (var ti = (startIx || 0) + 1; ti <= n; ti++) {
       var target = ti < n ? ti : 'goal';
-      var w = window(lv, s, target, opt);
+      var w = winRange(lv, s, target, opt);
       if (!w.any) return { ok: false, at: ti };
       var mid = Math.round((w.from + w.to) / 2);
       mid -= mid % 2;
@@ -130,5 +132,5 @@ var SOLVER = (function () {
     return { ok: true, path: path, minWidth: minW, widths: ws };
   }
 
-  return { solve: solve, seqPath: seqPath, flight: flight, window: window, releases: releases, qkey: qkey };
+  return { solve: solve, seqPath: seqPath, flight: flight, winRange: winRange, releases: releases, qkey: qkey };
 })();

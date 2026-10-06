@@ -32,7 +32,7 @@ for (var i = 0; i < LEVELS.count(); i++) {
       /* الهدف التالي: نحاكي لين نعرف الحلقة اللي نوصلها */
       var f = SOLVER.flight(lv, (function () { var c = SIM.cloneState(hang); for (var q = 0; q < act.rel; q++) SIM.step(lv, c, true); return c; })(), act.gap, { maxFlight: 2.4 });
       if (!target) target = f.s.ix;
-      var w = SOLVER.window(lv, hang, target, { relStep: 1, maxHold: 3.2, gaps: [act.gap], maxFlight: 2.4 });
+      var w = SOLVER.winRange(lv, hang, target, { relStep: 1, maxHold: 3.2, gaps: [act.gap], maxFlight: 2.4 });
       ws.push(Math.round(w.width * 1000));
       /* ننقل الحالة لعند الوصول */
       s = f.s;

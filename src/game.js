@@ -21,8 +21,44 @@ var GAME = (function () {
 
   /* ---------- لغة ---------- */
   var T = {
-    ar: { t1: 'اضغط مطوّلًا على الشاشة', t2: 'اترك وإنت تتأرجح لقدّام', t3: 'اضغط قبل الحلقة اللي بعدها', level: 'المرحلة', win: 'ممتاز!', next: 'التالي', title: 'أرجوحة الغيل', again: 'من جديد' },
-    en: { t1: 'Press and hold the screen', t2: 'Let go as you swing forward', t3: 'Press again before the next ring', level: 'Level', win: 'Great!', next: 'Next', title: 'Canopy Fling', again: 'Again' }
+    ar: {
+      t1: 'اضغط مطوّلًا على الشاشة', t2: 'اترك وإنت تتأرجح لقدّام', t3: 'اضغط قبل الحلقة اللي بعدها', level: 'المرحلة', win: 'ممتاز!', next: 'التالي', title: 'أرجوحة الغيل', again: 'من جديد',
+      endless: 'مسار بلا نهاية', area: 'المنطقة',
+      r2t: 'أوراق نطّاطة', r2: 'الورقة العملاقة تنطّك لفوق، بس تتعب بعد نطّتين',
+      r3t: 'كروم ضعيفة', r3: 'الكرمة الفاتحة تنقطع بعد أول مسكة، ما فيه رجعة',
+      r4t: 'ضباب الشلال', r4: 'الضباب الصاعد يرفعك لفوق',
+      r5t: 'طيور تشيل الحلقات', r5: 'الطيور تحرّك الحلقات، اضبط توقيتك',
+      r6t: 'أغصان تنطوي', r6: 'الغصن الوردي ينطوي لو طوّلت الضغط',
+      r7t: 'مسار بلا نهاية', r7: 'كل القواعد مخلوطة، وما فيه نهاية',
+      shop: 'المتجر', bal: 'قطراتك', buy: 'اشترِ', max: 'أقصى', close: 'إغلاق',
+      ab_rope: 'حبل أطول', ab_rope_d: 'تمسك أبعد وتتأرجح أوسع',
+      ab_swing: 'تمرجح أسرع', ab_swing_d: 'الدفع أقوى وإنت ماسك',
+      ab_magnet: 'مغناطيس القطرات', ab_magnet_d: 'القطرات والفواكه تجيك',
+      ab_rescue: 'نجدة بالهواء', ab_rescue_d: 'مرة وحدة بالمرحلة ينطّك من تحت',
+      pres: 'نجمة جديدة', presOk: 'اضغط مرة ثانية للتأكيد', presInfo: 'تبدأ من المرحلة الأولى، وتاخذ نجمة: قطرات +٢٥٪ وهالة ذهبية للأبد',
+      presLock: 'تفتح بعد المنطقة السادسة', stars: 'النجوم',
+      rare1: 'زائر نادر! +١٠', rare2: 'مطر! القطرات ×٢', rare3: 'بركة مؤقتة تحتك', areaDone: 'خلصت المناطق الست! المسارات بلا نهاية فتحت',
+      best: 'أفضل'
+    },
+    en: {
+      t1: 'Press and hold the screen', t2: 'Let go as you swing forward', t3: 'Press again before the next ring', level: 'Level', win: 'Great!', next: 'Next', title: 'Canopy Fling', again: 'Again',
+      endless: 'Endless path', area: 'Area',
+      r2t: 'Bouncy leaves', r2: 'Giant leaves bounce you up, but tire after two bounces',
+      r3t: 'Weak vines', r3: 'Pale vines snap after one grab, no way back',
+      r4t: 'Waterfall mist', r4: 'Rising mist lifts you up',
+      r5t: 'Hornbill rings', r5: 'Birds carry the rings, time your grab',
+      r6t: 'Folding branches', r6: 'Pink branches fold if you hold too long',
+      r7t: 'Endless path', r7: 'Every rule mixed, no end in sight',
+      shop: 'Shop', bal: 'Your drops', buy: 'Buy', max: 'Max', close: 'Close',
+      ab_rope: 'Longer rope', ab_rope_d: 'Reach further, swing wider',
+      ab_swing: 'Faster swing', ab_swing_d: 'Stronger pump while holding',
+      ab_magnet: 'Drop magnet', ab_magnet_d: 'Drops and fruit come to you',
+      ab_rescue: 'Air rescue', ab_rescue_d: 'Once per level, bounced back from below',
+      pres: 'New star', presOk: 'Tap again to confirm', presInfo: 'Restart from level 1 and earn a star: drops +25% and a golden halo forever',
+      presLock: 'Unlocks after area six', stars: 'Stars',
+      rare1: 'Rare visitor! +10', rare2: 'Rain shower! Drops x2', rare3: 'A pond appears below', areaDone: 'All six areas done! Endless paths unlocked',
+      best: 'Best'
+    }
   };
   var lang = 'en';
   try { var nl = (navigator.language || 'en').toLowerCase(); lang = nl.indexOf('ar') === 0 ? 'ar' : 'en'; } catch (e) {}
@@ -33,9 +69,16 @@ var GAME = (function () {
   }
 
   /* ---------- تخزين ---------- */
-  var save = { lvl: 0, drops: 0, tip: 0 };
+  var save = { lvl: 0, drops: 0, tip: 0, ab: { rope: 0, swing: 0, magnet: 0, rescue: 0 }, pr: 0, seen: 0, best: 0, plays: 0 };
   try { var raw = localStorage.getItem('cf1'); if (raw) { var o = JSON.parse(raw); for (var k in o) save[k] = o[k]; } } catch (e) {}
   function persist() { try { localStorage.setItem('cf1', JSON.stringify(save)); } catch (e) {} }
+  var AB = {
+    rope: { max: 3, cost: [20, 50, 120] }, swing: { max: 3, cost: [20, 60, 140] },
+    magnet: { max: 3, cost: [15, 40, 100] }, rescue: { max: 2, cost: [60, 160] }
+  };
+  function applyMods() {
+    SIM.setMods({ dL: 3 * save.ab.rope, pump: 1 + 0.12 * save.ab.swing, rescue: save.ab.rescue });
+  }
 
   /* ---------- سبرايتات إلى كانفس ---------- */
   function toCanvas(spr, fn) {
@@ -67,11 +110,30 @@ var GAME = (function () {
     SPR.drop = toCanvas(ART.DROP); SPR.mango = toCanvas(ART.MANGO); SPR.pit = toCanvas(ART.PITAYA);
     SPR.nest = toCanvas(ART.NEST);
     SPR.birdf = ART.BIRDF.map(function (s) { return toCanvas(s); });
+    SPR.horn = ART.HORN.map(function (s2) { return toCanvas(s2); });
+    SPR.hornGold = ART.HORN.map(function (s2) { return toCanvas(s2, function (c) { var r = PIX.ramp(c); return r === 6 || r === 0 ? PIX.cid('M', Math.min(4, PIX.level(c) + 1)) : (r === 5 ? PIX.cid('C', 4) : c); }); });
+    SPR.ringB = toCanvas(ART.RING, function (c) { return PIX.cid('L', PIX.level(c)); });
+    SPR.ringF = toCanvas(ART.RING, function (c) { return PIX.cid('H', PIX.level(c)); });
+    SPR.leafCache = {};
     SPR.fr = {};
     ['idle', 'swing', 'fly', 'joy', 'fall'].forEach(function (k) {
       SPR.fr[k] = FRAME_MAPS[k].map(function (fm) { return { c: toCanvas(PIX.sprite(fm.r)), p: [fm.p[0] + 1, fm.p[1] + 1] }; });
     });
     SPR.fr.grab = { c: toCanvas(PIX.sprite(FRAME_MAPS.grab.r)), p: [FRAME_MAPS.grab.p[0] + 1, FRAME_MAPS.grab.p[1] + 1] };
+  }
+
+  /* ورقة نطّاطة بعرض معيّن وحالة (0 جديدة، 1 تعبت، 2 خلصت): تمديد أعمدة المنتصف بأعداد صحيحة */
+  function leafSprite(w, state, pond) {
+    var key = w + ':' + state + ':' + (pond ? 1 : 0);
+    if (SPR.leafCache[key]) return SPR.leafCache[key];
+    var b = ART.LEAF_BIG, nw = Math.max(b.w, w), h = b.h, d = new Array(nw * h), x, y, sx;
+    for (y = 0; y < h; y++) for (x = 0; x < nw; x++) {
+      sx = x < (b.w >> 1) ? x : (x >= nw - (b.w >> 1) ? x - (nw - b.w) : (b.w >> 1));
+      d[y * nw + x] = b.d[y * b.w + sx];
+    }
+    var rk = pond ? 'T' : (state === 0 ? 'J' : (state === 1 ? 'L' : 'M'));
+    var c = toCanvas({ w: nw, h: h, d: d }, function (v) { return PIX.cid(rk, state === 0 && !pond ? Math.min(4, PIX.level(v) + 1) : Math.min(4, PIX.level(v) + 1)); });
+    return (SPR.leafCache[key] = c);
   }
 
   /* ---------- خلفيات مخبوزة ---------- */
@@ -157,23 +219,123 @@ var GAME = (function () {
   /* ---------- حالة اللعب ---------- */
   var lv, st, held = false, camX = 0, camY = 110, parts = [], flash = 0, shake = 0;
   var phase = 'play', phaseT = 0, grabAnim = 0, picked = {}, lvlDrops = 0, tipStep = 0, birds = [];
-  var levelIdx = 0;
+  var levelIdx = 0, CORE = 24, leafAnim = [], rare = null, rain = false, pondDone = false, cardT = 0, toastT = 0, menuOpen = false;
+  var deathsHere = 0, deadX = 0;
+
+  /* ---------- مسارات لا نهائية: تتولد وتتحقق بخيط خلفي ---------- */
+  var worker = null, ecache = {}, epend = {};
+  function modsList() {
+    var m = SIM.getMods();
+    return [{ dL: 0, pump: 1 }, { dL: m.dL, pump: m.pump }, { dL: 9, pump: 1.36 }];
+  }
+  function initWorker() {
+    try {
+      var src = document.getElementById('wsrc');
+      if (!src || !window.Worker || !window.Blob || !window.URL) return;
+      var url = URL.createObjectURL(new Blob([src.textContent], { type: 'text/javascript' }));
+      worker = new Worker(url);
+      worker.onmessage = function (e) { var d = e.data; if (d && d.lv) ecache[d.k] = d.lv; delete epend[d.k]; };
+      worker.onerror = function () { worker = null; };
+    } catch (e) { worker = null; }
+  }
+  function wantEndless(k) {
+    if (ecache[k] || epend[k]) return;
+    if (worker) { epend[k] = 1; try { worker.postMessage({ k: k, mods: modsList() }); } catch (e) { worker = null; delete epend[k]; } }
+  }
+  function getEndless(k) {
+    if (!ecache[k]) { ecache[k] = LEVELS.endless(k, modsList(), 60); delete epend[k]; }
+    return ecache[k];
+  }
+  function getCore(i) {
+    var sv = SIM.getMods(); SIM.setMods({});
+    var l = LEVELS.get(i);
+    SIM.setMods(sv);
+    return l;
+  }
+
+  function areaOf(i) { return i < CORE ? ((i / 4) | 0) + 1 : 7; }
+  function rollSurprises() {
+    rare = null; rain = false;
+    if (levelIdx < 3) return;
+    var R = LEVELS.rng(save.plays * 131 + levelIdx * 7 + 5), q = R();
+    if (q < 0.12 && lv.pickups.length > 4) {
+      var pk = lv.pickups[Math.floor(lv.pickups.length * (0.35 + 0.3 * R()))];
+      rare = { cx: pk.x, cy: pk.y - 6, t: 0, got: false };
+    } else if (q < 0.22) { rain = true; }
+  }
+  function showCard(title, body, secs) {
+    $('cardt').textContent = title; $('cardb').textContent = body;
+    $('card').style.display = 'flex'; cardT = secs || 4.5;
+  }
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.style.display = 'block'; toastT = 2.2; }
 
   function loadLevel(i) {
-    levelIdx = i % LEVELS.count();
-    lv = LEVELS.get(levelIdx);
+    applyMods();
+    levelIdx = i;
+    var base = i < CORE ? getCore(i) : getEndless(i - CORE);
+    if (!base) base = getCore(0);
+    lv = {}; for (var k in base) lv[k] = base[k];
+    lv.leaves = base.leaves.slice();
+    lv.pickups = base.pickups.map(function (q) { return { x: q.x, y: q.y, t: q.t }; });
     st = SIM.makeState(lv);
-    picked = {}; lvlDrops = 0; parts = []; birds = []; phase = 'play'; phaseT = 0; flash = 0;
-    camX = st.x - VW * 0.38; camY = 110;
+    picked = {}; lvlDrops = 0; parts = []; birds = []; phase = 'play'; phaseT = 0; flash = 0; leafAnim = []; deathsHere = 0; pondDone = false;
+    camX = st.x - VW * 0.38; camY = st.y - VH * 0.54 + 12;
     tipStep = (levelIdx === 0 && !save.tip) ? 1 : 0;
     $('win').style.display = 'none';
+    save.plays++;
+    rollSurprises();
+    var ar = areaOf(i);
+    if (ar >= 2 && !(save.seen & (1 << ar))) {
+      save.seen |= (1 << ar); persist();
+      showCard(tr('r' + ar + 't'), tr('r' + ar), 5);
+    } else { $('card').style.display = 'none'; cardT = 0; }
+    if (rain) toast(tr('rare2'));
+    if (i >= CORE - 1) wantEndless(i + 1 - CORE);
     hud();
   }
   function hud() {
     $('drops').textContent = num(save.drops + lvlDrops);
-    $('lvl').textContent = tr('level') + ' ' + num(levelIdx + 1);
+    var lt = levelIdx < CORE ? tr('level') + ' ' + num(levelIdx + 1) : '∞ ' + num(levelIdx - CORE + 1);
+    $('lvl').textContent = lt + (save.pr ? ' ★' + num(save.pr) : '');
     var tip = $('tip');
     if (tipStep >= 1 && tipStep <= 3) { tip.textContent = tr('t' + tipStep); tip.style.display = 'block'; } else tip.style.display = 'none';
+  }
+
+  /* ---------- متجر القدرات ---------- */
+  var presArm = 0;
+  function shopRender() {
+    $('shoph').textContent = tr('shop');
+    $('shopbal').textContent = tr('bal') + ': ' + num(save.drops) + (save.pr ? '   ' + tr('stars') + ': ' + num(save.pr) : '');
+    var box = $('shoplist'); box.innerHTML = '';
+    ['rope', 'swing', 'magnet', 'rescue'].forEach(function (k) {
+      var lvn = save.ab[k], def = AB[k], row = document.createElement('div'); row.className = 'row';
+      var info = document.createElement('div');
+      var nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = tr('ab_' + k);
+      var ds = document.createElement('div'); ds.className = 'ds'; ds.textContent = tr('ab_' + k + '_d');
+      var pips = document.createElement('div'); pips.className = 'pips'; pips.textContent = new Array(lvn + 1).join('●') + new Array(def.max - lvn + 1).join('○');
+      info.appendChild(nm); info.appendChild(ds); info.appendChild(pips);
+      var bt = document.createElement('button');
+      if (lvn >= def.max) { bt.textContent = tr('max'); bt.disabled = true; }
+      else { var cost = def.cost[lvn]; bt.textContent = num(cost); bt.disabled = save.drops < cost; bt.onclick = function () { buy(k); }; }
+      row.appendChild(info); row.appendChild(bt); box.appendChild(row);
+    });
+    var bp = $('bpres'), ok = save.lvl >= CORE;
+    bp.textContent = ok ? (presArm ? tr('presOk') : '★ ' + tr('pres')) : tr('presLock');
+    bp.disabled = !ok; bp.style.opacity = ok ? 1 : 0.5;
+    $('bclose').textContent = tr('close');
+  }
+  function buy(k) {
+    var def = AB[k], lvn = save.ab[k];
+    if (lvn >= def.max || save.drops < def.cost[lvn]) return;
+    save.drops -= def.cost[lvn]; save.ab[k]++; applyMods(); persist(); sfx('pick', 3); shopRender(); hud();
+  }
+  function openShop() { if (menuOpen) return; menuOpen = true; held = false; presArm = 0; shopRender(); $('shop').style.display = 'flex'; }
+  function closeShop() { menuOpen = false; presArm = 0; $('shop').style.display = 'none'; hud(); }
+  function doPrestige() {
+    if (save.lvl < CORE) return;
+    if (!presArm) { presArm = 1; shopRender(); return; }
+    save.pr++; save.lvl = 0; save.seen = 0; presArm = 0; persist();
+    closeShop(); loadLevel(0); toast('★ ' + num(save.pr));
   }
 
   /* ---------- صوت ---------- */
@@ -214,6 +376,9 @@ var GAME = (function () {
       ns.connect(f); f.connect(g); g.connect(AU.master); ns.start(t); ns.stop(t + 0.35);
     }
     else if (name === 'pick') { var n = (a || 0) % 5; var sc = [784, 880, 1047, 1175, 1319]; tone(sc[n], t, 0.35, 'sine', 0.2); tone(sc[n] * 2, t, 0.2, 'sine', 0.06); }
+    else if (name === 'bounce') { tone(262, t, 0.3, 'sine', 0.2); tone(523, t + 0.03, 0.25, 'triangle', 0.1); tone(660, t + 0.08, 0.2, 'sine', 0.06); }
+    else if (name === 'snap') { tone(180, t, 0.12, 'square', 0.1); tone(120, t + 0.05, 0.18, 'triangle', 0.12); }
+    else if (name === 'rare') { [880, 1175, 1568].forEach(function (f2, i) { tone(f2, t + i * 0.07, 0.5, 'sine', 0.16); }); }
     else if (name === 'dead') { tone(220, t, 0.35, 'triangle', 0.18); tone(147, t + 0.1, 0.4, 'triangle', 0.15); }
     else if (name === 'win') { [523, 659, 784, 1047, 1319].forEach(function (f2, i) { tone(f2, t + i * 0.09, 0.7, 'triangle', 0.2); }); }
   }
@@ -246,12 +411,13 @@ var GAME = (function () {
   function lift() { held = false; }
   function bindInput() {
     var tgt = $('stage');
-    tgt.addEventListener('pointerdown', function (e) { e.preventDefault(); press(); }, { passive: false });
+    tgt.addEventListener('pointerdown', function (e) { e.preventDefault(); if (menuOpen) return; press(); }, { passive: false });
     window.addEventListener('pointerup', lift);
     window.addEventListener('pointercancel', lift);
     window.addEventListener('blur', lift);
     window.addEventListener('keydown', function (e) {
-      if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (!e.repeat) press(); }
+      if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (!e.repeat && !menuOpen) press(); }
+      else if (e.code === 'Escape' && menuOpen) closeShop();
       else if (e.code === 'KeyR') restart();
     });
     window.addEventListener('keyup', function (e) { if (e.code === 'Space' || e.code === 'ArrowUp') lift(); });
@@ -259,14 +425,18 @@ var GAME = (function () {
     btn('bsound', function () { audioInit(); setMute(!AU.on); });
     btn('blang', function () { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
     btn('brestart', restart);
-    btn('bnext', function () { save.lvl = (levelIdx + 1) % LEVELS.count(); persist(); loadLevel(save.lvl); });
+    btn('bshop', function () { if (menuOpen) closeShop(); else openShop(); });
+    btn('bclose', closeShop);
+    btn('bpres', doPrestige);
+    btn('bnext', function () { loadLevel(save.lvl); });
   }
   function applyLang() {
     document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     $('winmsg').textContent = tr('win'); $('bnext').textContent = tr('next');
+    if (menuOpen) shopRender();
     hud();
   }
-  function restart() { loadLevel(levelIdx); }
+  function restart() { if (menuOpen) return; save.plays--; loadLevel(levelIdx); }
 
   /* ---------- جسيمات ---------- */
   function burst(x, y, n, cols, sp) {
@@ -290,10 +460,16 @@ var GAME = (function () {
         if (tipStep === 1) { tipStep = 2; hud(); }
         else if (tipStep === 3) { tipStep = 0; save.tip = 1; persist(); hud(); }
       } else if (e.t === 'release') {
-        sfx('release'); shake = 0.6;
+        sfx(e.cut ? 'snap' : 'release'); shake = 0.6;
+        if (e.cut || e.forced) burst(e.cut && !e.forced ? st.x : st.x, st.y - 10, 8, [C('L', 3), C('L', 2), C('M', 3)], 45);
         if (tipStep === 2) { tipStep = 3; hud(); }
+      } else if (e.t === 'bounce') {
+        sfx('bounce'); leafAnim[e.i] = 0.2; shake = 0.5;
+        burst(e.x, e.y, 8, [C('L', 3), C('L', 4), C('T', 4)], 55);
+      } else if (e.t === 'rescue') {
+        sfx('rare'); burst(e.x, e.y + 6, 14, [C('C', 4), C('T', 4), C('M', 4)], 80); flash = 0.5;
       } else if (e.t === 'dead') {
-        sfx('dead'); phase = 'dead'; phaseT = 0;
+        sfx('dead'); phase = 'dead'; phaseT = 0; deathsHere++; deadX = st.x;
       } else if (e.t === 'win') {
         sfx('win'); phase = 'win'; phaseT = 0; flash = 1;
         for (var b = 0; b < 16; b++) birds.push({ x: st.x - 40 + Math.random() * 80, y: st.y + Math.random() * 30, vx: 40 + Math.random() * 60, vy: -30 - Math.random() * 60, ph: Math.random() * 6 });
@@ -301,13 +477,24 @@ var GAME = (function () {
       }
     }
     /* قطرات */
+    var mr = 14 + 9 * save.ab.magnet, gain = (1 + 0.25 * save.pr) * (rain ? 2 : 1);
     for (var p = 0; p < lv.pickups.length; p++) {
       if (picked[p]) continue;
-      var pk = lv.pickups[p], dx = st.x - pk.x, dy = (st.y + 6) - pk.y;
-      if (dx * dx + dy * dy < 14 * 14) {
-        picked[p] = 1; lvlDrops++; sfx('pick', lvlDrops);
+      var pk = lv.pickups[p], dx = st.x - pk.x, dy = (st.y + 6) - pk.y, dd = dx * dx + dy * dy;
+      if (save.ab.magnet && dd < mr * mr * 3 && dd > 1) { var dl = Math.sqrt(dd), pull = Math.min(1.6, 60 * SIM.DT * 1.2 / 1); pk.x += dx / dl * pull; pk.y += dy / dl * pull; }
+      if (dd < mr * mr) {
+        picked[p] = 1; lvlDrops += Math.round((pk.t ? 3 : 1) * gain); sfx('pick', p);
         burst(pk.x, pk.y, 9, [C('T', 4), C('C', 4), pk.t ? C('M', 3) : C('T', 3)], 50);
         hud();
+      }
+    }
+    /* زائر نادر */
+    if (rare && !rare.got) {
+      var rx = rare.cx + Math.cos(rare.t * 1.6) * 12, ry = rare.cy + Math.sin(rare.t * 2.2) * 6;
+      var ddx = st.x - rx, ddy = st.y - ry;
+      if (ddx * ddx + ddy * ddy < 18 * 18) {
+        rare.got = true; lvlDrops += 10; sfx('rare'); toast(tr('rare1')); hud();
+        burst(rx, ry, 18, [C('M', 4), C('M', 3), C('C', 4)], 70);
       }
     }
   }
@@ -319,15 +506,34 @@ var GAME = (function () {
       if (acc > 0.1) acc = 0;
     } else if (phase === 'dead') {
       phaseT += dt;
-      if (phaseT > 0.55) { SIM.respawn(lv, st); st.idle = true; phase = 'play'; held = false; camX = st.x - VW * 0.38; }
+      if (phaseT > 0.55) {
+        SIM.respawn(lv, st); st.idle = true; phase = 'play'; held = false; camX = st.x - VW * 0.38; leafAnim = [];
+        /* بركة مؤقتة بعد أول سقطة (أحيانًا) */
+        if (!pondDone && deathsHere >= 1 && lv.lowY && lv.killY - 30 > lv.lowY + 14 && ((save.plays * 7 + levelIdx) % 5 === 0)) {
+          pondDone = true; lv.leaves.push({ x: Math.round(Math.max(lv.anchors[0].x, Math.min(lv.goal.x, deadX))), y: lv.killY - 30, w: 90, pond: true });
+          toast(tr('rare3'));
+        }
+      }
     } else if (phase === 'win') {
       phaseT += dt;
       if (phaseT > 1.4 && $('win').style.display !== 'flex') {
         $('win').style.display = 'flex';
-        save.drops += lvlDrops; lvlDrops = 0; save.lvl = (levelIdx + 1) % LEVELS.count(); persist(); hud();
+        var bonus = Math.round(5 * (1 + 0.25 * save.pr));
+        save.drops += lvlDrops + bonus; lvlDrops = 0;
+        if (levelIdx + 1 > save.lvl) save.lvl = levelIdx + 1;
+        else if (levelIdx >= save.lvl) save.lvl = levelIdx + 1;
+        if (save.lvl > CORE && save.lvl - CORE > save.best) save.best = save.lvl - CORE;
+        persist(); hud();
+        $('winmsg').textContent = tr('win');
+        $('winsub').textContent = '+' + num(bonus) + (levelIdx === CORE - 1 ? '  ' + tr('areaDone') : '');
+        if (levelIdx + 1 >= CORE) wantEndless(levelIdx + 1 - CORE);
       }
     }
     if (grabAnim > 0) grabAnim -= dt;
+    if (rare) rare.t += dt;
+    for (var li = 0; li < leafAnim.length; li++) if (leafAnim[li] > 0) leafAnim[li] -= dt;
+    if (cardT > 0) { cardT -= dt; if (cardT <= 0) $('card').style.display = 'none'; }
+    if (toastT > 0) { toastT -= dt; if (toastT <= 0) $('toast').style.display = 'none'; }
     if (shake > 0) shake -= dt * 3;
     if (flash > 0) flash -= dt * 0.9;
     for (var i = parts.length - 1; i >= 0; i--) {
@@ -339,7 +545,7 @@ var GAME = (function () {
     /* كاميرا */
     var tx = st.x - VW * 0.36 + Math.max(-30, Math.min(40, st.vx * 0.22));
     camX += (tx - camX) * Math.min(1, dt * 4.5);
-    var ty = (st.mode === SIM.HANG ? st.y : st.y * 0.6 + 110 * 0.4) - VH * 0.45 + 12;
+    var ty = (st.mode === SIM.HANG ? st.y : st.y * 0.6 + 110 * 0.4) - VH * 0.54 + 12;
     camY += (ty - camY) * Math.min(1, dt * 2.5);
     music();
   }
@@ -350,11 +556,52 @@ var GAME = (function () {
     var o = -(((camX * par) % w) + w) % w;
     for (var x = o; x < VW; x += w) ctx.drawImage(img, px(x), px(y));
   }
-  function drawVine(x0, y0, x1, y1, sway) {
+  function drawVine(x0, y0, x1, y1, ramp) {
+    var rk = ramp || 'J', lo = rk === 'L' ? 3 : (rk === 'F' ? 2 : 1), hi = rk === 'L' ? 4 : (rk === 'F' ? 3 : 2);
     PIX.line(x0, y0, x1, y1, function (x, y, i) {
-      ctx.fillStyle = hexOf(C('J', (i % 6 < 3) ? 1 : 2)); ctx.fillRect(x, y, 1, 1);
-      if (i % 9 === 4) { ctx.fillStyle = hexOf(C('L', 1)); ctx.fillRect(x + 1, y, 1, 1); }
+      ctx.fillStyle = hexOf(C(rk, (i % 6 < 3) ? lo : hi)); ctx.fillRect(x, y, 1, 1);
+      if (i % 9 === 4) { ctx.fillStyle = hexOf(rk === 'L' ? C('M', 3) : C('L', 1)); ctx.fillRect(x + 1, y, 1, 1); }
     });
+  }
+  /* غصن ينطوي: عارضة بنّية تنحني حسب مدة الضغط، وتومض بالوردي قرب الانطواء */
+  function drawLimb(sx, ay, k, held_) {
+    var d = Math.round(Math.min(1, k) * 5), flashOn = held_ && k > 0.62 && (((tAll * 12) | 0) & 1);
+    var cx = px(sx), cy = px(ay), j;
+    for (j = 0; j < 3; j++) {
+      var col = j === 0 ? C('F', 3) : (j === 1 ? (flashOn ? C('H', 3) : C('F', 2)) : C('F', 1));
+      var paint = function (x, y) { ctx.fillStyle = hexOf(col); ctx.fillRect(x, y, 1, 1); };
+      PIX.line(cx - 13, cy + j, cx, cy + d + j, paint);
+      PIX.line(cx, cy + d + j, cx + 13, cy + j, paint);
+    }
+    ctx.fillStyle = hexOf(C('L', 3)); ctx.fillRect(cx - 13, cy - 1, 2, 1); ctx.fillRect(cx + 12, cy - 1, 2, 1);
+  }
+  function drawLeaves(topY) {
+    for (var i = 0; i < lv.leaves.length; i++) {
+      var lf = lv.leaves[i], used = (st.lcut >> (2 * i)) & 3, sx = lf.x - camX;
+      if (sx < -60 || sx > VW + 60) continue;
+      var img = leafSprite(lf.w, used, lf.pond), sq = (leafAnim[i] > 0) ? 2 : 0, droop = used >= 2 ? 3 : 0;
+      var top = px(lf.y - camY) - (img.height >> 1) + sq + droop;
+      if (!lf.pond) drawVine(px(sx), px(topY), px(sx), top + (img.height >> 1) - 2, used >= 2 ? 'F' : 'J');
+      ctx.drawImage(img, px(sx) - (img.width >> 1), top);
+    }
+  }
+  function drawDrafts(topY) {
+    for (var i = 0; i < lv.drafts.length; i++) {
+      var d = lv.drafts[i], sx = d.x - camX;
+      if (sx < -40 || sx > VW + 40) continue;
+      var y0 = px(d.y - camY), j, yy, xx;
+      for (yy = topY; yy < y0 + d.h * 0.45; yy += 1) {
+        for (var cx = -1; cx <= 1; cx++) {
+          if (PIX.dth(cx + 3, yy + ((tAll * 40) | 0), 0.55)) { ctx.fillStyle = hexOf(((yy + cx) & 3) ? C('C', 4) : C('T', 4)); ctx.fillRect(px(sx) + cx, yy, 1, 1); }
+        }
+      }
+      for (j = 0; j < 34; j++) {
+        yy = d.y + d.h - ((tAll * 46 + j * 23) % d.h);
+        xx = d.x + Math.sin(j * 2.7 + tAll * 1.3) * (d.w * 0.5);
+        ctx.fillStyle = hexOf((j & 1) ? C('C', 4) : C('T', 4));
+        ctx.fillRect(px(xx - camX), px(yy - camY), (j % 3) ? 1 : 2, 1);
+      }
+    }
   }
   var HEX = [];
   function hexOf(id) {
@@ -378,19 +625,33 @@ var GAME = (function () {
     /* كروم العالم */
     var i, a, x, y;
     var topY = -20;
+    drawDrafts(topY);
+    drawLeaves(topY);
     for (i = 0; i < lv.anchors.length; i++) {
       a = lv.anchors[i];
-      var ax = a.x - camX, ay = a.y - camY;
-      if (ax < -30 || ax > VW + 30) continue;
-      var hx = a.x, hy = a.y + a.L, held_ = (st.mode === SIM.HANG && st.ix === i);
-      if (held_) { hx = st.x; hy = st.y; }
-      else hx += Math.sin(tAll * 1.3 + i) * 1.2;
-      /* حبل من فوق لين الحلقة */
-      drawVine(px(a.x - camX), px(topY), px(a.x - camX), px(ay), 0);
-      drawVine(px(a.x - camX), px(ay), px(hx - camX), px(hy - camY - 17), 0);
-      ctx.drawImage(SPR.ring, px(hx - camX) - 9, px(hy - camY) - 17);
-      if (lv.anchors[i].cp && i > 0) { /* علامة نقطة حفظ: غصين ليموني */
-        ctx.fillStyle = hexOf(C('L', 3)); ctx.fillRect(px(a.x - camX) - 1, px(ay) + 2, 3, 3);
+      var pxv = SIM.ax(lv, a, st.t), L = SIM.eff(a), sx = pxv - camX, ay = a.y - camY;
+      if (sx < -40 || sx > VW + 40) continue;
+      var snapped = a.bit && (st.cut & a.bit), held_ = (st.mode === SIM.HANG && st.ix === i);
+      var hx = pxv, hy = a.y + L;
+      if (held_) { hx = st.x; hy = st.y; } else hx += Math.sin(tAll * 1.3 + i) * 1.2;
+      var rimg = a.brk ? SPR.ringB : (a.fold ? SPR.ringF : SPR.ring);
+      if (a.mv) {
+        var hf = SPR.horn[((tAll * 7 + i) | 0) & 1], hl = SIM.avx(lv, a, st.t) < 0, hw = hf.width;
+        if (hl) { ctx.save(); ctx.translate(px(sx), 0); ctx.scale(-1, 1); ctx.drawImage(hf, -(hw >> 1), px(ay) - 8); ctx.restore(); }
+        else ctx.drawImage(hf, px(sx) - (hw >> 1), px(ay) - 8);
+        drawVine(px(sx), px(ay) + 2, px(hx - camX), px(hy - camY - 17), 'J');
+        ctx.drawImage(rimg, px(hx - camX) - 9, px(hy - camY) - 17);
+      } else if (snapped) {
+        drawVine(px(sx), px(topY), px(sx), px(ay) + 12, a.fold ? 'F' : 'L');
+        if (a.fold) drawLimb(sx, ay, 7, false);
+      } else {
+        drawVine(px(sx), px(topY), px(sx), px(ay), a.brk ? 'L' : 'J');
+        if (a.fold) drawLimb(sx, ay, held_ ? st.hold / a.fold : 0, held_);
+        drawVine(px(sx), px(ay), px(hx - camX), px(hy - camY - 17), a.brk ? 'L' : 'J');
+        ctx.drawImage(rimg, px(hx - camX) - 9, px(hy - camY) - 17);
+      }
+      if (a.cp && i > 0) { /* علامة نقطة حفظ: غصين ليموني */
+        ctx.fillStyle = hexOf(C('L', 3)); ctx.fillRect(px(sx) - 1, px(ay) + 2, 3, 3);
       }
     }
     /* العش */
@@ -410,6 +671,14 @@ var GAME = (function () {
       var im = pk.t ? SPR.mango : SPR.drop;
       ctx.drawImage(im, px(pk.x - camX) - (im.width >> 1), px(pk.y - camY + bob) - (im.height >> 1));
     }
+    /* زائر نادر: أبو قرن ذهبي */
+    if (rare && !rare.got) {
+      var rx = rare.cx + Math.cos(rare.t * 1.6) * 12, ry = rare.cy + Math.sin(rare.t * 2.2) * 6;
+      var gf = SPR.hornGold[((tAll * 8) | 0) & 1], gl = Math.sin(rare.t * 1.6) > 0;
+      if (gl) { ctx.save(); ctx.translate(px(rx - camX), 0); ctx.scale(-1, 1); ctx.drawImage(gf, -(gf.width >> 1), px(ry - camY) - 5); ctx.restore(); }
+      else ctx.drawImage(gf, px(rx - camX) - (gf.width >> 1), px(ry - camY) - 5);
+      if (PIX.dth(((tAll * 20) | 0), 3, 0.5)) { ctx.fillStyle = hexOf(C('C', 4)); ctx.fillRect(px(rx - camX) + ((tAll * 31) % 14 | 0) - 7, px(ry - camY) + ((tAll * 17) % 10 | 0) - 5, 1, 1); }
+    }
     /* الجبّون */
     drawGibbon();
     /* جسيمات */
@@ -427,6 +696,10 @@ var GAME = (function () {
       ctx.drawImage(fr, px(bd.x - camX), px(bd.y - camY));
     }
     tile(LAY.near, 512, 0, VH - 54 - cy * 0.4, 1.5);
+    if (rain) {
+      ctx.fillStyle = hexOf(C('T', 4));
+      for (i = 0; i < 46; i++) { var rxx = (i * 53 + tAll * 22) % VW, ryy = (i * 37 + tAll * 150) % VH; ctx.fillRect(px(rxx), px(ryy), 1, 3); }
+    }
     if (flash > 0) { ctx.globalAlpha = Math.min(1, flash) * 0.55; ctx.fillStyle = hexOf(C('C', 4)); ctx.fillRect(0, 0, VW, VH); ctx.globalAlpha = 1; }
     ctx.restore();
     /* تعتيم لحظة السقوط */
@@ -453,6 +726,13 @@ var GAME = (function () {
       else if (al > 12) f = SPR.fr.fly[1];
       else if (al > -14) f = SPR.fr.fly[2];
       else f = SPR.fr.fly[3];
+    }
+    if (save.pr > 0 && phase !== 'dead') {
+      for (var hh = 0; hh < 12; hh++) {
+        var ha = hh / 12 * 6.283 + tAll * 1.2;
+        ctx.fillStyle = hexOf((hh & 1) ? C('M', 4) : C('C', 4));
+        ctx.fillRect(px(X + Math.cos(ha) * 9), px(Y + 9 + Math.sin(ha) * 9), 1, 1);
+      }
     }
     var w = f.c.width;
     if (flip) {
@@ -483,14 +763,16 @@ var GAME = (function () {
   function start() {
     cv = $('cv');
     buildSprites();
+    applyMods();
+    initWorker();
     resize();
     window.addEventListener('resize', function () { resize(); });
     bindInput();
     applyLang();
-    loadLevel(save.lvl || 0);
+    loadLevel(Math.min(save.lvl || 0, CORE + 2000));
     setMute(true);
     last = performance.now();
     requestAnimationFrame(frame);
   }
-  return { start: start, get state() { return st; }, get level() { return lv; }, get phase() { return phase; }, setHeld: function (h) { held = h; }, loadLevel: loadLevel, view: function () { return [VW, VH, SC]; }, save: save, tip: function () { return tipStep; } };
+  return { start: start, tick: function (dt) { update(dt); }, dbg: function () { return { worker: !!worker, ecache: Object.keys(ecache), mods: SIM.getMods(), rare: !!rare, rain: rain, menu: menuOpen }; }, buy: buy, doPrestige: doPrestige, openShop: openShop, closeShop: closeShop, get state() { return st; }, get level() { return lv; }, get phase() { return phase; }, setHeld: function (h) { held = h; }, loadLevel: loadLevel, view: function () { return [VW, VH, SC]; }, save: save, tip: function () { return tipStep; } };
 })();

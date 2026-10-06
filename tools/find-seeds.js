@@ -1,22 +1,45 @@
 'use strict';
-/* يدوّر على بذور تعطي مراحل متسلسلة محلولة بنوافذ ترك ضمن مجال الصعوبة */
-var fs = require('fs'), vm = require('vm'), path = require('path');
-var root = path.join(__dirname, '..', 'src');
-var ctx = { console: console, Math: Math };
-vm.createContext(ctx);
-[['sim.js', 'SIM'], ['solver.js', 'SOLVER'], ['levels.js', 'LEVELS']].forEach(function (p) {
-  vm.runInContext(fs.readFileSync(path.join(root, p[0]), 'utf8') + '\n;this.' + p[1] + '=' + p[1] + ';', ctx);
-});
-var LEVELS = ctx.LEVELS, SOLVER = ctx.SOLVER;
+/* يبحث لكل مرحلة عن أول بذرة تحقق: قابلة للحل، نافذة ترك مقبولة، تنجح مع كل القدرات، وتنجح من كل نقطة حفظ */
+var ctx = require('./lib')();
+var SIM = ctx.SIM, SOLVER = ctx.SOLVER, LEVELS = ctx.LEVELS;
+var MODS = [];
+[0, 3, 6, 9].forEach(function (dl) { [1, 1.12, 1.24, 1.36].forEach(function (pm) { MODS.push({ dL: dl, pump: pm }); }); });
 
-var targets = JSON.parse(process.argv[2]);   /* [{id, n, dx, dy, L, cpEvery, lo, hi}] */
-targets.forEach(function (t) {
-  var found = null, tried = 0;
-  for (var seed = t.from || 1; seed < (t.from || 1) + 400 && !found; seed++) {
-    var lv = LEVELS.chain({ id: t.id, name: 'x', seed: seed, n: t.n, dx: t.dx, dy: t.dy, L: t.L, cpEvery: t.cpEvery });
+function checkAll(lv) {
+  var i, m;
+  for (m = 0; m < MODS.length; m++) {
+    SIM.setMods(MODS[m]);
     var r = SOLVER.seqPath(lv, {});
-    tried++;
-    if (r.ok && r.minWidth >= t.lo && r.minWidth <= t.hi) found = { seed: seed, minW: Math.round(r.minWidth * 1000), widths: r.widths.map(function (w) { return Math.round(w * 1000); }) };
+    if (!r.ok) { SIM.setMods({}); return 'mods' + m; }
   }
-  console.log('مرحلة', t.id, found ? JSON.stringify(found) : 'ما لقيت (' + tried + ')');
-});
+  SIM.setMods({});
+  /* من كل نقطة حفظ، بأطوار مختلفة للحلقات المتحركة */
+  for (i = 1; i < lv.anchors.length; i++) {
+    if (!lv.anchors[i].cp) continue;
+    var ph = lv.anchors.some(function (a) { return a.mv; }) ? [0, 0.8, 1.6, 2.4] : [0];
+    for (var q = 0; q < ph.length; q++) {
+      var r2 = SOLVER.seqPath(lv, {}, i, ph[q]);
+      if (!r2.ok) return 'cp' + i + '@' + ph[q];
+    }
+  }
+  return null;
+}
+
+var from = +(process.argv[2] || 0), to = +(process.argv[3] || LEVELS.count() - 1), maxSeed = +(process.argv[4] || 400);
+var out = {};
+for (var i = from; i <= to; i++) {
+  var found = 0, why = {};
+  for (var seed = 1; seed <= maxSeed && !found; seed++) {
+    var sp = LEVELS.specFor(i); sp.seed = seed;
+    var lv = LEVELS.gen(sp);
+    var r = SOLVER.seqPath(lv, {});
+    if (!r.ok) { why.base = (why.base || 0) + 1; continue; }
+    if (r.minWidth < sp.lo || r.minWidth > sp.hi) { why.narrow = (why.narrow || 0) + 1; continue; }
+    var bad = checkAll(lv);
+    if (bad) { why[bad.replace(/\d+.*/, '')] = (why[bad.replace(/\d+.*/, '')] || 0) + 1; continue; }
+    found = seed; out[i] = seed;
+    console.log('level ' + (i + 1) + ' seed ' + seed + ' minW ' + Math.round(r.minWidth * 1000) + 'ms anchors ' + lv.anchors.length + ' leaves ' + lv.leaves.length);
+  }
+  if (!found) console.log('level ' + (i + 1) + ' NOT FOUND ' + JSON.stringify(why));
+}
+console.log('SEEDS_JSON ' + JSON.stringify(out));
