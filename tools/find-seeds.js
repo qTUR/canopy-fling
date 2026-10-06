@@ -16,7 +16,7 @@ function checkAll(lv) {
   /* من كل نقطة حفظ، بأطوار مختلفة للحلقات المتحركة */
   for (i = 1; i < lv.anchors.length; i++) {
     if (!lv.anchors[i].cp) continue;
-    var ph = lv.anchors.some(function (a) { return a.mv; }) ? [0, 0.8, 1.6, 2.4] : [0];
+    var ph = lv.anchors.some(function (a) { return a.mv; }) ? [0, 0.4, 0.7, 1.1, 1.6, 2.0, 2.4, 2.8] : [0];
     for (var q = 0; q < ph.length; q++) {
       var r2 = SOLVER.seqPath(lv, {}, i, ph[q]);
       if (!r2.ok) return 'cp' + i + '@' + ph[q];

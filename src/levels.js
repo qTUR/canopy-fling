@@ -99,7 +99,7 @@ var LEVELS = (function () {
         if (a === 2) { sp.leaf = [0.9, 0.85, 0.8, 0.8][w]; sp.leafDy = [40, 64]; }
         if (a === 3) { sp.brk = [0.45, 0.55, 0.6, 0.7][w]; if (w === 3) { sp.leaf = 0.25; sp.leafDy = [44, 66]; } }
         if (a === 4) { sp.draft = [0.45, 0.45, 0.5, 0.5][w]; sp.yr = [70, 165]; if (w === 3) sp.brk = 0.15; }
-        if (a === 5) { sp.mv = [0.5, 0.5, 0.42, 0.42][w]; if (w === 3) sp.n = 20; if (w === 2) sp.n = 22; sp.mvA = [14, 22]; sp.tper = [3.2, 3.0, 2.8, 2.6][w]; if (w === 3) sp.brk = 0.1; }
+        if (a === 5) { sp.mv = [0.5, 0.4, 0.34, 0.3][w]; if (w === 3) sp.n = 20; if (w === 2) sp.n = 22; sp.mvA = w ? [10, 17] : [14, 22]; sp.tper = [3.2, 3.0, 2.8, 2.6][w]; if (w === 3) sp.brk = 0.1; }
         if (a === 6) { sp.fold = [0.45, 0.5, 0.55, 0.55][w]; sp.foldT = [[1.2, 1.6], [1.1, 1.5], [1.0, 1.4], [0.95, 1.3]][w]; if (w >= 2) sp.brk = 0.1; }
         out.push(sp);
       }
@@ -108,14 +108,14 @@ var LEVELS = (function () {
   }
   var SPECS = makeSpecs();
   /* بذور مثبّتة بعد التحقق (tools/find-seeds.js) */
-  var SEEDS = [1, 1, 8, 14, 3, 2, 8, 9, 1, 5, 2, 1, 33, 1, 1, 1, 22, 9, 47, 7, 2, 17, 101, 7];
+  var SEEDS = [5,1,27,14,3,6,9,9,2,5,2,17,9,4,24,3,9,103,46,640,66,90,881,783];
 
   function specFor(i) {
     var sp = {};
     for (var k in SPECS[i]) sp[k] = SPECS[i][k];
     var g = i / (SPECS.length - 1), within = i % 4;
-    sp.hi = Math.round((0.28 - 0.17 * g + (within === 0 ? 0.03 : 0)) * 100) / 100;
-    sp.lo = Math.max(0.06, Math.round((sp.hi - 0.07) * 100) / 100);
+    sp.hi = Math.round((0.24 - 0.15 * g + (within === 0 ? 0.03 : 0)) * 100) / 100;
+    sp.lo = Math.max(0.05, Math.round((sp.hi - 0.06) * 100) / 100);
     sp.id = i + 1; sp.name = 'a' + sp.area + 'l' + (i + 1); sp.seed = SEEDS[i] || 1;
     return sp;
   }

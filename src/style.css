@@ -72,3 +72,12 @@ html[lang=ar] #menu.pause h1{font-size:min(16vw,10vh,64px)}
 .row .pb{min-width:70px;font-size:24px;margin-bottom:8px}
 #bpres{background:var(--hib);color:var(--cream);box-shadow:0 -4px 0 0 var(--hib),0 4px 0 0 var(--hib),-4px 0 0 0 var(--hib),4px 0 0 0 var(--hib),0 8px 0 0 #7a1f4a}
 #bpres:disabled{background:#2b4a41;color:#7fa093;box-shadow:0 -4px 0 0 #2b4a41,0 4px 0 0 #2b4a41,-4px 0 0 0 #2b4a41,4px 0 0 0 #2b4a41,0 8px 0 0 var(--jade0)}
+
+@media (max-height:520px) and (min-aspect-ratio:5/4){
+  #shop .sp{width:min(94%,760px);max-height:94%;display:grid;grid-template-columns:1fr 1.25fr;grid-template-areas:'h l' 'b l' 'f l' 'p l' 'c l';gap:8px 18px;align-content:center;padding:10px 16px}
+  #shop h2{grid-area:h;font-size:32px}
+  #shopbal{grid-area:b;font-size:20px}
+  #shoplist{grid-area:l;align-self:center}
+  #bfree{grid-area:f}#bpres{grid-area:p}#bclose{grid-area:c}
+  #shop .pb{font-size:20px;padding:6px 10px}
+}

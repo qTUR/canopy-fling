@@ -11,7 +11,7 @@ var coreCtx = require('./lib')();
 var coreData = [];
 for (var ci = 0; ci < coreCtx.LEVELS.count(); ci++) { var cl = coreCtx.LEVELS.get(ci); if (!cl.ok) throw new Error('level ' + (ci + 1) + ' unsolved'); coreData.push(cl); }
 var coreSrc = 'var CORE_DATA = ' + JSON.stringify(coreData) + ';\n';
-var FILES = ['pix.js', 'foliage.js', 'frames.js', 'art.js', 'sim.js', 'solver.js', 'levels.js', 'game.js'];
+var FILES = ['pix.js', 'foliage.js', 'frames.js', 'art.js', 'sim.js', 'solver.js', 'levels.js', 'yt.js', 'game.js'];
 var code = coreSrc + FILES.map(function (f) { return fs.readFileSync(path.join(root, 'src', f), 'utf8'); }).join('\n');
 var css = fs.readFileSync(path.join(root, 'src', 'style.css'), 'utf8');
 var body = fs.readFileSync(path.join(root, 'src', 'body.html'), 'utf8');
