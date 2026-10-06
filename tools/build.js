@@ -62,4 +62,5 @@ console.log('youtube', fs.statSync(path.join(yd, 'index.html')).size);
 var pd = outDir('pages');
 fs.writeFileSync(path.join(pd, 'index.html'), page('pages'));
 fs.writeFileSync(path.join(pd, '.nojekyll'), '');
+if (fs.existsSync(path.join(root, 'assets', 'og.png'))) fs.copyFileSync(path.join(root, 'assets', 'og.png'), path.join(pd, 'og.png'));
 console.log('pages', fs.statSync(path.join(pd, 'index.html')).size);
