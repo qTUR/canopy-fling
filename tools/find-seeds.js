@@ -3,7 +3,7 @@
 var ctx = require('./lib')();
 var SIM = ctx.SIM, SOLVER = ctx.SOLVER, LEVELS = ctx.LEVELS;
 var MODS = [];
-[0, 3, 6, 9].forEach(function (dl) { [1, 1.12, 1.24, 1.36].forEach(function (pm) { MODS.push({ dL: dl, pump: pm }); }); });
+[0, 3, 6, 9].forEach(function (dl) { [1, 1.12, 1.24, 1.36].forEach(function (pm) { MODS.push({ dL: dl, pump: pm, rescue: (dl + (pm > 1.2 ? 1 : 0)) % 3 }); }); });
 
 function checkAll(lv) {
   var i, m;
@@ -29,7 +29,7 @@ var from = +(process.argv[2] || 0), to = +(process.argv[3] || LEVELS.count() - 1
 var out = {};
 for (var i = from; i <= to; i++) {
   var found = 0, why = {};
-  for (var seed = 1; seed <= maxSeed && !found; seed++) {
+  for (var seed = +(process.argv[5] || 1); seed <= maxSeed && !found; seed++) {
     var sp = LEVELS.specFor(i); sp.seed = seed;
     var lv = LEVELS.gen(sp);
     var r = SOLVER.seqPath(lv, {});

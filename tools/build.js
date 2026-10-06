@@ -6,13 +6,18 @@ var root = path.join(__dirname, '..');
 var dist = path.join(root, 'dist');
 fs.mkdirSync(dist, { recursive: true });
 
+/* مراحل الحملة الأساسية تُحسب وقت البناء */
+var coreCtx = require('./lib')();
+var coreData = [];
+for (var ci = 0; ci < coreCtx.LEVELS.count(); ci++) { var cl = coreCtx.LEVELS.get(ci); if (!cl.ok) throw new Error('level ' + (ci + 1) + ' unsolved'); coreData.push(cl); }
+var coreSrc = 'var CORE_DATA = ' + JSON.stringify(coreData) + ';\n';
 var FILES = ['pix.js', 'foliage.js', 'frames.js', 'art.js', 'sim.js', 'solver.js', 'levels.js', 'game.js'];
-var code = FILES.map(function (f) { return fs.readFileSync(path.join(root, 'src', f), 'utf8'); }).join('\n');
+var code = coreSrc + FILES.map(function (f) { return fs.readFileSync(path.join(root, 'src', f), 'utf8'); }).join('\n');
 var css = fs.readFileSync(path.join(root, 'src', 'style.css'), 'utf8');
 var body = fs.readFileSync(path.join(root, 'src', 'body.html'), 'utf8');
 
 var wsrc = ['sim.js', 'solver.js', 'levels.js'].map(function (f) { return fs.readFileSync(path.join(root, 'src', f), 'utf8'); }).join('\n') +
-  '\nonmessage = function (e) { var d = e.data; var lv = null; try { lv = LEVELS.endless(d.k, d.mods, 60); } catch (x) {} postMessage({ k: d.k, lv: lv }); };\n';
+  '\nonmessage = function (e) { var d = e.data; var lv = null; try { lv = d.star ? LEVELS.starLevel(d.i, d.star, d.mods, 60) : LEVELS.endless(d.ek, d.mods, 60); } catch (x) {} postMessage({ k: d.k, lv: lv }); };\n';
 var wtag = '<script type="text/plain" id="wsrc">' + wsrc + '</script>';
 function page(target) {
   if (target === 'artifact') return '<title>Canopy Fling</title><style>' + css + '</style>' + body + wtag + '<script>' + code + '\nGAME.start();</script>';

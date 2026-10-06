@@ -224,27 +224,34 @@ var GAME = (function () {
 
   /* ---------- مسارات لا نهائية: تتولد وتتحقق بخيط خلفي ---------- */
   var worker = null, ecache = {}, epend = {};
-  function modsList() {
-    var m = SIM.getMods();
-    return [{ dL: 0, pump: 1 }, { dL: m.dL, pump: m.pump }, { dL: 9, pump: 1.36 }];
-  }
+  var ALLMODS = [];
+  [0, 3, 6, 9].forEach(function (dl) { [1, 1.12, 1.24, 1.36].forEach(function (pm) { ALLMODS.push({ dL: dl, pump: pm, rescue: (dl + (pm > 1.2 ? 1 : 0)) % 3 }); }); });
+  function modsList() { return ALLMODS; }
   function initWorker() {
     try {
       var src = document.getElementById('wsrc');
       if (!src || !window.Worker || !window.Blob || !window.URL) return;
       var url = URL.createObjectURL(new Blob([src.textContent], { type: 'text/javascript' }));
       worker = new Worker(url);
-      worker.onmessage = function (e) { var d = e.data; if (d && d.lv) ecache[d.k] = d.lv; delete epend[d.k]; };
+      worker.onmessage = function (e) { var d = e.data; if (d && d.lv) ecache[d.k] = d.lv; if (d) delete epend[d.k]; };
       worker.onerror = function () { worker = null; };
     } catch (e) { worker = null; }
   }
-  function wantEndless(k) {
-    if (ecache[k] || epend[k]) return;
-    if (worker) { epend[k] = 1; try { worker.postMessage({ k: k, mods: modsList() }); } catch (e) { worker = null; delete epend[k]; } }
+  function wantEndless(k) { want('e' + k, { k: 'e' + k, ek: k, mods: modsList() }); }
+  function wantStar(i, p) { want('s' + p + ':' + i, { k: 's' + p + ':' + i, i: i, star: p, mods: modsList() }); }
+  function want(key, msg) {
+    if (ecache[key] || epend[key]) return;
+    if (worker) { epend[key] = 1; try { worker.postMessage(msg); } catch (e) { worker = null; delete epend[key]; } }
   }
   function getEndless(k) {
-    if (!ecache[k]) { ecache[k] = LEVELS.endless(k, modsList(), 60); delete epend[k]; }
-    return ecache[k];
+    var key = 'e' + k;
+    if (!ecache[key]) { ecache[key] = LEVELS.endless(k, modsList(), 60); delete epend[key]; }
+    return ecache[key];
+  }
+  function getStar(i, p) {
+    var key = 's' + p + ':' + i;
+    if (!ecache[key]) { ecache[key] = LEVELS.starLevel(i, p, modsList(), 60); delete epend[key]; }
+    return ecache[key];
   }
   function getCore(i) {
     var sv = SIM.getMods(); SIM.setMods({});
@@ -272,7 +279,7 @@ var GAME = (function () {
   function loadLevel(i) {
     applyMods();
     levelIdx = i;
-    var base = i < CORE ? getCore(i) : getEndless(i - CORE);
+    var base = i < CORE ? (save.pr > 0 ? getStar(i, save.pr) : getCore(i)) : getEndless(i - CORE);
     if (!base) base = getCore(0);
     lv = {}; for (var k in base) lv[k] = base[k];
     lv.leaves = base.leaves.slice();
@@ -291,6 +298,8 @@ var GAME = (function () {
     } else { $('card').style.display = 'none'; cardT = 0; }
     if (rain) toast(tr('rare2'));
     if (i >= CORE - 1) wantEndless(i + 1 - CORE);
+    if (i < CORE - 1 && save.pr > 0) wantStar(i + 1, save.pr);
+    if (save.lvl >= CORE - 1) wantStar(0, save.pr + 1);
     hud();
   }
   function hud() {
@@ -302,7 +311,7 @@ var GAME = (function () {
   }
 
   /* ---------- متجر القدرات ---------- */
-  var presArm = 0;
+  var presArm = 0, shopDirty = false;
   function shopRender() {
     $('shoph').textContent = tr('shop');
     $('shopbal').textContent = tr('bal') + ': ' + num(save.drops) + (save.pr ? '   ' + tr('stars') + ': ' + num(save.pr) : '');
@@ -327,10 +336,13 @@ var GAME = (function () {
   function buy(k) {
     var def = AB[k], lvn = save.ab[k];
     if (lvn >= def.max || save.drops < def.cost[lvn]) return;
-    save.drops -= def.cost[lvn]; save.ab[k]++; applyMods(); persist(); sfx('pick', 3); shopRender(); hud();
+    save.drops -= def.cost[lvn]; save.ab[k]++; shopDirty = true; applyMods(); persist(); sfx('pick', 3); shopRender(); hud();
   }
   function openShop() { if (menuOpen) return; menuOpen = true; held = false; presArm = 0; shopRender(); $('shop').style.display = 'flex'; }
-  function closeShop() { menuOpen = false; presArm = 0; $('shop').style.display = 'none'; hud(); }
+  function closeShop() {
+    menuOpen = false; presArm = 0; $('shop').style.display = 'none';
+    if (shopDirty && phase === 'play') { shopDirty = false; save.plays--; loadLevel(levelIdx); } else hud();
+  }
   function doPrestige() {
     if (save.lvl < CORE) return;
     if (!presArm) { presArm = 1; shopRender(); return; }
@@ -527,6 +539,7 @@ var GAME = (function () {
         $('winmsg').textContent = tr('win');
         $('winsub').textContent = '+' + num(bonus) + (levelIdx === CORE - 1 ? '  ' + tr('areaDone') : '');
         if (levelIdx + 1 >= CORE) wantEndless(levelIdx + 1 - CORE);
+        if (levelIdx + 1 >= CORE - 1) wantStar(0, save.pr + 1);
       }
     }
     if (grabAnim > 0) grabAnim -= dt;

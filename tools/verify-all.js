@@ -7,7 +7,7 @@ var fails = 0;
 function fail(m) { fails++; console.log('FAIL ' + m); }
 
 var MODS = [];
-[0, 3, 6, 9].forEach(function (dl) { [1, 1.12, 1.24, 1.36].forEach(function (pm) { MODS.push({ dL: dl, pump: pm }); }); });
+[0, 3, 6, 9].forEach(function (dl) { [1, 1.12, 1.24, 1.36].forEach(function (pm) { MODS.push({ dL: dl, pump: pm, rescue: (dl + (pm > 1.2 ? 1 : 0)) % 3 }); }); });
 
 function rnd(seed) { return LEVELS.rng(seed); }
 /* لاعب عشوائي: يتأكد إن الحالة ما تعلق للأبد */

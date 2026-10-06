@@ -92,7 +92,7 @@ var SOLVER = (function () {
       if (sw.mode !== SIM.HANG) break;
       var res = flight(lv, sw, opt.gaps[0], opt);
       var ok = (target === 'goal') ? res.k === 'win' : (res.k === 'arrive' && res.s.ix === target);
-      if (ok) good.push(st);
+      if (ok && res.s.resc === hang.resc) good.push(st);
       for (var q = 0; q < opt.relStep; q++) SIM.step(lv, sw, true);
     }
     /* أطول مقطع متصل */

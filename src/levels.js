@@ -86,48 +86,36 @@ var LEVELS = (function () {
     lv.pickups = pk; lv.lowY = Math.round(lowY);
   }
 
-  /* مواصفات المراحل (بدون بذور). lo = أدنى عرض نافذة ترك مقبول بالثواني */
-  function A1(n, dx, dy, lo) { return { area: 1, n: n, dx: dx, dy: dy, L: [38, 46], cpEvery: 4, lo: lo }; }
-  var SPECS = [
-    { area: 1, n: 6, dx: [56, 64], dy: [-6, 8], L: [40, 44], cpEvery: 3, lo: 0.22 },
-    { area: 1, n: 8, dx: [58, 70], dy: [-14, 12], L: [38, 46], cpEvery: 4, lo: 0.2 },
-    { area: 1, n: 9, dx: [62, 78], dy: [-18, 14], L: [38, 48], cpEvery: 4, lo: 0.18 },
-    { area: 1, n: 10, dx: [64, 84], dy: [-22, 18], L: [36, 50], cpEvery: 4, lo: 0.16 },
-    /* منطقة ٢: أوراق نطّاطة */
-    { area: 2, n: 6, dx: [62, 80], dy: [-12, 12], L: [38, 46], cpEvery: 3, leaf: 0.9, leafDy: [40, 62], lo: 0.2 },
-    { area: 2, n: 8, dx: [66, 88], dy: [-14, 14], L: [38, 46], cpEvery: 4, leaf: 0.85, leafDy: [40, 64], lo: 0.17 },
-    { area: 2, n: 9, dx: [70, 94], dy: [-16, 16], L: [36, 48], cpEvery: 4, leaf: 0.8, leafDy: [42, 66], lo: 0.15 },
-    { area: 2, n: 11, dx: [72, 98], dy: [-18, 18], L: [36, 48], cpEvery: 4, leaf: 0.8, leafDy: [42, 66], lo: 0.14 },
-    /* منطقة ٣: كروم تنقطع */
-    { area: 3, n: 6, dx: [58, 72], dy: [-12, 12], L: [38, 46], cpEvery: 3, brk: 0.6, lo: 0.2 },
-    { area: 3, n: 8, dx: [60, 78], dy: [-14, 14], L: [38, 46], cpEvery: 4, brk: 0.6, lo: 0.17 },
-    { area: 3, n: 10, dx: [62, 82], dy: [-16, 16], L: [36, 48], cpEvery: 5, brk: 0.7, lo: 0.15 },
-    { area: 3, n: 12, dx: [64, 86], dy: [-18, 18], L: [36, 48], cpEvery: 5, brk: 0.7, leaf: 0.3, leafDy: [44, 66], lo: 0.13 },
-    /* منطقة ٤: تيارات ضباب الشلال */
-    { area: 4, n: 6, dx: [60, 76], dy: [-10, 12], L: [38, 46], cpEvery: 3, draft: 0.5, yr: [70, 160], lo: 0.2 },
-    { area: 4, n: 8, dx: [62, 80], dy: [-12, 14], L: [38, 46], cpEvery: 4, draft: 0.5, yr: [70, 160], lo: 0.17 },
-    { area: 4, n: 10, dx: [62, 84], dy: [-14, 16], L: [36, 48], cpEvery: 4, draft: 0.5, yr: [70, 165], lo: 0.14 },
-    { area: 4, n: 12, dx: [64, 86], dy: [-16, 16], L: [36, 48], cpEvery: 5, draft: 0.45, brk: 0.2, yr: [70, 165], lo: 0.12 },
-    /* منطقة ٥: حلقات متحركة (طيور) */
-    { area: 5, n: 6, dx: [58, 72], dy: [-12, 12], L: [38, 46], cpEvery: 3, mv: 0.5, mvA: [12, 20], tper: 3.2, lo: 0.2 },
-    { area: 5, n: 8, dx: [60, 76], dy: [-14, 14], L: [38, 46], cpEvery: 4, mv: 0.55, mvA: [14, 22], tper: 3.0, lo: 0.16 },
-    { area: 5, n: 10, dx: [62, 80], dy: [-16, 16], L: [36, 48], cpEvery: 4, mv: 0.6, mvA: [14, 24], tper: 2.8, lo: 0.13 },
-    { area: 5, n: 12, dx: [62, 84], dy: [-16, 16], L: [36, 48], cpEvery: 5, mv: 0.5, brk: 0.15, mvA: [14, 24], tper: 2.8, lo: 0.11 },
-    /* منطقة ٦: أغصان تنطوي */
-    { area: 6, n: 6, dx: [58, 74], dy: [-12, 12], L: [38, 46], cpEvery: 3, fold: 0.5, foldT: [1.2, 1.6], lo: 0.18 },
-    { area: 6, n: 8, dx: [60, 78], dy: [-14, 14], L: [38, 46], cpEvery: 4, fold: 0.55, foldT: [1.1, 1.5], lo: 0.15 },
-    { area: 6, n: 10, dx: [62, 82], dy: [-16, 16], L: [36, 48], cpEvery: 4, fold: 0.55, foldT: [1.0, 1.4], lo: 0.12 },
-    { area: 6, n: 12, dx: [62, 86], dy: [-16, 16], L: [36, 48], cpEvery: 5, fold: 0.4, brk: 0.15, leaf: 0.25, leafDy: [44, 66], foldT: [1.0, 1.4], lo: 0.1 }
-  ];
+  /* مواصفات المراحل (بدون بذور): ٦ مناطق × ٤ مراحل، الطول والصعوبة يزيدان تدريجيًا */
+  function makeSpecs() {
+    var out = [], a, w;
+    for (a = 1; a <= 6; a++) {
+      for (w = 0; w < 4; w++) {
+        var i = (a - 1) * 4 + w;
+        var sp = {
+          area: a, n: Math.round(8 + i * 1.15), dx: [60 + 3 * w, 78 + 4 * w + (a > 1 ? 4 : 0)], dy: [-16 - 2 * w, 16 + 2 * w], L: [36, 48],
+          cpEvery: 4 + (a >= 3 ? 1 : 0) + (a >= 5 ? 1 : 0)
+        };
+        if (a === 2) { sp.leaf = [0.9, 0.85, 0.8, 0.8][w]; sp.leafDy = [40, 64]; }
+        if (a === 3) { sp.brk = [0.45, 0.55, 0.6, 0.7][w]; if (w === 3) { sp.leaf = 0.25; sp.leafDy = [44, 66]; } }
+        if (a === 4) { sp.draft = [0.45, 0.45, 0.5, 0.5][w]; sp.yr = [70, 165]; if (w === 3) sp.brk = 0.15; }
+        if (a === 5) { sp.mv = [0.5, 0.5, 0.42, 0.42][w]; if (w === 3) sp.n = 20; if (w === 2) sp.n = 22; sp.mvA = [14, 22]; sp.tper = [3.2, 3.0, 2.8, 2.6][w]; if (w === 3) sp.brk = 0.1; }
+        if (a === 6) { sp.fold = [0.45, 0.5, 0.55, 0.55][w]; sp.foldT = [[1.2, 1.6], [1.1, 1.5], [1.0, 1.4], [0.95, 1.3]][w]; if (w >= 2) sp.brk = 0.1; }
+        out.push(sp);
+      }
+    }
+    return out;
+  }
+  var SPECS = makeSpecs();
   /* بذور مثبّتة بعد التحقق (tools/find-seeds.js) */
-  var SEEDS = [1, 1, 1, 4, 5, 10, 8, 4, 1, 1, 3, 1, 1, 1, 1, 2, 1, 4, 19, 30, 3, 8, 3, 12];
+  var SEEDS = [1, 1, 8, 14, 3, 2, 8, 9, 1, 5, 2, 1, 33, 1, 1, 1, 22, 9, 47, 7, 2, 17, 101, 7];
 
   function specFor(i) {
     var sp = {};
     for (var k in SPECS[i]) sp[k] = SPECS[i][k];
     var g = i / (SPECS.length - 1), within = i % 4;
-    sp.hi = Math.round((0.36 - 0.22 * g + (within === 0 ? 0.04 : 0)) * 100) / 100;
-    sp.lo = Math.max(0.07, Math.round((sp.hi - 0.09) * 100) / 100);
+    sp.hi = Math.round((0.28 - 0.17 * g + (within === 0 ? 0.03 : 0)) * 100) / 100;
+    sp.lo = Math.max(0.06, Math.round((sp.hi - 0.07) * 100) / 100);
     sp.id = i + 1; sp.name = 'a' + sp.area + 'l' + (i + 1); sp.seed = SEEDS[i] || 1;
     return sp;
   }
@@ -148,8 +136,35 @@ var LEVELS = (function () {
 
   var cache = {};
   function get(i) {
-    if (!cache[i]) cache[i] = build(specFor(i));
+    if (!cache[i]) {
+      if (typeof CORE_DATA !== 'undefined' && CORE_DATA[i]) cache[i] = CORE_DATA[i];
+      else { var sv = SIM.getMods(); SIM.setMods({}); cache[i] = build(specFor(i)); SIM.setMods(sv); }
+    }
     return cache[i];
+  }
+
+  /* نسخة النجمة p من المرحلة i: أطول وأصعب، تتولد وتتحقق (بالخيط الخلفي) */
+  function starLevel(i, p, modsList, maxAttempts) {
+    var saved = SIM.getMods();
+    maxAttempts = maxAttempts || 60;
+    for (var at = 0; at < maxAttempts; at++) {
+      var sp = specFor(i);
+      sp.seed = 7000 + i * 131 + p * 977 + at * 31; sp.n += 3 * p;
+      sp.hi = Math.max(0.08, sp.hi - 0.015 * p); sp.lo = Math.max(0.05, sp.lo - 0.015 * p);
+      sp.id = 3000 + p * 100 + i; sp.name = 's' + p + 'l' + i;
+      SIM.setMods({});
+      var lv = finish(gen(sp));
+      if (!lv.ok || lv.minW < sp.lo || lv.minW > sp.hi) continue;
+      var ok = true;
+      for (var mi = 0; mi < (modsList || []).length && ok; mi++) {
+        SIM.setMods(modsList[mi]);
+        if (!SOLVER.seqPath(lv, {}).ok) ok = false;
+      }
+      SIM.setMods(saved);
+      if (ok) { lv.attempt = at; return lv; }
+    }
+    SIM.setMods(saved);
+    return null;
   }
 
   /* ---------- مسارات لا نهائية: تخلط كل القواعد، وتصعب تدريجيًا ---------- */
@@ -199,6 +214,6 @@ var LEVELS = (function () {
 
   return {
     SPECS: SPECS, SEEDS: SEEDS, gen: gen, build: build, finish: finish, get: get, specFor: specFor,
-    count: function () { return SPECS.length; }, addPickups: addPickups, rng: rng, endless: endless, endlessSpec: endlessSpec
+    count: function () { return SPECS.length; }, addPickups: addPickups, rng: rng, endless: endless, starLevel: starLevel, endlessSpec: endlessSpec
   };
 })();
